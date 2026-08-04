@@ -201,6 +201,7 @@
             <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-medium text-studio-muted">
                 <a href="#about" class="premium-link nav-link hover:text-studio-primary transition-colors">The Artist</a>
                 <a href="#available-works" class="premium-link nav-link hover:text-studio-primary transition-colors">Original Works</a>
+                <a href="#commissions" class="premium-link nav-link hover:text-studio-primary transition-colors">Commissions</a>
                 <a href="#exhibitions" class="premium-link nav-link hover:text-studio-primary transition-colors">Exhibitions & Press</a>
             </div>
 
@@ -407,6 +408,60 @@
         </div>
     </section>
 
+    <!-- COMMISSIONS & COLLECTOR QUESTIONS -->
+    <section id="commissions" class="reveal py-20 md:py-24 bg-studio-bg border-b border-studio-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div class="lg:col-span-5 space-y-6">
+                <span class="section-kicker">Commissions</span>
+                <h2 class="font-serif text-3xl md:text-5xl text-studio-primary leading-tight">Commission a Thread Portrait or Textile Work</h2>
+                <p class="text-sm text-studio-muted leading-relaxed">
+                    Mary accepts select commissions for collectors, curators, and institutions interested in symbolic thread-based portraits, narrative textile works, and emotionally grounded original pieces.
+                </p>
+                <button onclick="openInquiryModal('Commission Inquiry')" class="bg-studio-accent text-white px-7 py-4 text-xs uppercase tracking-widest hover:bg-studio-primary transition-colors font-semibold inline-flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Join Commission Waitlist
+                </button>
+            </div>
+
+            <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="magnetic-card bg-white border border-studio-border p-6">
+                    <span class="text-[10px] uppercase tracking-widest text-studio-accent font-semibold">1. Conversation</span>
+                    <h3 class="font-serif text-lg text-studio-primary mt-2">Tell the Story</h3>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-2">Share the person, memory, theme, or emotion the work should hold. Reference images and symbolic details are welcome.</p>
+                </div>
+                <div class="magnetic-card bg-white border border-studio-border p-6">
+                    <span class="text-[10px] uppercase tracking-widest text-studio-accent font-semibold">2. Direction</span>
+                    <h3 class="font-serif text-lg text-studio-primary mt-2">Confirm Scope</h3>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-2">Mary confirms size, surface, medium, timeline, and quotation before work begins.</p>
+                </div>
+                <div class="magnetic-card bg-white border border-studio-border p-6">
+                    <span class="text-[10px] uppercase tracking-widest text-studio-accent font-semibold">3. Studio Work</span>
+                    <h3 class="font-serif text-lg text-studio-primary mt-2">Stitched Slowly</h3>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-2">Each piece is handmade with thread, pigment, and textile gestures, allowing the work to develop with care.</p>
+                </div>
+                <div class="magnetic-card bg-white border border-studio-border p-6">
+                    <span class="text-[10px] uppercase tracking-widest text-studio-accent font-semibold">4. Delivery</span>
+                    <h3 class="font-serif text-lg text-studio-primary mt-2">Invoice & Shipping</h3>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-2">A formal invoice and shipping quote are prepared once details are confirmed with the collector.</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+                <details class="bg-white border border-studio-border p-5 group">
+                    <summary class="cursor-pointer font-serif text-lg text-studio-primary">Who are commissions for?</summary>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-3">Collectors, families, galleries, curators, and institutions seeking original thread-based works with personal or cultural meaning.</p>
+                </details>
+                <details class="bg-white border border-studio-border p-5 group">
+                    <summary class="cursor-pointer font-serif text-lg text-studio-primary">How is pricing handled?</summary>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-3">Pricing depends on size, surface, complexity, materials, and delivery destination. Mary confirms a quote before beginning.</p>
+                </details>
+                <details class="bg-white border border-studio-border p-5 group">
+                    <summary class="cursor-pointer font-serif text-lg text-studio-primary">Can collectors outside Nigeria inquire?</summary>
+                    <p class="text-sm text-studio-muted leading-relaxed mt-3">Yes. Communication can happen by email, with shipping quoted according to artwork size and destination.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
     <!-- SECTION 2: EXHIBITIONS & PRESS NEWS -->
     <section id="exhibitions" class="reveal py-20 md:py-24 bg-studio-bg border-b border-studio-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -478,20 +533,22 @@
         </div>
 
         <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
-            <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Private Advisory</span>
-            <h2 class="font-serif text-3xl md:text-5xl font-light mt-2 mb-4">Join the Collector List</h2>
+            <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Collector Letters</span>
+            <h2 class="font-serif text-3xl md:text-5xl font-light mt-2 mb-4">Join the Studio Circle</h2>
             <p class="text-stone-400 text-sm leading-relaxed mb-8">
-                Subscribe for studio updates, new original works, exhibition news, and private acquisition notices from Mary Adesakin Studio.
+                Receive thoughtful studio notes, new original work announcements, exhibition updates, and early acquisition notices from Mary Adesakin Studio.
             </p>
 
-            <form onsubmit="handleNewsletter(event)" class="flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
-                <input type="email" id="nl-email" placeholder="Email Address" required class="bg-white/5 border border-stone-600 px-6 py-4 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-studio-accent flex-1 rounded-none">
+            <form onsubmit="handleNewsletter(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-3xl mx-auto">
+                <input type="text" id="nl-first-name" placeholder="First Name" class="bg-white/5 border border-stone-600 px-5 py-4 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-studio-accent rounded-none">
+                <input type="text" id="nl-last-name" placeholder="Last Name" class="bg-white/5 border border-stone-600 px-5 py-4 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-studio-accent rounded-none">
+                <input type="email" id="nl-email" placeholder="Email Address" required class="bg-white/5 border border-stone-600 px-5 py-4 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-studio-accent rounded-none">
                 <button type="submit" class="bg-studio-accent text-white px-8 py-4 text-xs uppercase tracking-widest font-semibold hover:bg-white hover:text-studio-primary transition-colors border border-studio-accent hover:border-white">
-                    Subscribe
+                    Join
                 </button>
             </form>
             <div id="nl-success-msg" class="hidden text-xs text-emerald-400 pt-4">
-                ✓ Thank you. You have been added to the private mailing list.
+                An email draft has opened. Send it to join the Studio Circle.
             </div>
         </div>
     </section>
@@ -722,19 +779,19 @@
                 <div class="space-y-3">
                     <h4 class="text-xs uppercase tracking-wider font-bold text-studio-primary border-b pb-1">1. Collector Information</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" placeholder="First & Last Name" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
-                        <input type="email" placeholder="Email Address (for Certificate of Authenticity)" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input id="collector-name" type="text" placeholder="First & Last Name" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input id="collector-email" type="email" placeholder="Email Address" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
                     </div>
                 </div>
 
                 <!-- Step 2: Shipping Destination -->
                 <div class="space-y-3">
                     <h4 class="text-xs uppercase tracking-wider font-bold text-studio-primary border-b pb-1">2. Shipping Destination</h4>
-                    <input type="text" placeholder="Street Address" required class="w-full border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                    <input id="collector-address" type="text" placeholder="Street Address" required class="w-full border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        <input type="text" placeholder="City" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
-                        <input type="text" placeholder="State / Region" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
-                        <input type="text" placeholder="Postal Code" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input id="collector-city" type="text" placeholder="City" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input id="collector-region" type="text" placeholder="State / Region" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input id="collector-postal-code" type="text" placeholder="Postal Code" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
                     </div>
                 </div>
 
@@ -771,10 +828,28 @@
                     <span class="text-[10px] text-studio-accent font-semibold uppercase">Studio confirmation required</span>
                 </div>
 
+                <label class="flex items-start gap-2 text-[11px] leading-relaxed text-studio-muted cursor-pointer">
+                    <input id="collector-policy-agreement" type="checkbox" required class="mt-0.5 accent-studio-accent">
+                    <span>I have read the <button type="button" onclick="openPolicyModal('terms')" class="underline hover:text-studio-accent">studio terms</button> and <button type="button" onclick="openPolicyModal('returns')" class="underline hover:text-studio-accent">return and refund policy</button>.</span>
+                </label>
+
                 <button type="submit" class="w-full bg-studio-accent text-white py-4 text-xs uppercase tracking-widest font-semibold hover:bg-studio-primary transition-colors flex items-center justify-center gap-2 shadow-xl">
                     <i data-lucide="send" class="w-4 h-4"></i> Send Inquiry to Studio
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- STUDIO POLICIES MODAL -->
+    <div id="policy-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="policy-title">
+        <div class="modal-panel bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
+            <button onclick="closePolicyModal()" aria-label="Close studio policies" class="absolute top-4 right-4 text-stone-500 hover:text-black">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Mary Adesakin Studio</span>
+            <h3 id="policy-title" class="font-serif text-2xl font-semibold text-studio-primary mt-1">Studio Policies</h3>
+            <div id="policy-content" class="mt-6 text-sm leading-relaxed text-studio-muted space-y-5"></div>
+            <p class="mt-8 pt-4 border-t border-stone-200 text-[11px] leading-relaxed text-studio-muted">These policies apply to enquiries made through this website and are effective 4 August 2026. For a specific acquisition or commission, the studio will confirm the final terms in writing before payment.</p>
         </div>
     </div>
 
@@ -838,6 +913,9 @@
                 </div>
                 <div class="flex gap-4 pt-2">
                     <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Adesakin Mary" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
+                    <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on Instagram" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    <a href="https://www.tiktok.com/@dammy017?_r=1&_t=ZS-98aw9mfksiq" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on TikTok" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="music-2" class="w-5 h-5"></i></a>
+                    <a href="https://www.facebook.com/share/1DzBXHzfPN/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on Facebook" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
                 </div>
             </div>
             
@@ -846,6 +924,7 @@
                 <ul class="space-y-3 text-sm text-studio-muted">
                     <li><a href="#about" class="hover:text-studio-accent transition-colors">Artist Biography</a></li>
                     <li><a href="#available-works" class="hover:text-studio-accent transition-colors">Available Artworks</a></li>
+                    <li><a href="#commissions" class="hover:text-studio-accent transition-colors">Commissions</a></li>
                     <li><a href="#exhibitions" class="hover:text-studio-accent transition-colors">Selected Exhibitions</a></li>
                     <li><a href="#newsletter" class="hover:text-studio-accent transition-colors">Join Mailing List</a></li>
                     <li><a href="#upcoming" class="hover:text-studio-accent transition-colors">Upcoming Collection</a></li>
@@ -856,6 +935,9 @@
                 <h5 class="text-xs uppercase tracking-widest text-studio-primary mb-4 font-bold">Inquiries & Policies</h5>
                 <ul class="space-y-3 text-sm text-studio-muted">
                     <li><button type="button" onclick="openInquiryModal()" class="hover:text-studio-accent transition-colors text-left">Private Commissions</button></li>
+                    <li><button type="button" onclick="openPolicyModal('terms')" class="hover:text-studio-accent transition-colors text-left">Terms of Service</button></li>
+                    <li><button type="button" onclick="openPolicyModal('returns')" class="hover:text-studio-accent transition-colors text-left">Return & Refund Policy</button></li>
+                    <li><button type="button" onclick="openPolicyModal('privacy')" class="hover:text-studio-accent transition-colors text-left">Privacy Policy</button></li>
                     <li><a href="mailto:adesakinmary2020@gmail.com" class="hover:text-studio-accent transition-colors">Studio Email</a></li>
                     <li><a href="tel:+2349067002871" class="hover:text-studio-accent transition-colors">Call Studio</a></li>
                 </ul>
@@ -1242,8 +1324,15 @@
             ).join('%0A');
             const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
             const note = encodeURIComponent(document.getElementById('collector-note')?.value || '');
+            const collectorName = encodeURIComponent(document.getElementById('collector-name')?.value || '');
+            const collectorEmail = encodeURIComponent(document.getElementById('collector-email')?.value || '');
+            const address = encodeURIComponent(document.getElementById('collector-address')?.value || '');
+            const city = encodeURIComponent(document.getElementById('collector-city')?.value || '');
+            const region = encodeURIComponent(document.getElementById('collector-region')?.value || '');
+            const postalCode = encodeURIComponent(document.getElementById('collector-postal-code')?.value || '');
+            const preference = encodeURIComponent(document.querySelector('input[name="payment_method"]:checked')?.value || 'availability');
             const subject = encodeURIComponent('Collector inquiry for Mary Adesakin artwork');
-            const body = `Hello Mary,%0A%0AI would like to inquire about the following artwork:%0A${selectedLines}%0A%0ASelected artwork value: $${subtotal.toLocaleString()} USD%0A%0ANote: ${note}%0A%0APlease confirm availability, payment process, and shipping details.%0A`;
+            const body = `Hello Mary,%0A%0ACollector: ${collectorName}%0AEmail: ${collectorEmail}%0AShipping destination: ${address}, ${city}, ${region}, ${postalCode}%0ARequest: ${preference}%0A%0AI would like to inquire about the following artwork:%0A${selectedLines}%0A%0ASelected artwork value: $${subtotal.toLocaleString()} USD%0A%0ANote: ${note}%0A%0APlease confirm availability, payment process, and shipping details.%0A`;
             return `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
         }
 
@@ -1272,8 +1361,13 @@
         
         function handleNewsletter(e) {
             e.preventDefault();
+            const firstName = encodeURIComponent(document.getElementById('nl-first-name').value || '');
+            const lastName = encodeURIComponent(document.getElementById('nl-last-name').value || '');
+            const email = encodeURIComponent(document.getElementById('nl-email').value || '');
+            const subject = encodeURIComponent('Studio Circle sign-up');
+            const body = `Hello Mary,%0A%0APlease add me to the Studio Circle.%0A%0AName: ${firstName} ${lastName}%0AEmail: ${email}%0A`;
+            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
             document.getElementById('nl-success-msg').classList.remove('hidden');
-            document.getElementById('nl-email').value = '';
         }
         
         function openInquiryModal() {
@@ -1282,6 +1376,32 @@
         
         function closeInquiryModal() {
             setModalState(document.getElementById('inquiry-modal'), false);
+        }
+
+        const studioPolicies = {
+            terms: {
+                title: 'Terms of Service',
+                content: `<p>Mary Adesakin Studio presents artwork, prices, and availability for general information. A shortlist or enquiry does not reserve, sell, or constitute a contract for an artwork.</p><p>Original works are subject to prior sale. The studio confirms availability, final artwork details, shipping arrangements, delivery timing, and payment instructions in writing before payment is requested. Prices and availability may change before that confirmation.</p><p>Artwork photography is made to represent each work faithfully, but thread, canvas, jute, acrylic, scale, and colour can appear differently across screens. Please request further images or details before committing to acquire a work.</p><p>All artwork images, texts, and site content remain the intellectual property of Mary Adesakin unless stated otherwise. They may not be reproduced, distributed, or used commercially without written permission.</p>`
+            },
+            returns: {
+                title: 'Return & Refund Policy',
+                content: `<p>Original artworks and made-to-order commissions are final sale once payment has been confirmed, because each work is unique or created specifically for its collector.</p><p>Please inspect a delivery promptly. If a work arrives damaged, contact the studio within 48 hours of delivery with your order details, photographs of the packaging, and clear images of the damage. The studio will review the matter and discuss an appropriate remedy, which may include repair, replacement where possible, or a refund.</p><p>Shipping, customs duties, import taxes, and return carriage are confirmed for each acquisition before payment. The studio cannot refund delays or charges caused by customs authorities or circumstances outside its control.</p>`
+            },
+            privacy: {
+                title: 'Privacy Policy',
+                content: `<p>Mary Adesakin Studio collects the information you choose to provide in an enquiry, including your name, email address, shipping destination, and message. This information is used only to respond to your enquiry, prepare an invoice or shipping quote, fulfil an agreed acquisition or commission, and keep studio records.</p><p>This website opens your email application to send enquiries and Studio Circle sign-ups; it does not process card payments or store payment-card details. Please do not send bank, card, or other sensitive financial information through the enquiry form.</p><p>The studio does not sell personal information. Information may be shared only with service providers needed to fulfil an agreed order, such as a shipping carrier, or where required by law. To ask about, correct, or request deletion of your information, email adesakinmary2020@gmail.com.</p>`
+            }
+        };
+
+        function openPolicyModal(policyName) {
+            const policy = studioPolicies[policyName] || studioPolicies.terms;
+            document.getElementById('policy-title').innerText = policy.title;
+            document.getElementById('policy-content').innerHTML = policy.content;
+            setModalState(document.getElementById('policy-modal'), true);
+        }
+
+        function closePolicyModal() {
+            setModalState(document.getElementById('policy-modal'), false);
         }
         
         function handleInquirySubmit(e) {
@@ -1317,6 +1437,7 @@
             closeModal();
             closeCheckoutModal();
             closeInquiryModal();
+            closePolicyModal();
             setModalState(document.getElementById('cart-drawer'), false);
         });
     </script>
