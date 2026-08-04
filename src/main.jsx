@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowDown,
@@ -19,9 +19,44 @@ import {
   X,
 } from 'lucide-react';
 import './styles.css';
+import {
+  artworkForHash,
+  hasPaymentLink,
+  isPositivePrice,
+  money,
+  normalizePrice,
+  paymentUrlFor,
+} from './app-utils.js';
 
 const FORMSPREE_INQUIRY_ENDPOINT = 'https://formspree.io/f/mppaawgd';
 const FORMSPREE_STUDIO_CIRCLE_ENDPOINT = 'https://formspree.io/f/mwleepdn';
+
+const policies = {
+  terms: {
+    title: 'Studio Terms',
+    content: [
+      'Artwork, prices, and availability shown on this website are for general information. A shortlist or inquiry does not reserve an artwork or create a sale.',
+      'Before payment, the studio confirms the work, final price, availability, shipping destination, delivery timing, and payment instructions in writing. Prices exclude shipping, customs duties, and import taxes unless confirmed otherwise.',
+      'Artwork images aim to represent each piece faithfully, but colour, texture, and scale can differ across screens. Copyright in the artwork, images, and text remains with Mary Adesakin unless agreed otherwise in writing.',
+    ],
+  },
+  returns: {
+    title: 'Return & Refund Policy',
+    content: [
+      'Original artworks and made-to-order commissions are final sale after payment is confirmed because each work is unique or made specifically for its collector.',
+      'If a work arrives damaged, contact the studio within 48 hours with order details and photographs of the packaging and damage. Keep all packaging until the studio responds.',
+      'The studio will review delivery damage and agree an appropriate remedy. Commission cancellations and deposit terms are governed by the written commission agreement.',
+    ],
+  },
+  privacy: {
+    title: 'Privacy Policy',
+    content: [
+      'The studio uses the contact details and messages you submit only to answer inquiries, prepare acquisition or shipping information, fulfil agreed work, and maintain studio records.',
+      'Forms are processed by Formspree. The website uses Plausible Analytics for aggregate traffic measurement and does not process or store payment-card details. Do not send financial credentials through an inquiry form.',
+      'The studio does not sell personal information. To request access, correction, or deletion, email adesakinmary2020@gmail.com. External social and payment services apply their own privacy policies.',
+    ],
+  },
+};
 
 const translations = {
   en: {
@@ -146,14 +181,8 @@ const translations = {
   },
 };
 
-const money = (value) => value ? `$${value.toLocaleString()} USD` : '';
 const artworkDescription = (art, lang) => art.description?.[lang] || art.description?.en || '';
 const artworkUrl = (art) => `${window.location.origin}${window.location.pathname}#artwork/${art.slug}`;
-const normalizePrice = (value) => {
-  if (value === '') return null;
-  const number = Number(value);
-  return Number.isFinite(number) && number >= 0 ? number : null;
-};
 
 function App() {
   const [artworks, setArtworks] = useState([]);
@@ -162,10 +191,13 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [selected, setSelected] = useState(null);
   const [shortlist, setShortlist] = useState([]);
+  const [shortlistOpen, setShortlistOpen] = useState(false);
+  const [policyName, setPolicyName] = useState(null);
   const [toast, setToast] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [adminMode, setAdminMode] = useState(() => window.location.hash === '#admin');
   const t = translations[lang];
+  const featuredArt = artworks.find((art) => art.slug === 'the-weight-of-words');
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}data/artworks.json`)
@@ -177,16 +209,16 @@ function App() {
   useEffect(() => {
     if (!artworks.length) return;
     const openFromHash = () => {
-      if (window.location.hash === '#admin') return;
-      const slug = decodeURIComponent(window.location.hash || '').replace('#artwork/', '');
-      if (!slug) return;
-      const art = artworks.find((item) => item.slug === slug);
-      if (art) setSelected(art);
+      setSelected(artworkForHash(artworks, window.location.hash || ''));
     };
     openFromHash();
     window.addEventListener('hashchange', openFromHash);
     return () => window.removeEventListener('hashchange', openFromHash);
   }, [artworks]);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   useEffect(() => {
     const handleRoute = () => setAdminMode(window.location.hash === '#admin');
@@ -206,8 +238,8 @@ function App() {
     return artworks.filter((art) => {
       const matchesFilter =
         filter === 'all' ||
-        (filter === 'priced' && art.status === 'Available' && art.originalPrice) ||
-        (filter === 'request' && art.status !== 'Sold' && !art.originalPrice) ||
+        (filter === 'priced' && art.status === 'Available' && isPositivePrice(art.originalPrice)) ||
+        (filter === 'request' && art.status !== 'Sold' && !isPositivePrice(art.originalPrice)) ||
         (filter === '2026' && art.year === '2026');
       const haystack = [art.title, art.collection, art.medium, art.year, art.dimensions].join(' ').toLowerCase();
       return matchesFilter && (!needle || haystack.includes(needle));
@@ -241,25 +273,25 @@ function App() {
   };
 
   const addToShortlist = (art) => {
-    if (!art.originalPrice || art.status !== 'Available') {
-      showToast(t.stripeMissing);
+    if (art.status !== 'Available') {
+      showToast(t.unavailable);
       return;
     }
     if (shortlist.some((item) => item.id === art.id)) {
       showToast(`${art.title} is already shortlisted.`);
       return;
     }
-    setShortlist([...shortlist, art]);
+    setShortlist((items) => [...items, art]);
     showToast(`${art.title} added.`);
   };
 
+  const removeFromShortlist = (id) => {
+    setShortlist((items) => items.filter((item) => item.id !== id));
+  };
+
   const handlePaymentLink = (art, type) => {
-    const url = type === 'deposit' ? art.stripeDepositUrl : art.stripePaymentUrl;
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } else {
-      showToast(t.stripeMissing);
-    }
+    if (!hasPaymentLink(art, type)) return;
+    window.open(paymentUrlFor(art, type), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -284,10 +316,16 @@ function App() {
               ))}
             </select>
           </label>
-          <button className="shortlist" type="button" aria-label="Collector shortlist">
+          <button className="shortlist" type="button" aria-label={`Collector shortlist, ${shortlist.length} items`} onClick={() => setShortlistOpen(true)}>
             <Bookmark size={16} /> {shortlist.length}
           </button>
-          <button className="menu" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open navigation">
+          <button
+            className="menu"
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+            aria-expanded={menuOpen}
+          >
             {menuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -314,12 +352,12 @@ function App() {
             </div>
           </div>
           <article className="featured">
-            <img src={`${import.meta.env.BASE_URL}assets/artwork/the-weight-of-words.png`} alt="The Weight of Words" />
+            <img src={`${import.meta.env.BASE_URL}${featuredArt?.image || 'assets/artwork/the-weight-of-words.png'}`} alt={featuredArt?.title || 'The Weight of Words'} />
             <div>
-              <span>{t.available}</span>
-              <h2>The Weight of Words</h2>
-              <p>Thread on Canvas / 30 x 32 inches</p>
-              <strong>$750 USD</strong>
+              <span>{featuredArt?.status === 'Sold' ? t.sold : t.available}</span>
+              <h2>{featuredArt?.title || 'The Weight of Words'}</h2>
+              <p>{featuredArt ? `${featuredArt.medium} / ${featuredArt.dimensions}` : 'Thread on Canvas / 30 x 32 inches'}</p>
+              <strong>{featuredArt ? (money(featuredArt.originalPrice) || t.priceOnRequest) : 'Loading catalogue…'}</strong>
             </div>
           </article>
         </section>
@@ -375,16 +413,16 @@ function App() {
                   <p>{artworkDescription(art, lang)}</p>
                   <dl>
                     <dt>{t.originalPainting}</dt>
-                    <dd>{art.status === 'Sold' ? t.sold : art.originalPrice ? money(art.originalPrice) : t.priceOnRequest}</dd>
+                    <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}</dd>
                     <dt>{t.format}</dt>
                     <dd>Original + Print</dd>
                     <dt>{t.print}</dt>
-                    <dd>{art.printPrice ? money(art.printPrice) : t.availableByInquiry}</dd>
+                    <dd>{isPositivePrice(art.printPrice) ? money(art.printPrice) : t.availableByInquiry}</dd>
                   </dl>
                   <div className="card-actions">
                     <button type="button" onClick={() => openArtwork(art)}>{t.viewSelect}</button>
                     <button type="button" aria-label={t.copyLink} onClick={() => copyLink(art)}><LinkIcon size={16} /></button>
-                    {art.originalPrice ? <button type="button" aria-label={t.addShortlist} onClick={() => addToShortlist(art)}><BookmarkPlus size={16} /></button> : null}
+                    {art.status === 'Available' ? <button type="button" aria-label={t.addShortlist} onClick={() => addToShortlist(art)}><BookmarkPlus size={16} /></button> : null}
                   </div>
                 </div>
               </article>
@@ -421,6 +459,11 @@ function App() {
           <p>Ile-Ife, Osun State, Nigeria</p>
         </div>
         <div className="footer-links">
+          <div className="policy-links" aria-label="Studio policies">
+            <button type="button" onClick={() => setPolicyName('terms')}>Terms</button>
+            <button type="button" onClick={() => setPolicyName('returns')}>Returns & Refunds</button>
+            <button type="button" onClick={() => setPolicyName('privacy')}>Privacy</button>
+          </div>
           <div className="socials">
             <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Mary"><Mail size={18} /></a>
             <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noreferrer" aria-label="Instagram"><i className="fa-brands fa-instagram" /></a>
@@ -432,8 +475,8 @@ function App() {
       </footer>
 
       {selected ? (
-        <div className="modal" role="dialog" aria-modal="true" aria-labelledby="artwork-title">
-          <div className="modal-panel">
+        <Dialog labelledBy="artwork-title" onClose={closeArtwork}>
+          <div className="modal-panel artwork-modal-panel">
             <button type="button" className="close" onClick={closeArtwork} aria-label="Close artwork details"><X /></button>
             <img src={`${import.meta.env.BASE_URL}${selected.image}`} alt={selected.title} />
             <div className="modal-copy">
@@ -443,30 +486,184 @@ function App() {
               <p>{artworkDescription(selected, lang)}</p>
               <dl>
                 <dt>Year</dt><dd>{selected.year}</dd>
-                <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : selected.originalPrice ? money(selected.originalPrice) : t.priceOnRequest}</dd>
-                <dt>{t.print}</dt><dd>{selected.printPrice ? money(selected.printPrice) : t.availableByInquiry}</dd>
+                <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : isPositivePrice(selected.originalPrice) ? money(selected.originalPrice) : t.priceOnRequest}</dd>
+                <dt>{t.print}</dt><dd>{isPositivePrice(selected.printPrice) ? money(selected.printPrice) : t.availableByInquiry}</dd>
                 <dt>{t.edition}</dt><dd>{selected.edition}</dd>
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
               </dl>
               <div className="modal-actions">
                 <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
-                <button type="button" onClick={() => handlePaymentLink(selected, 'deposit')}><ExternalLink size={16} /> {t.payDeposit}</button>
-                <button type="button" onClick={() => handlePaymentLink(selected, 'full')}><ExternalLink size={16} /> {t.payInFull}</button>
+                {hasPaymentLink(selected, 'deposit') ? <button type="button" onClick={() => handlePaymentLink(selected, 'deposit')}><ExternalLink size={16} /> {t.payDeposit}</button> : null}
+                {hasPaymentLink(selected, 'full') ? <button type="button" onClick={() => handlePaymentLink(selected, 'full')}><ExternalLink size={16} /> {t.payInFull}</button> : null}
+                {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
                 <a href={`mailto:adesakinmary2020@gmail.com?subject=Artwork inquiry: ${encodeURIComponent(selected.title)}`}>{t.requestDetails}</a>
               </div>
             </div>
           </div>
-        </div>
+        </Dialog>
       ) : null}
 
-      {toast ? <div className="toast">{toast}</div> : null}
+      {shortlistOpen ? (
+        <ShortlistDialog
+          items={shortlist}
+          onClose={() => setShortlistOpen(false)}
+          onRemove={removeFromShortlist}
+          onOpenPrivacy={() => {
+            setShortlistOpen(false);
+            setPolicyName('privacy');
+          }}
+        />
+      ) : null}
+
+      {policyName ? (
+        <PolicyDialog policy={policies[policyName]} onClose={() => setPolicyName(null)} />
+      ) : null}
+
+      {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
     </>
   );
 }
 
+function Dialog({ labelledBy, onClose, children }) {
+  const dialogRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const previouslyFocused = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    document.body.style.overflow = 'hidden';
+    const firstFocusable = dialog?.querySelector(focusableSelector);
+    (firstFocusable || dialog)?.focus();
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialog) return;
+      const focusable = [...dialog.querySelectorAll(focusableSelector)];
+      if (!focusable.length) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
+    };
+  }, []);
+
+  return (
+    <div
+      className="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={labelledBy}
+      ref={dialogRef}
+      tabIndex="-1"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function ShortlistDialog({ items, onClose, onRemove, onOpenPrivacy }) {
+  const selectedWorks = items.map((art) => (
+    `${art.title} (${isPositivePrice(art.originalPrice) ? money(art.originalPrice) : 'Price on request'})`
+  )).join('; ');
+
+  return (
+    <Dialog labelledBy="shortlist-title" onClose={onClose}>
+      <div className="modal-panel compact-modal">
+        <button type="button" className="close" onClick={onClose} aria-label="Close collector shortlist"><X /></button>
+        <div className="modal-copy shortlist-copy">
+          <span className="kicker">Collector Inquiry</span>
+          <h2 id="shortlist-title">Collector Shortlist</h2>
+          {items.length ? (
+            <ul className="shortlist-items">
+              {items.map((art) => (
+                <li key={art.id}>
+                  <img src={`${import.meta.env.BASE_URL}${art.image}`} alt="" />
+                  <span><strong>{art.title}</strong><small>{money(art.originalPrice) || 'Price on request'}</small></span>
+                  <button type="button" onClick={() => onRemove(art.id)} aria-label={`Remove ${art.title} from shortlist`}><X size={16} /></button>
+                </li>
+              ))}
+            </ul>
+          ) : <p>Your shortlist is empty. Add an available artwork from the catalogue.</p>}
+
+          <form className="inquiry-form" action={FORMSPREE_INQUIRY_ENDPOINT} method="POST">
+            <input type="hidden" name="_subject" value="Collector acquisition inquiry" />
+            <input type="hidden" name="shortlisted_artworks" value={selectedWorks} />
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" autoComplete="name" maxLength="100" required />
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" autoComplete="email" maxLength="254" required />
+            </label>
+            <label>
+              <span>Location</span>
+              <input type="text" name="location" autoComplete="country-name" maxLength="120" required />
+            </label>
+            <label>
+              <span>Message</span>
+              <textarea name="message" rows="4" maxLength="2000" placeholder="Ask about availability, shipping, or acquisition details." />
+            </label>
+            <p className="form-privacy">Form details are used to respond to this inquiry. <button type="button" onClick={onOpenPrivacy}>Read the privacy policy.</button></p>
+            <button className="primary" type="submit" disabled={!items.length}><Send size={16} /> Send Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
+function PolicyDialog({ policy, onClose }) {
+  return (
+    <Dialog labelledBy="policy-title" onClose={onClose}>
+      <div className="modal-panel compact-modal">
+        <button type="button" className="close" onClick={onClose} aria-label={`Close ${policy.title}`}><X /></button>
+        <div className="modal-copy policy-copy">
+          <span className="kicker">Mary Adesakin Studio</span>
+          <h2 id="policy-title">{policy.title}</h2>
+          {policy.content.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          <small>Effective 4 August 2026.</small>
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
 function AdminPanel({ artworks, setArtworks, showToast }) {
-  const pricedOriginals = artworks.filter((art) => art.originalPrice).length;
-  const pricedPrints = artworks.filter((art) => art.printPrice).length;
+  const pricedOriginals = artworks.filter((art) => isPositivePrice(art.originalPrice)).length;
+  const pricedPrints = artworks.filter((art) => isPositivePrice(art.printPrice)).length;
 
   const updatePrice = (id, field, value) => {
     setArtworks((items) => items.map((art) => (
@@ -525,7 +722,7 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
               <span>Original price</span>
               <input
                 type="number"
-                min="0"
+                min="1"
                 step="1"
                 value={art.originalPrice ?? ''}
                 onChange={(event) => updatePrice(art.id, 'originalPrice', event.target.value)}
@@ -536,7 +733,7 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
               <span>Print price</span>
               <input
                 type="number"
-                min="0"
+                min="1"
                 step="1"
                 value={art.printPrice ?? ''}
                 onChange={(event) => updatePrice(art.id, 'printPrice', event.target.value)}
