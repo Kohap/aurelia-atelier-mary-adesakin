@@ -293,7 +293,7 @@
 
         <div class="lg:col-span-5 relative">
             <div class="relative z-10 bg-white p-3 sm:p-4 lift-card border border-studio-border">
-                <img src="assets/artwork/the-weight-of-words.png" alt="The Weight of Words by Mary Adesakin" loading="eager" decoding="async" class="w-full h-[360px] sm:h-[460px] lg:h-[560px] object-cover filter brightness-95 contrast-105">
+                <img src="assets/artwork/the-weight-of-words.png" alt="The Weight of Words by Mary Adesakin" loading="eager" fetchpriority="high" decoding="async" class="w-full h-[360px] sm:h-[460px] lg:h-[560px] object-cover filter brightness-95 contrast-105">
                 <div class="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 border-t border-studio-border pt-3">
                     <div>
                         <span class="text-xs tracking-widest text-studio-accent font-semibold uppercase">Featured Original Work</span>
@@ -326,7 +326,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
                 <a href="#available-works" class="group block">
                     <figure class="overflow-hidden bg-stone-100 aspect-[4/5]">
-                        <img src="assets/artwork/the-ife-muse.jpg" alt="The Ife Muse by Mary Adesakin" loading="eager" decoding="async" class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700">
+                        <img src="assets/artwork/the-ife-muse.jpg" alt="The Ife Muse by Mary Adesakin" loading="lazy" decoding="async" class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700">
                     </figure>
                     <div class="pt-3 flex items-start justify-between gap-3">
                         <div><h3 class="font-serif text-lg text-studio-primary">The Ife Muse</h3><p class="text-xs text-studio-muted mt-0.5">Thread and Acrylic on Canvas, 2026</p></div>
@@ -335,7 +335,7 @@
                 </a>
                 <a href="#available-works" class="group block sm:mt-8">
                     <figure class="overflow-hidden bg-stone-100 aspect-[4/5]">
-                        <img src="assets/artwork/beauty-in-becoming.jpg" alt="Beauty in Becoming by Mary Adesakin" loading="eager" decoding="async" class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700">
+                        <img src="assets/artwork/beauty-in-becoming.jpg" alt="Beauty in Becoming by Mary Adesakin" loading="lazy" decoding="async" class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700">
                     </figure>
                     <div class="pt-3 flex items-start justify-between gap-3">
                         <div><h3 class="font-serif text-lg text-studio-primary">Beauty in Becoming</h3><p class="text-xs text-studio-muted mt-0.5">Thread and Acrylic on Canvas, 2026</p></div>
@@ -344,7 +344,7 @@
                 </a>
                 <a href="#available-works" class="group block">
                     <figure class="overflow-hidden bg-stone-100 aspect-[4/5]">
-                        <img src="assets/artwork/rare-like-a-blue-rose.jpg" alt="Rare Like a Blue Rose by Mary Adesakin" loading="eager" decoding="async" class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700">
+                        <img src="assets/artwork/rare-like-a-blue-rose.jpg" alt="Rare Like a Blue Rose by Mary Adesakin" loading="lazy" decoding="async" class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700">
                     </figure>
                     <div class="pt-3 flex items-start justify-between gap-3">
                         <div><h3 class="font-serif text-lg text-studio-primary">Rare Like a Blue Rose</h3><p class="text-xs text-studio-muted mt-0.5">Thread and Acrylic on Canvas, 2026</p></div>
@@ -742,9 +742,9 @@
     </main>
 
     <!-- ARTWORK DETAIL / SELECTION MODAL -->
-    <div id="art-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="art-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-panel bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-studio-border relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black text-xl p-2 z-10">
+            <button onclick="closeModal()" aria-label="Close artwork details" class="absolute top-4 right-4 text-stone-500 hover:text-black text-xl p-2 z-10">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
 
@@ -820,16 +820,16 @@
     </div>
 
     <!-- CART DRAWER (SLIDE-OVER) -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex justify-end">
+    <div id="cart-drawer" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex justify-end" role="dialog" aria-modal="true" aria-labelledby="cart-title">
         <div class="modal-panel bg-white max-w-md w-full h-full flex flex-col justify-between shadow-2xl relative">
             
             <!-- Cart Header -->
             <div class="p-6 border-b border-stone-200 flex justify-between items-center bg-studio-bg">
                 <div class="flex items-center gap-2">
                     <i data-lucide="bookmark" class="w-5 h-5 text-studio-accent"></i>
-                    <h3 class="font-serif text-lg font-bold text-studio-primary">Collector Shortlist</h3>
+                    <h3 id="cart-title" class="font-serif text-lg font-bold text-studio-primary">Collector Shortlist</h3>
                 </div>
-                <button onclick="toggleCartDrawer()" class="text-stone-400 hover:text-black">
+                <button onclick="toggleCartDrawer()" aria-label="Close collector shortlist" class="text-stone-400 hover:text-black">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -868,15 +868,15 @@
     </div>
 
     <!-- ACQUISITION INQUIRY MODAL -->
-    <div id="checkout-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="checkout-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
         <div class="modal-panel bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
+            <button onclick="closeCheckoutModal()" aria-label="Close acquisition inquiry" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
 
             <div class="mb-6 border-b border-stone-200 pb-4">
                 <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Collector Inquiry</span>
-                <h3 class="font-serif text-2xl font-bold text-studio-primary mt-1">Request Acquisition Details</h3>
+                <h3 id="checkout-title" class="font-serif text-2xl font-bold text-studio-primary mt-1">Request Acquisition Details</h3>
             </div>
 
             <form onsubmit="handleFinalPayment(event)" class="space-y-6">
@@ -960,13 +960,13 @@
     </div>
 
     <!-- GENERAL INQUIRY MODAL -->
-    <div id="inquiry-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-panel bg-white max-w-lg w-full p-8 border border-stone-200 relative">
-            <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
+    <div id="inquiry-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
+        <div class="modal-panel bg-white max-w-lg w-full max-h-[90vh] overflow-y-auto p-8 border border-stone-200 relative">
+            <button onclick="closeInquiryModal()" aria-label="Close studio inquiry" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
             
-            <h3 class="font-serif text-2xl font-semibold text-studio-primary">Studio Inquiry & Commissions</h3>
+            <h3 id="inquiry-title" class="font-serif text-2xl font-semibold text-studio-primary">Studio Inquiry & Commissions</h3>
             <p class="text-xs text-studio-muted mt-1">Submit your request for original work acquisition, textile commissions, exhibitions, or gallery representation.</p>
 
             <form onsubmit="handleInquirySubmit(event)" class="mt-6 space-y-4">
@@ -1470,7 +1470,7 @@
                                 View & Select
                             </button>
                             ${isOriginalAvailable ? `
-                                <button onclick="quickAddToCart(${art.id}, 'original')" class="bg-studio-accent text-white px-3.5 py-3 hover:bg-studio-primary transition-colors" title="Quick Add Original to Cart">
+                                <button onclick="quickAddToCart(${art.id}, 'original')" aria-label="Add ${art.title} to collector shortlist" class="bg-studio-accent text-white px-3.5 py-3 hover:bg-studio-primary transition-colors" title="Quick Add Original to Cart">
                                     <i data-lucide="bookmark-plus" class="w-4 h-4"></i>
                                 </button>
                             ` : ''}
