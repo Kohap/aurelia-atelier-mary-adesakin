@@ -455,7 +455,9 @@ function App() {
           <span className="kicker">{t.exhibitions}</span>
           <h2>Exhibitions & Press</h2>
           <ul>
+            <li>SWANS Female Exhibition, Signature Beyond Art Gallery, Lagos, 2026</li>
             <li>La Beaute Vue par les Artistes, Paris, 2025</li>
+            <li>Tola Wewe Art Gallery, Ondo, 2025</li>
             <li>House of George Art and Craft Gallery, 2025</li>
             <li>Deep in Thought, Annual Contemporary Art Showcase, 2024</li>
             <li>Life In My City Art Festival, 2024</li>
