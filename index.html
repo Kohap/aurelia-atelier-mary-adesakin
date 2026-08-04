@@ -425,17 +425,28 @@
                 <div>
                     <span class="section-kicker">Catalogue Raisonne</span>
                     <h2 class="font-serif text-3xl md:text-4xl text-studio-primary mt-1">Available Artworks & Pricing</h2>
-                    <p class="text-studio-muted text-sm mt-2 max-w-2xl">Acquire verified original thread artworks direct from Mary Adesakin's studio.</p>
+                    <p class="text-studio-muted text-sm mt-2 max-w-2xl">Acquire verified original thread artworks or request print details direct from Mary Adesakin's studio.</p>
                 </div>
 
                 <!-- Filters -->
                 <div class="mt-6 md:mt-0 flex flex-wrap gap-2 text-[11px] uppercase tracking-wider" id="filter-buttons">
-                    <button onclick="filterArt('all', this)" class="filter-btn active bg-studio-primary text-white px-4 py-2.5 border border-studio-primary">All Works</button>
-                    <button onclick="filterArt('thread-canvas', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Thread on Canvas</button>
-                    <button onclick="filterArt('thread-acrylic', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Thread & Acrylic</button>
-                    <button onclick="filterArt('2025', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2025 Works</button>
-                    <button onclick="filterArt('2026', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2026 Works</button>
+                    <button data-filter="all" onclick="filterArt('all', this)" class="filter-btn active bg-studio-primary text-white px-4 py-2.5 border border-studio-primary">All Works</button>
+                    <button data-filter="available" onclick="filterArt('available', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Priced Works</button>
+                    <button data-filter="inquire" onclick="filterArt('inquire', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Price on Request</button>
+                    <button data-filter="2026" onclick="filterArt('2026', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2026 Works</button>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 mb-8">
+                <label class="relative block">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-studio-muted"></i>
+                    <input id="artwork-search" oninput="searchArtworks(this.value)" type="search" placeholder="Search by title, series, material, or year" class="w-full h-11 border border-studio-border bg-white pl-10 pr-4 text-sm text-studio-primary placeholder:text-stone-400 focus:outline-none focus:border-studio-accent">
+                </label>
+                <select id="artwork-sort" onchange="setArtworkSort(this.value)" aria-label="Sort artworks" class="h-11 min-w-48 border border-studio-border bg-white px-3 text-xs uppercase tracking-wider text-studio-primary focus:outline-none focus:border-studio-accent">
+                    <option value="curated">Curated order</option>
+                    <option value="newest">Newest first</option>
+                    <option value="title">Title A-Z</option>
+                </select>
             </div>
 
             <!-- Artwork Grid -->
@@ -457,6 +468,18 @@
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Private Collections</span>
                 </div>
             </div>
+
+            <div class="border-y border-studio-border py-8 mb-10">
+                <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+                    <div>
+                        <span class="section-kicker">Browse by Series</span>
+                        <h3 class="font-serif text-2xl text-studio-primary mt-1">Collection Stories</h3>
+                    </div>
+                    <button onclick="clearArtworkFilters()" class="text-xs uppercase tracking-widest text-studio-accent hover:text-studio-primary transition-colors">Reset catalogue</button>
+                </div>
+                <div id="collection-guide" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+            </div>
+            <p id="artwork-result-summary" class="text-xs text-studio-muted mb-5" aria-live="polite"></p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
                 <div class="magnetic-card border border-studio-border bg-studio-bg p-5 flex gap-3">
                     <i data-lucide="badge-check" class="w-5 h-5 text-studio-accent shrink-0"></i>
@@ -777,6 +800,10 @@
                             <div class="p-3 border border-stone-200 bg-studio-bg text-xs text-studio-muted leading-relaxed">
                                 Shipping, invoice, and commission questions can be included in the collector inquiry after shortlisting the artwork.
                             </div>
+                            <button type="button" onclick="requestSelectedArtworkDetails('print')" class="w-full flex items-center justify-between gap-3 p-3 border border-studio-border text-left hover:border-studio-accent hover:bg-studio-bg transition-colors">
+                                <span class="flex items-center gap-2 text-xs font-semibold text-studio-primary"><i data-lucide="images" class="w-4 h-4 text-studio-accent"></i> Print edition available</span>
+                                <span class="text-[10px] uppercase tracking-widest text-studio-accent">Request details</span>
+                            </button>
                         </div>
                     </div>
 
@@ -1213,9 +1240,30 @@
             }
         ];
 
+        const collectionHighlights = [
+            {
+                title: 'Maze of Uncertainty',
+                image: 'assets/artwork/between-knowing-and-not.jpg',
+                description: 'Portraits of pause, resilience, and the space between doubt and clarity.'
+            },
+            {
+                title: 'Becoming',
+                image: 'assets/artwork/beauty-in-becoming.jpg',
+                description: 'Works that hold self-reflection, renewal, and the courage to be fully seen.'
+            },
+            {
+                title: 'Yoruba Heritage',
+                image: 'assets/artwork/the-ife-muse.jpg',
+                description: 'Threaded studies of memory, lineage, and enduring cultural presence.'
+            }
+        ];
+
         // CART STATE
         let cart = [];
         let selectedArtwork = null;
+        let activeArtworkFilter = 'all';
+        let artworkSearchQuery = '';
+        let artworkSortOrder = 'curated';
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         function setModalState(element, isOpen) {
@@ -1283,10 +1331,66 @@
             animateNumber(document.getElementById('portfolio-sold'), artworks.filter(art => art.status === 'Sold').length);
         }
 
+        function renderCollectionGuide() {
+            const guide = document.getElementById('collection-guide');
+            guide.innerHTML = collectionHighlights.map(collection => {
+                const workCount = artworks.filter(art => art.collection === collection.title).length;
+                return `
+                    <button onclick="filterArt('collection:${collection.title}')" class="group text-left border border-studio-border bg-studio-bg hover:bg-white hover:border-studio-accent transition-colors">
+                        <div class="aspect-[16/9] overflow-hidden bg-stone-100">
+                            <img src="${collection.image}" alt="${collection.title} collection by Mary Adesakin" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700">
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="font-serif text-lg text-studio-primary">${collection.title}</h4>
+                                <span class="text-[10px] uppercase tracking-widest text-studio-accent shrink-0 pt-1">${workCount} works</span>
+                            </div>
+                            <p class="text-xs text-studio-muted leading-relaxed mt-2">${collection.description}</p>
+                            <p class="text-[10px] uppercase tracking-widest text-studio-accent mt-3">Prints available</p>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function getFilteredArtworks() {
+            const query = artworkSearchQuery.trim().toLowerCase();
+            let results = artworks.filter(art => {
+                const matchesFilter = activeArtworkFilter === 'all'
+                    || (activeArtworkFilter === 'available' && art.status === 'Available')
+                    || (activeArtworkFilter === 'inquire' && art.status === 'Inquire')
+                    || (activeArtworkFilter === 'thread-canvas' && art.medium === 'Thread on Canvas')
+                    || (activeArtworkFilter === 'thread-acrylic' && art.medium.includes('Acrylic'))
+                    || (activeArtworkFilter === '2025' && art.year === '2025')
+                    || (activeArtworkFilter === '2026' && art.year === '2026')
+                    || (activeArtworkFilter.startsWith('collection:') && art.collection === activeArtworkFilter.replace('collection:', ''));
+                const searchable = [art.title, art.collection, art.medium, art.year, art.dimensions].join(' ').toLowerCase();
+                return matchesFilter && (!query || searchable.includes(query));
+            });
+
+            if(artworkSortOrder === 'newest') {
+                results = [...results].sort((a, b) => Number(b.year) - Number(a.year) || b.id - a.id);
+            } else if(artworkSortOrder === 'title') {
+                results = [...results].sort((a, b) => a.title.localeCompare(b.title));
+            }
+            return results;
+        }
+
+        function updateArtworkResultSummary(results) {
+            const summary = document.getElementById('artwork-result-summary');
+            const label = results.length === 1 ? 'work' : 'works';
+            summary.innerText = `${results.length} ${label} shown`;
+        }
+
         // RENDER ARTWORKS
         function renderArtworks(data) {
             const grid = document.getElementById('artwork-grid');
             grid.innerHTML = '';
+
+            if(!data.length) {
+                grid.innerHTML = '<div class="md:col-span-3 border border-dashed border-studio-border bg-studio-bg p-8 text-center"><p class="font-serif text-xl text-studio-primary">No artworks match this search.</p><button onclick="clearArtworkFilters()" class="mt-3 text-xs uppercase tracking-widest text-studio-accent hover:text-studio-primary transition-colors">Reset catalogue</button></div>';
+                return;
+            }
 
             data.forEach(art => {
                 const card = document.createElement('div');
@@ -1327,7 +1431,11 @@
                             </div>
                             <div class="flex justify-between items-center text-xs">
                                 <span class="text-studio-muted">Format:</span>
-                                <span class="font-serif font-bold text-studio-accent">Original Only</span>
+                                <span class="font-serif font-bold text-studio-accent">Original + Print</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-studio-muted">Print:</span>
+                                <span class="font-medium text-studio-primary">Available by inquiry</span>
                             </div>
                             <div class="flex justify-between items-center gap-4 text-xs">
                                 <span class="text-studio-muted">Edition:</span>
@@ -1354,18 +1462,42 @@
 
         // FILTER LOGIC
         function filterArt(type, trigger) {
+            activeArtworkFilter = type;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-studio-primary', 'text-white', 'border-studio-primary');
                 btn.classList.add('bg-stone-50', 'text-studio-muted', 'border-studio-border');
             });
-            trigger.classList.remove('bg-stone-50', 'text-studio-muted', 'border-studio-border');
-            trigger.classList.add('bg-studio-primary', 'text-white', 'border-studio-primary');
+            const activeButton = trigger || document.querySelector(`.filter-btn[data-filter="${type}"]`);
+            if(activeButton) {
+                activeButton.classList.remove('bg-stone-50', 'text-studio-muted', 'border-studio-border');
+                activeButton.classList.add('bg-studio-primary', 'text-white', 'border-studio-primary');
+            }
+            const results = getFilteredArtworks();
+            renderArtworks(results);
+            updateArtworkResultSummary(results);
+        }
 
-            if(type === 'all') renderArtworks(artworks);
-            else if(type === 'thread-canvas') renderArtworks(artworks.filter(a => a.medium === 'Thread on Canvas'));
-            else if(type === 'thread-acrylic') renderArtworks(artworks.filter(a => a.medium.includes('Acrylic')));
-            else if(type === '2025') renderArtworks(artworks.filter(a => a.year === '2025'));
-            else if(type === '2026') renderArtworks(artworks.filter(a => a.year === '2026'));
+        function searchArtworks(query) {
+            artworkSearchQuery = query;
+            const results = getFilteredArtworks();
+            renderArtworks(results);
+            updateArtworkResultSummary(results);
+        }
+
+        function setArtworkSort(sortOrder) {
+            artworkSortOrder = sortOrder;
+            const results = getFilteredArtworks();
+            renderArtworks(results);
+            updateArtworkResultSummary(results);
+        }
+
+        function clearArtworkFilters() {
+            activeArtworkFilter = 'all';
+            artworkSearchQuery = '';
+            artworkSortOrder = 'curated';
+            document.getElementById('artwork-search').value = '';
+            document.getElementById('artwork-sort').value = 'curated';
+            filterArt('all');
         }
 
         // MODAL LOGIC
@@ -1408,11 +1540,13 @@
             setModalState(document.getElementById('art-modal'), false);
         }
 
-        function requestSelectedArtworkDetails() {
+        function requestSelectedArtworkDetails(requestType = 'original') {
             if(!selectedArtwork) return;
             closeModal();
             document.getElementById('general-inquiry-type').value = 'Collector / Buyer';
-            document.getElementById('general-inquiry-message').value = `I would like to request availability, price, and shipping details for ${selectedArtwork.title}.`;
+            document.getElementById('general-inquiry-message').value = requestType === 'print'
+                ? `I would like to request print edition, size, price, and shipping details for ${selectedArtwork.title}.`
+                : `I would like to request availability, price, and shipping details for ${selectedArtwork.title}.`;
             openInquiryModal();
         }
 
@@ -1701,7 +1835,8 @@
             initRevealMotion();
             initActiveNavigation();
             updatePortfolioStats();
-            renderArtworks(artworks);
+            renderCollectionGuide();
+            filterArt('all');
             updateCartUI();
         });
 
