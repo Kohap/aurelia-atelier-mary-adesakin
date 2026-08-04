@@ -94,10 +94,13 @@ const translations = {
     stripeMissing: 'Stripe link not added yet. Use inquiry for now.',
     inquirySent: 'Inquiry sent to Mary Adesakin Studio.',
     linkCopied: 'Artwork link copied.',
-    artist: 'The Artist',
+    artist: 'The Artist Bio',
     statementTitle: 'Artist Statement',
-    statement: 'I use thread as both material and metaphor: a line that repairs, remembers, conceals, reveals, and connects what words sometimes cannot carry.',
-    about: 'I am a Nigerian thread painter and textile artist from Ile-Ife, Osun State. My work brings thread, canvas, fabric, and pigment together to hold emotion, memory, Yoruba heritage, and contemporary life with care.',
+    statement: 'My practice explores themes of vulnerability, struggle, culture, and resilience through textile based portraiture using thread and acrylic. I use thread as both a material and a language to connect fragments of memory, identity, and lived experience while exploring personal narratives and broader societal issues.',
+    about: [
+      'Adesakin Mary Damilola is a Nigerian visual artist from Ile-Ife, whose practice focuses on thread painting and acrylic. Born in the early 2000s, she explores themes of vulnerability, struggle, culture, and resilience through layered compositions, using thread as both a material and a language to connect memory, identity, and lived experience.',
+      'She studied Fine and Applied Arts at Adeyemi College of Education (affiliated to Obafemi Awolowo University) and graduated in 2024. Currently working as a full time artist, her work has been exhibited in Nigeria and internationally, including Deep in Thought Art Exhibition, La Beauté Vue par les Artistes in Paris, and the SWANS Female Exhibition. She has also exhibited with Tola Wewe Art Gallery, and her works are held by private collectors.',
+    ],
   },
   yo: {
     language: 'Yoruba',
@@ -366,7 +369,9 @@ function App() {
           <div>
             <span className="kicker">{t.artist}</span>
             <h2>Adesakin Mary Damilola</h2>
-            <p>{t.about}</p>
+            {Array.isArray(t.about)
+              ? t.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+              : <p>{t.about}</p>}
           </div>
           <div className="statement">
             <span className="kicker">{t.statementTitle}</span>
