@@ -1,0 +1,254 @@
+[
+  {
+    "id": 1,
+    "slug": "the-weight-of-words",
+    "title": "The Weight of Words",
+    "collection": "Thread Narratives",
+    "year": "2025",
+    "medium": "Thread on Canvas",
+    "dimensions": "30 x 32 inches",
+    "originalPrice": 750,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original catalogue work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/the-weight-of-words.png",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "This art piece depicts a man immersed in a newspaper, seated in his private library. The work reflects on media, solitude, and the psychological weight of staying informed in an age of constant updates.",
+      "yo": "Ise yi n wo bi iroyin, ipalemo inu, ati iwuwo ero se n kan eniyan.",
+      "fr": "Cette oeuvre reflechit au poids psychologique de l'information, de la solitude et des medias."
+    }
+  },
+  {
+    "id": 2,
+    "slug": "maze-of-uncertainty",
+    "title": "Maze of Uncertainty",
+    "collection": "Maze of Uncertainty",
+    "year": "2025",
+    "medium": "Thread and Acrylic on Canvas",
+    "dimensions": "20 x 24 inches",
+    "originalPrice": null,
+    "status": "Sold",
+    "edition": "Original work",
+    "provenance": "Original catalogue work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/maze-of-uncertainty-sold-2025.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "Maze of Uncertainty was created as a reflection on the moments in life when the path ahead feels unclear. Through the woman's contemplative gaze and the shifting colors of the background, I explore how vulnerability and strength coexist in times of doubt.",
+      "yo": "Maze of Uncertainty n soro nipa akoko ti ona iwaju ko ye wa, ati bi ailera ati agbara se le wa papo.",
+      "fr": "Maze of Uncertainty explore les moments ou le chemin semble incertain, entre vulnerabilite, force et resilience."
+    }
+  },
+  {
+    "id": 4,
+    "slug": "loud-silence",
+    "title": "Loud Silence",
+    "collection": "Witness and Voice",
+    "year": "2025",
+    "medium": "Thread on Jute",
+    "dimensions": "42 x 51 inches",
+    "originalPrice": 850,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Featured at the Life In My City Art Festival Ondo Regional Zone.",
+    "image": "assets/artwork/loud-silence.png",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "Loud Silence captures a frozen scream, a suspended moment of agony, a cry for breath, and a plea for justice. The loose vertical threads split the face and conceal the voice.",
+      "yo": "Loud Silence n mu igbe inu, irora, ati ipe fun ododo han pelu okun.",
+      "fr": "Loud Silence saisit un cri suspendu, une douleur retenue et une demande de justice."
+    }
+  },
+  {
+    "id": 5,
+    "slug": "visible-within",
+    "title": "Visible Within",
+    "collection": "Emotional Release",
+    "year": "2026",
+    "medium": "Thread on Canvas",
+    "dimensions": "8 x 10 inches",
+    "originalPrice": 200,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original catalogue work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/visible-within.png",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "This work depicts the eye as the window of the soul, using thread to materialize emotional release. Turquoise strands transform tears into a symbol of healing rather than fragility.",
+      "yo": "Ise yi lo oju gege bi ferese okan, pelu okun ti o so omije di ami iwosan.",
+      "fr": "Cette oeuvre presente l'oeil comme une fenetre de l'ame, transformant les larmes en signe de guerison."
+    }
+  },
+  {
+    "id": 6,
+    "slug": "hands-that-wont-let-go",
+    "title": "Hands That Won't Let Go",
+    "collection": "Guidance and Control",
+    "year": "2026",
+    "medium": "Mixed Media (Thread and Acrylic on Canvas)",
+    "dimensions": "36 x 36 inches",
+    "originalPrice": null,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original portfolio work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/hands-that-wont-let-go.png",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "A violinist held by multiple hands, tracing the fragile line between guidance, inherited pressure, and the desire for self-expression.",
+      "yo": "Olorin violin ti owo pupo di mu, laarin itoju, ipa, ati ife lati so ara re han.",
+      "fr": "Une violoniste tenue par plusieurs mains, entre guidance, pression heritee et expression de soi."
+    }
+  },
+  {
+    "id": 7,
+    "slug": "the-ife-muse",
+    "title": "The Ife Muse",
+    "collection": "Yoruba Heritage",
+    "year": "2026",
+    "medium": "Thread and Acrylic on Canvas",
+    "dimensions": "21 x 26 inches",
+    "originalPrice": null,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original portfolio work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/the-ife-muse.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "Inspired by ancient Ife bronze heads, this portrait reconnects facial markings, memory, and Yoruba heritage through thread.",
+      "yo": "Ise yi ni imisi lati ori idẹ Ife atijo, ti o so iranti ati asa Yoruba po pelu okun.",
+      "fr": "Inspiree par les tetes de bronze d'Ife, cette oeuvre relie memoire, marques faciales et heritage yoruba."
+    }
+  },
+  {
+    "id": 8,
+    "slug": "beauty-in-becoming",
+    "title": "Beauty in Becoming",
+    "collection": "Becoming",
+    "year": "2026",
+    "medium": "Thread and Acrylic on Canvas",
+    "dimensions": "18 x 19 inches",
+    "originalPrice": null,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original portfolio work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/beauty-in-becoming.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "A quiet portrait of identity, vulnerability, and growth, where thread lines and a rose hold space for resilience and renewal.",
+      "yo": "Aworan idakẹjẹ nipa idanimọ, idagbasoke, ati agbara lati tun ara se.",
+      "fr": "Un portrait calme sur l'identite, la vulnerabilite, la croissance et le renouveau."
+    }
+  },
+  {
+    "id": 10,
+    "slug": "the-calm-before-clarity",
+    "title": "The Calm Before Clarity",
+    "collection": "Maze of Uncertainty",
+    "year": "2025",
+    "medium": "Mixed Media (Thread and Acrylic on Canvas)",
+    "dimensions": "20 x 24 inches",
+    "originalPrice": null,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original portfolio work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/the-calm-before-clarity.png",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "A contemplative gaze held within shifting colour, approaching uncertainty as a space for reflection, resilience, and possibility.",
+      "yo": "Wiwo inu ninu awon awo ti n yipada, n ri aidaniloju gege bi aaye ero ati ireti.",
+      "fr": "Un regard contemplatif dans des couleurs mouvantes, ou l'incertitude devient espace de resilience."
+    }
+  },
+  {
+    "id": 11,
+    "slug": "rare-like-a-blue-rose",
+    "title": "Rare Like a Blue Rose",
+    "collection": "Becoming",
+    "year": "2026",
+    "medium": "Mixed Media (Thread and Acrylic on Canvas)",
+    "dimensions": "17 x 17 inches",
+    "originalPrice": null,
+    "status": "Available",
+    "edition": "Original work",
+    "provenance": "Original portfolio work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/rare-like-a-blue-rose.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "A vivid affirmation of self-possession: finding light within and letting it shine fully, whatever the odds.",
+      "yo": "Ifihan ti igboya ati imole inu, pelu agbara lati tan ni kikun.",
+      "fr": "Une affirmation vive de la possession de soi et de la lumiere interieure."
+    }
+  },
+  {
+    "id": 12,
+    "slug": "the-weight",
+    "title": "The Weight",
+    "collection": "Early Thread Narratives",
+    "year": "2024",
+    "medium": "Threadcollage and Acrylic on Canvas",
+    "dimensions": "16 x 20 inches",
+    "originalPrice": null,
+    "status": "Sold",
+    "edition": "Original work",
+    "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/in-her-prime.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "Sold original work from Mary Adesakin's 2024 catalogue.",
+      "yo": "Ise atilẹba ti ta lati katalogi Mary Adesakin 2024.",
+      "fr": "Oeuvre originale vendue du catalogue 2024 de Mary Adesakin."
+    }
+  },
+  {
+    "id": 13,
+    "slug": "in-her-prime",
+    "title": "In Her Prime",
+    "collection": "Early Thread Narratives",
+    "year": "2024",
+    "medium": "Threadcollage and Acrylic on Canvas",
+    "dimensions": "16 x 20 inches",
+    "originalPrice": null,
+    "status": "Sold",
+    "edition": "Original work",
+    "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/in-her-prime-green.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "Sold original work from Mary Adesakin's 2024 catalogue, centered on women's education, service, and the fullness of feminine becoming.",
+      "yo": "Ise ti ta, nipa eko obinrin, ise iranlowo, ati idagbasoke obinrin.",
+      "fr": "Oeuvre vendue sur l'education des femmes, le service et le devenir feminin."
+    }
+  },
+  {
+    "id": 15,
+    "slug": "stitched-in-time",
+    "title": "Stitched in Time",
+    "collection": "Yoruba Heritage",
+    "year": "2025",
+    "medium": "Thread and Acrylic on Canvas",
+    "dimensions": "18 x 22 inches",
+    "originalPrice": null,
+    "status": "Sold",
+    "edition": "Original work",
+    "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
+    "image": "assets/artwork/stitched-in-time.jpg",
+    "stripeDepositUrl": "",
+    "stripePaymentUrl": "",
+    "description": {
+      "en": "Inspired by the Olojo Festival in Ile-Ife, this work reimagines the spiritual and ancestral resonance of bata drum traditions.",
+      "yo": "Imisi lati Odun Olojo ni Ile-Ife, ti o tun ro ohun bata ati iranti awon baba nla.",
+      "fr": "Inspiree par le festival Olojo d'Ile-Ife, cette oeuvre reimagine les traditions du tambour bata."
+    }
+  }
+]

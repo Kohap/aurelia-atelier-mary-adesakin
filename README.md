@@ -6,15 +6,19 @@ Live site: https://kohap.github.io/aurelia-atelier-mary-adesakin/
 
 ## Overview
 
-This static GitHub Pages site presents Mary Adesakin's thread painting practice, selected original artworks, sold works, exhibition history, studio policies, and direct collector inquiry forms.
+This Vite/React GitHub Pages site presents Mary Adesakin's thread painting practice, selected original artworks, sold works, exhibition history, studio policies, and direct collector inquiry forms.
 
 The site is designed for collectors, curators, galleries, and art advisors who want to review original works, request print details, join the studio list, or contact the studio about commissions and acquisitions.
 
 ## Current Features
 
+- React/Vite app structure for easier future editing
+- Admin-friendly JSON artwork catalogue in `public/data/artworks.json`
 - Responsive artist portfolio and artwork catalogue
 - Original artwork cards with status, dimensions, medium, year, and inquiry flow
 - Collection browsing, search, and sort controls
+- Multilingual interface support for English, Yoruba, and French
+- Stripe deposit/payment link fields for available works
 - Collector shortlist and acquisition inquiry modal
 - Formspree-powered studio inquiry and mailing list forms
 - Plausible analytics snippet
@@ -28,51 +32,61 @@ The site is designed for collectors, curators, galleries, and art advisors who w
 ```text
 .
 ├── index.html
-├── robots.txt
-├── sitemap.xml
-├── assets/
-│   ├── favicon.svg
-│   └── artwork/
-│       ├── beauty-in-becoming.jpg
-│       ├── hands-that-wont-let-go.png
-│       ├── in-her-prime-green.jpg
-│       ├── in-her-prime.jpg
-│       ├── loud-silence.png
-│       ├── mary-studio-social-preview.png
-│       ├── maze-of-uncertainty-sold-2025.jpg
-│       ├── maze-of-uncertainty-sold.jpg
-│       ├── rare-like-a-blue-rose.jpg
-│       ├── stitched-in-time.jpg
-│       ├── the-calm-before-clarity.png
-│       ├── the-ife-muse.jpg
-│       ├── the-weight-of-words.png
-│       └── visible-within.png
+├── package.json
+├── vite.config.js
+├── public/
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   ├── assets/
+│   │   ├── favicon.svg
+│   │   └── artwork/
+│   │       ├── beauty-in-becoming.jpg
+│   │       ├── hands-that-wont-let-go.png
+│   │       ├── in-her-prime-green.jpg
+│   │       ├── in-her-prime.jpg
+│   │       ├── loud-silence.png
+│   │       ├── mary-studio-social-preview.png
+│   │       ├── maze-of-uncertainty-sold-2025.jpg
+│   │       ├── maze-of-uncertainty-sold.jpg
+│   │       ├── rare-like-a-blue-rose.jpg
+│   │       ├── stitched-in-time.jpg
+│   │       ├── the-calm-before-clarity.png
+│   │       ├── the-ife-muse.jpg
+│   │       ├── the-weight-of-words.png
+│   │       └── visible-within.png
+│   └── data/
+│       └── artworks.json
+├── src/
+│   ├── main.jsx
+│   └── styles.css
 └── README.md
 ```
 
 ## Local Preview
 
-Because the site is static, it can be opened directly in a browser:
+Install dependencies once:
 
 ```bash
-open index.html
+npm install
 ```
 
-For a closer GitHub Pages-style preview, run a local server from the project root:
+Run the local development server:
 
 ```bash
-python3 -m http.server 4173
+npm run dev
 ```
 
-Then visit:
+Build for GitHub Pages:
 
-```text
-http://127.0.0.1:4173/
+```bash
+npm run build
 ```
 
 ## Publishing
 
-This project is published through GitHub Pages from the `main` branch with `index.html` at the repository root.
+This project is a Vite app configured with the GitHub Pages base path `/aurelia-atelier-mary-adesakin/`.
+
+Deployment is handled by `.github/workflows/pages.yml`, which installs dependencies, builds the Vite app, uploads `dist`, and deploys it to GitHub Pages.
 
 Publishing files:
 
@@ -82,7 +96,8 @@ Publishing files:
 
 ## Maintenance Notes
 
-- Keep artwork data inside the `artworks` array in `index.html`.
+- Keep artwork data inside `public/data/artworks.json`.
+- To add Stripe payments, paste real Stripe Payment Link URLs into `stripeDepositUrl` or `stripePaymentUrl` for each available artwork.
 - Keep image filenames stable once they are published, unless the corresponding artwork record is updated.
 - Update `sitemap.xml` when the canonical URL changes.
-- Keep Formspree endpoints and analytics snippets in `index.html`.
+- Keep Formspree endpoints in `src/main.jsx` and analytics snippets in `index.html`.
