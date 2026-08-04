@@ -810,6 +810,9 @@
 
                     <!-- Add to Cart CTA inside Modal -->
                     <div class="pt-4 border-t border-stone-200 flex gap-2">
+                        <button type="button" onclick="copyArtworkLink(selectedArtwork?.id)" aria-label="Copy selected artwork link" class="border border-studio-border text-studio-primary px-4 py-3.5 hover:border-studio-accent hover:text-studio-accent transition-colors">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                        </button>
                         <button id="modal-shortlist-button" onclick="addSelectedToCart()" class="flex-1 bg-studio-accent text-white py-3.5 text-xs uppercase tracking-widest hover:bg-studio-primary transition-colors flex items-center justify-center gap-2 font-semibold">
                             <i data-lucide="bookmark-plus" class="w-4 h-4"></i> Add to Collector Shortlist
                         </button>
@@ -1079,6 +1082,7 @@
         const artworks = [
             {
                 id: 1,
+                slug: "the-weight-of-words",
                 title: "The Weight of Words",
                 collection: "Thread Narratives",
                 year: "2025",
@@ -1094,6 +1098,7 @@
             },
             {
                 id: 2,
+                slug: "maze-of-uncertainty",
                 title: "Maze of Uncertainty",
                 collection: "Maze of Uncertainty",
                 year: "2025",
@@ -1109,6 +1114,7 @@
             },
             {
                 id: 4,
+                slug: "loud-silence",
                 title: "Loud Silence",
                 collection: "Witness and Voice",
                 year: "2025",
@@ -1124,6 +1130,7 @@
             },
             {
                 id: 5,
+                slug: "visible-within",
                 title: "Visible Within",
                 collection: "Emotional Release",
                 year: "2026",
@@ -1139,6 +1146,7 @@
             },
             {
                 id: 6,
+                slug: "hands-that-wont-let-go",
                 title: "Hands That Won't Let Go",
                 collection: "Guidance and Control",
                 year: "2026",
@@ -1154,6 +1162,7 @@
             },
             {
                 id: 7,
+                slug: "the-ife-muse",
                 title: "The Ife Muse",
                 collection: "Yoruba Heritage",
                 year: "2026",
@@ -1169,6 +1178,7 @@
             },
             {
                 id: 8,
+                slug: "beauty-in-becoming",
                 title: "Beauty in Becoming",
                 collection: "Becoming",
                 year: "2026",
@@ -1184,6 +1194,7 @@
             },
             {
                 id: 10,
+                slug: "the-calm-before-clarity",
                 title: "The Calm Before Clarity",
                 collection: "Maze of Uncertainty",
                 year: "2025",
@@ -1199,6 +1210,7 @@
             },
             {
                 id: 11,
+                slug: "rare-like-a-blue-rose",
                 title: "Rare Like a Blue Rose",
                 collection: "Becoming",
                 year: "2026",
@@ -1214,6 +1226,7 @@
             },
             {
                 id: 12,
+                slug: "the-weight",
                 title: "The Weight",
                 collection: "Early Thread Narratives",
                 year: "2024",
@@ -1229,6 +1242,7 @@
             },
             {
                 id: 13,
+                slug: "in-her-prime",
                 title: "In Her Prime",
                 collection: "Early Thread Narratives",
                 year: "2024",
@@ -1244,6 +1258,7 @@
             },
             {
                 id: 15,
+                slug: "stitched-in-time",
                 title: "Stitched in Time",
                 collection: "Yoruba Heritage",
                 year: "2025",
@@ -1284,6 +1299,45 @@
         let artworkSearchQuery = '';
         let artworkSortOrder = 'curated';
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function getArtworkUrl(art) {
+            const baseUrl = `${window.location.origin}${window.location.pathname}`;
+            return `${baseUrl}#artwork/${art.slug}`;
+        }
+
+        async function copyArtworkLink(id) {
+            const art = artworks.find(a => a.id === id);
+            if(!art) return;
+            const url = getArtworkUrl(art);
+            try {
+                if(navigator.clipboard?.writeText) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    const tempInput = document.createElement('input');
+                    tempInput.value = url;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    tempInput.remove();
+                }
+                showToast(`Link copied for "${art.title}"`);
+            } catch(error) {
+                showToast('Unable to copy link. Open the artwork and copy the page URL.');
+            }
+        }
+
+        function openArtworkFromHash() {
+            const hash = decodeURIComponent(window.location.hash || '');
+            const slug = hash.startsWith('#artwork/') ? hash.replace('#artwork/', '') : '';
+            if(!slug) return;
+            const art = artworks.find(a => a.slug === slug);
+            if(!art) return;
+            filterArt('all');
+            setTimeout(() => {
+                document.getElementById('available-works')?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+                openArtworkModal(art.id, { updateHash: false });
+            }, 120);
+        }
 
         function setModalState(element, isOpen) {
             element.classList.toggle('hidden', !isOpen);
@@ -1469,6 +1523,9 @@
                             <button onclick="openArtworkModal(${art.id})" class="flex-1 bg-studio-bg border border-studio-border text-studio-primary py-3 text-xs uppercase tracking-widest hover:bg-studio-primary hover:text-white transition-all">
                                 View & Select
                             </button>
+                            <button onclick="copyArtworkLink(${art.id})" aria-label="Copy share link for ${art.title}" class="border border-studio-border text-studio-primary px-3.5 py-3 hover:border-studio-accent hover:text-studio-accent transition-colors" title="Copy artwork link">
+                                <i data-lucide="link" class="w-4 h-4"></i>
+                            </button>
                             ${isOriginalAvailable ? `
                                 <button onclick="quickAddToCart(${art.id}, 'original')" aria-label="Add ${art.title} to collector shortlist" class="bg-studio-accent text-white px-3.5 py-3 hover:bg-studio-primary transition-colors" title="Quick Add Original to Cart">
                                     <i data-lucide="bookmark-plus" class="w-4 h-4"></i>
@@ -1523,7 +1580,7 @@
         }
 
         // MODAL LOGIC
-        function openArtworkModal(id) {
+        function openArtworkModal(id, options = {}) {
             selectedArtwork = artworks.find(a => a.id === id);
             if(!selectedArtwork) return;
 
@@ -1558,10 +1615,16 @@
             }
             lucide.createIcons();
             setModalState(document.getElementById('art-modal'), true);
+            if(options.updateHash !== false) {
+                history.replaceState(null, '', `#artwork/${selectedArtwork.slug}`);
+            }
         }
 
         function closeModal() {
             setModalState(document.getElementById('art-modal'), false);
+            if(window.location.hash.startsWith('#artwork/')) {
+                history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+            }
         }
 
         function requestSelectedArtworkDetails(requestType = 'original') {
@@ -1862,7 +1925,10 @@
             renderCollectionGuide();
             filterArt('all');
             updateCartUI();
+            openArtworkFromHash();
         });
+
+        window.addEventListener('hashchange', openArtworkFromHash);
 
         window.addEventListener('keydown', (event) => {
             if(event.key !== 'Escape') return;
