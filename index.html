@@ -26,6 +26,13 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Social Brand Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Privacy-friendly analytics by Plausible -->
+    <script async src="https://plausible.io/js/pa-I26Cc2czhAcno1ifSU3FJ.js"></script>
+    <script>
+        window.plausible = window.plausible || function() { (plausible.q = plausible.q || []).push(arguments); };
+        plausible.init = plausible.init || function(options) { plausible.o = options || {}; };
+        plausible.init();
+    </script>
     <script>
         tailwind.config = {
             theme: {
@@ -569,7 +576,7 @@
                 </button>
             </form>
             <div id="nl-success-msg" class="hidden text-xs text-emerald-400 pt-4">
-                An email draft has opened. Send it to join the Studio Circle.
+                Thank you. You are now on the Studio Circle list.
             </div>
         </div>
     </section>
@@ -607,7 +614,7 @@
                         </button>
                     </div>
                     <div id="vip-success-msg" class="hidden text-xs text-emerald-400 pt-1">
-                        An email draft has opened. Send it to request studio updates.
+                        Thank you. Your studio-update request has been received.
                     </div>
                 </form>
             </div>
@@ -1354,22 +1361,38 @@
             }
         }
 
-        function buildInquiryEmail() {
-            const selectedLines = cart.map(item =>
-                `- ${item.title} (${item.formatLabel}) - $${item.price.toLocaleString()} USD`
-            ).join('%0A');
-            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-            const note = encodeURIComponent(document.getElementById('collector-note')?.value || '');
-            const collectorName = encodeURIComponent(document.getElementById('collector-name')?.value || '');
-            const collectorEmail = encodeURIComponent(document.getElementById('collector-email')?.value || '');
-            const address = encodeURIComponent(document.getElementById('collector-address')?.value || '');
-            const city = encodeURIComponent(document.getElementById('collector-city')?.value || '');
-            const region = encodeURIComponent(document.getElementById('collector-region')?.value || '');
-            const postalCode = encodeURIComponent(document.getElementById('collector-postal-code')?.value || '');
-            const preference = encodeURIComponent(document.querySelector('input[name="payment_method"]:checked')?.value || 'availability');
-            const subject = encodeURIComponent('Collector inquiry for Mary Adesakin artwork');
-            const body = `Hello Mary,%0A%0ACollector: ${collectorName}%0AEmail: ${collectorEmail}%0AShipping destination: ${address}, ${city}, ${region}, ${postalCode}%0ARequest: ${preference}%0A%0AI would like to inquire about the following artwork:%0A${selectedLines}%0A%0ASelected artwork value: $${subtotal.toLocaleString()} USD%0A%0ANote: ${note}%0A%0APlease confirm availability, payment process, and shipping details.%0A`;
-            return `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
+        const FORMSPREE_INQUIRY_ENDPOINT = 'https://formspree.io/f/mppaawgd';
+        const FORMSPREE_STUDIO_CIRCLE_ENDPOINT = 'https://formspree.io/f/mwleepdn';
+
+        async function submitStudioForm(endpoint, fields, submitter) {
+            const originalLabel = submitter?.innerHTML;
+            if(submitter) {
+                submitter.disabled = true;
+                submitter.classList.add('opacity-70', 'cursor-wait');
+                submitter.textContent = 'Sending...';
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fields)
+                });
+                if(!response.ok) throw new Error('Form submission failed');
+                return true;
+            } catch(error) {
+                showToast('Unable to send right now. Please try again or email the studio.');
+                return false;
+            } finally {
+                if(submitter) {
+                    submitter.disabled = false;
+                    submitter.classList.remove('opacity-70', 'cursor-wait');
+                    submitter.innerHTML = originalLabel;
+                }
+            }
         }
 
         // ACQUISITION INQUIRY MODAL LOGIC
@@ -1386,31 +1409,51 @@
             setModalState(document.getElementById('checkout-modal'), false);
         }
 
-        function handleFinalPayment(e) {
+        async function handleFinalPayment(e) {
             e.preventDefault();
-            window.location.href = buildInquiryEmail();
+            const selectedWorks = cart.map(item => `${item.title} (${item.formatLabel}) - $${item.price.toLocaleString()} USD`).join('; ');
+            const success = await submitStudioForm(FORMSPREE_INQUIRY_ENDPOINT, {
+                subject: 'Collector acquisition inquiry',
+                collector_name: document.getElementById('collector-name')?.value || '',
+                collector_email: document.getElementById('collector-email')?.value || '',
+                street_address: document.getElementById('collector-address')?.value || '',
+                city: document.getElementById('collector-city')?.value || '',
+                region: document.getElementById('collector-region')?.value || '',
+                postal_code: document.getElementById('collector-postal-code')?.value || '',
+                request_type: document.querySelector('input[name="payment_method"]:checked')?.value || 'availability',
+                selected_works: selectedWorks,
+                selected_artwork_value: `$${cart.reduce((acc, item) => acc + (item.price * item.qty), 0).toLocaleString()} USD`,
+                note: document.getElementById('collector-note')?.value || ''
+            }, e.submitter);
+            if(!success) return;
             closeCheckoutModal();
-            showToast("Inquiry draft opened. Your shortlist has been kept.");
+            cart = [];
+            updateCartUI();
+            showToast('Inquiry sent to Mary Adesakin Studio.');
         }
         
-        function handleNewsletter(e) {
+        async function handleNewsletter(e) {
             e.preventDefault();
-            const firstName = encodeURIComponent(document.getElementById('nl-first-name').value || '');
-            const lastName = encodeURIComponent(document.getElementById('nl-last-name').value || '');
-            const email = encodeURIComponent(document.getElementById('nl-email').value || '');
-            const subject = encodeURIComponent('Studio Circle sign-up');
-            const body = `Hello Mary,%0A%0APlease add me to the Studio Circle.%0A%0AName: ${firstName} ${lastName}%0AEmail: ${email}%0A`;
-            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
+            const success = await submitStudioForm(FORMSPREE_STUDIO_CIRCLE_ENDPOINT, {
+                subject: 'Studio Circle sign-up',
+                first_name: document.getElementById('nl-first-name').value || '',
+                last_name: document.getElementById('nl-last-name').value || '',
+                email: document.getElementById('nl-email').value || ''
+            }, e.submitter);
+            if(!success) return;
             document.getElementById('nl-success-msg').classList.remove('hidden');
+            e.target.reset();
         }
 
-        function handleVipSignup(e) {
+        async function handleVipSignup(e) {
             e.preventDefault();
-            const email = encodeURIComponent(document.getElementById('vip-email').value || '');
-            const subject = encodeURIComponent('Request for Mary Adesakin studio updates');
-            const body = `Hello Mary,%0A%0APlease send me future original-work and studio updates.%0A%0AEmail: ${email}%0A`;
-            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
+            const success = await submitStudioForm(FORMSPREE_STUDIO_CIRCLE_ENDPOINT, {
+                subject: 'Request for Mary Adesakin studio updates',
+                email: document.getElementById('vip-email').value || ''
+            }, e.submitter);
+            if(!success) return;
             document.getElementById('vip-success-msg').classList.remove('hidden');
+            e.target.reset();
         }
         
         function openInquiryModal(inquiryType = '') {
@@ -1438,7 +1481,7 @@
             },
             privacy: {
                 title: 'Privacy Policy',
-                content: `<p>Mary Adesakin Studio collects the information you choose to provide in an enquiry, including your name, email address, phone number, location, shipping destination, and message. This information is used only to respond to your enquiry, prepare an invoice or shipping quote, fulfil an agreed acquisition or commission, and keep studio records.</p><h4 class="font-semibold text-studio-primary">How this website works</h4><p>This website opens your email application to send enquiries and Studio Circle sign-ups. It does not process card payments or store payment-card details. Please do not send bank, card, or other sensitive financial information through an enquiry email.</p><h4 class="font-semibold text-studio-primary">Sharing and your choices</h4><p>The studio does not sell personal information. Information may be shared only with service providers needed to fulfil an agreed order, such as a shipping carrier, or where required by law. To ask about, correct, or request deletion of your information, email adesakinmary2020@gmail.com.</p><h4 class="font-semibold text-studio-primary">External links</h4><p>Instagram, TikTok, Facebook, and any other external links operate under their own privacy policies. The studio is not responsible for how those third-party services collect or use information.</p>`
+                content: `<p>Mary Adesakin Studio collects the information you choose to provide in an enquiry, including your name, email address, phone number, location, shipping destination, and message. This information is used only to respond to your enquiry, prepare an invoice or shipping quote, fulfil an agreed acquisition or commission, and keep studio records.</p><h4 class="font-semibold text-studio-primary">How this website works</h4><p>Enquiries and Studio Circle sign-ups are securely sent through Formspree, a form-processing service. This website does not process card payments or store payment-card details. Please do not send bank, card, or other sensitive financial information through a form.</p><h4 class="font-semibold text-studio-primary">Analytics</h4><p>This website uses Plausible Analytics to understand aggregated site use, such as page visits and referral sources. Plausible is configured as privacy-friendly analytics and does not use cookies or collect personal data for this website.</p><h4 class="font-semibold text-studio-primary">Sharing and your choices</h4><p>The studio does not sell personal information. Information may be shared only with service providers needed to fulfil an agreed order, such as Formspree for form delivery or a shipping carrier, or where required by law. To ask about, correct, or request deletion of your information, email adesakinmary2020@gmail.com.</p><h4 class="font-semibold text-studio-primary">External links</h4><p>Instagram, TikTok, Facebook, and any other external links operate under their own privacy policies. The studio is not responsible for how those third-party services collect or use information.</p>`
             }
         };
 
@@ -1453,18 +1496,21 @@
             setModalState(document.getElementById('policy-modal'), false);
         }
         
-        function handleInquirySubmit(e) {
+        async function handleInquirySubmit(e) {
             e.preventDefault();
-            const inquiryType = encodeURIComponent(document.getElementById('general-inquiry-type')?.value || 'Studio Inquiry');
-            const name = encodeURIComponent(document.getElementById('general-inquiry-name')?.value || '');
-            const email = encodeURIComponent(document.getElementById('general-inquiry-email')?.value || '');
-            const phone = encodeURIComponent(document.getElementById('general-inquiry-phone')?.value || 'Not provided');
-            const location = encodeURIComponent(document.getElementById('general-inquiry-location')?.value || '');
-            const inquiryMessage = encodeURIComponent(document.getElementById('general-inquiry-message')?.value || '');
-            const body = `Hello Mary,%0A%0AName: ${name}%0AEmail: ${email}%0APhone / WhatsApp: ${phone}%0ALocation: ${location}%0A%0AInquiry:%0A${inquiryMessage}%0A`;
-            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${inquiryType}&body=${body}`;
+            const inquiryType = document.getElementById('general-inquiry-type')?.value || 'Studio Inquiry';
+            const success = await submitStudioForm(FORMSPREE_INQUIRY_ENDPOINT, {
+                subject: inquiryType,
+                name: document.getElementById('general-inquiry-name')?.value || '',
+                email: document.getElementById('general-inquiry-email')?.value || '',
+                phone_or_whatsapp: document.getElementById('general-inquiry-phone')?.value || 'Not provided',
+                location: document.getElementById('general-inquiry-location')?.value || '',
+                inquiry: document.getElementById('general-inquiry-message')?.value || ''
+            }, e.submitter);
+            if(!success) return;
             closeInquiryModal();
-            showToast("Inquiry draft opened for Mary Adesakin Studio.");
+            e.target.reset();
+            showToast('Inquiry sent to Mary Adesakin Studio.');
         }
 
         function showToast(msg) {
