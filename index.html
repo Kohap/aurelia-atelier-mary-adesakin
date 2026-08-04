@@ -749,7 +749,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
                 <div class="md:col-span-6 flex items-center justify-center bg-stone-100">
-                    <img id="modal-img" src="" alt="" class="max-h-[450px] w-full object-contain">
+                    <img id="modal-img" src="assets/artwork/the-weight-of-words.png" alt="Selected artwork preview" class="max-h-[450px] w-full object-contain">
                 </div>
 
                 <div class="md:col-span-6 space-y-5 flex flex-col justify-between">
@@ -1098,7 +1098,7 @@
                 year: "2025",
                 medium: "Thread and Acrylic on Canvas",
                 dimensions: "20 x 24 inches",
-                originalPrice: 500,
+                originalPrice: null,
                 status: "Sold",
                 category: "original",
                 edition: "Original work",
@@ -1268,7 +1268,7 @@
                 category: "original",
                 edition: "Original work",
                 provenance: "Sold catalogue work by Mary Adesakin Damilola.",
-                image: "assets/artwork/maze-of-uncertainty-sold.jpg",
+                image: "assets/artwork/in-her-prime-green.jpg",
                 description: "Sold original work from Mary Adesakin's 2024 catalogue, centered on women's education, service, and the fullness of feminine becoming."
             },
             {
@@ -1571,7 +1571,7 @@
 
             const canRequestOriginal = selectedArtwork.status !== 'Sold';
 
-            if(selectedArtwork.originalPrice > 0) {
+            if(selectedArtwork.status === 'Available' && selectedArtwork.originalPrice > 0) {
                 radOrig.disabled = false;
                 radOrig.checked = true;
                 document.getElementById('modal-original-price').innerText = `$${selectedArtwork.originalPrice.toLocaleString()}`;
