@@ -204,6 +204,7 @@ function App() {
   const [selected, setSelected] = useState(null);
   const [shortlist, setShortlist] = useState([]);
   const [shortlistOpen, setShortlistOpen] = useState(false);
+  const [inquiryArtwork, setInquiryArtwork] = useState(null);
   const [policyName, setPolicyName] = useState(null);
   const [toast, setToast] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -511,11 +512,34 @@ function App() {
                 {hasPaymentLink(selected, 'deposit') ? <a href={paymentUrlFor(selected, 'deposit')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payDeposit}</a> : null}
                 {hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null}
                 {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
-                <a href={`mailto:adesakinmary2020@gmail.com?subject=Artwork inquiry: ${encodeURIComponent(selected.title)}`}>{t.requestDetails}</a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInquiryArtwork(selected);
+                    closeArtwork();
+                  }}
+                >
+                  <Mail size={16} /> {t.requestDetails}
+                </button>
               </div>
             </div>
           </div>
         </Dialog>
+      ) : null}
+
+      {inquiryArtwork ? (
+        <ArtworkInquiryDialog
+          artwork={inquiryArtwork}
+          onClose={() => setInquiryArtwork(null)}
+          onSent={() => {
+            setInquiryArtwork(null);
+            showToast(t.inquirySent);
+          }}
+          onOpenPrivacy={() => {
+            setInquiryArtwork(null);
+            setPolicyName('privacy');
+          }}
+        />
       ) : null}
 
       {shortlistOpen ? (
@@ -653,6 +677,76 @@ function ShortlistDialog({ items, onClose, onRemove, onOpenPrivacy }) {
             </label>
             <p className="form-privacy">Form details are used to respond to this inquiry. <button type="button" onClick={onOpenPrivacy}>Read the privacy policy.</button></p>
             <button className="primary" type="submit" disabled={!items.length}><Send size={16} /> Send Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
+function ArtworkInquiryDialog({ artwork, onClose, onSent, onOpenPrivacy }) {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const submitInquiry = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    if (!form.reportValidity()) return;
+
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch(FORMSPREE_INQUIRY_ENDPOINT, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Inquiry submission failed');
+      onSent();
+    } catch {
+      setError('Your inquiry could not be sent. Please try again or email adesakinmary2020@gmail.com.');
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog labelledBy="artwork-inquiry-title" onClose={onClose}>
+      <div className="modal-panel compact-modal">
+        <button type="button" className="close" onClick={onClose} aria-label="Close artwork inquiry"><X /></button>
+        <div className="modal-copy shortlist-copy">
+          <span className="kicker">Artwork Inquiry</span>
+          <h2 id="artwork-inquiry-title">Ask About {artwork.title}</h2>
+          <p>Send your question directly to Mary Adesakin Studio. The artwork details will be included automatically.</p>
+
+          <form className="inquiry-form" onSubmit={submitInquiry}>
+            <input type="hidden" name="_subject" value={`Artwork inquiry: ${artwork.title}`} />
+            <input type="hidden" name="artwork" value={artwork.title} />
+            <input type="hidden" name="artwork_url" value={artworkUrl(artwork)} />
+            <input type="hidden" name="original_price" value={money(artwork.originalPrice) || 'Price on request'} />
+            <input className="form-honeypot" type="text" name="_gotcha" tabIndex="-1" autoComplete="off" aria-hidden="true" />
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" autoComplete="name" maxLength="100" required />
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" autoComplete="email" maxLength="254" required />
+            </label>
+            <label>
+              <span>Location</span>
+              <input type="text" name="location" autoComplete="country-name" maxLength="120" required />
+            </label>
+            <label>
+              <span>Message</span>
+              <textarea name="message" rows="5" maxLength="2000" placeholder="Ask about availability, prints, payment, or shipping." required />
+            </label>
+            <p className="form-privacy">Form details are used to respond to this inquiry. <button type="button" onClick={onOpenPrivacy}>Read the privacy policy.</button></p>
+            {error ? <p className="form-error" role="alert">{error}</p> : null}
+            <button className="primary" type="submit" disabled={submitting}>
+              <Send size={16} /> {submitting ? 'Sending...' : 'Send Artwork Inquiry'}
+            </button>
           </form>
         </div>
       </div>
