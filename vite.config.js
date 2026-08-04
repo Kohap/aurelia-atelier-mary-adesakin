@@ -5,8 +5,10 @@ import { fileURLToPath } from 'node:url';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 
+const base = process.env.VERCEL ? '/' : '/aurelia-atelier-mary-adesakin/';
+
 export default defineConfig({
-  base: '/aurelia-atelier-mary-adesakin/',
+  base,
   plugins: [react()],
   build: {
     rollupOptions: {
