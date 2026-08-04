@@ -53,6 +53,9 @@
             background-color: #FDFBF7;
             color: #1C1917;
         }
+        body.modal-open {
+            overflow: hidden;
+        }
         body::before {
             content: "";
             position: fixed;
@@ -93,6 +96,53 @@
         .fine-border {
             box-shadow: inset 0 0 0 1px rgba(168, 85, 54, 0.12);
         }
+        .premium-link {
+            position: relative;
+        }
+        .premium-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -0.45rem;
+            height: 1px;
+            background: #A85536;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 220ms ease;
+        }
+        .premium-link:hover::after,
+        .premium-link.is-active::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 700ms ease, transform 700ms ease;
+            transition-delay: var(--reveal-delay, 0ms);
+        }
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .magnetic-card {
+            transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+        }
+        .magnetic-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(168, 85, 54, 0.35);
+            box-shadow: 0 24px 70px rgba(28, 25, 23, 0.12);
+        }
+        .modal-panel {
+            transform: translateY(18px) scale(0.98);
+            opacity: 0;
+            transition: transform 220ms ease, opacity 220ms ease;
+        }
+        .modal-opened .modal-panel {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
         .skip-link {
             position: absolute;
             left: 1rem;
@@ -116,6 +166,18 @@
         .marquee-container { overflow: hidden; white-space: nowrap; }
         .marquee-content { display: inline-block; animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.001ms !important;
+            }
+            .reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-studio-accent selection:text-white">
@@ -130,16 +192,16 @@
     <!-- NAVIGATION BAR -->
     <nav class="sticky top-0 z-40 bg-studio-bg/90 backdrop-blur-xl border-b border-studio-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-            <a href="#" class="font-serif text-xl sm:text-2xl tracking-wider font-semibold text-studio-primary flex items-center gap-2 min-w-0">
+            <a href="#main-content" class="font-serif text-xl sm:text-2xl tracking-wider font-semibold text-studio-primary flex items-center gap-2 min-w-0">
                 <span class="w-2.5 h-2.5 rounded-full bg-studio-accent inline-block shrink-0"></span>
                 <span class="truncate">ADESAKIN MARY</span> <span class="hidden xs:inline text-xs sm:text-sm font-sans font-light tracking-widest text-studio-muted">STUDIO</span>
             </a>
 
             <!-- Desktop Links -->
             <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-medium text-studio-muted">
-                <a href="#about" class="hover:text-studio-primary transition-colors">The Artist</a>
-                <a href="#available-works" class="hover:text-studio-primary transition-colors">Original Works</a>
-                <a href="#exhibitions" class="hover:text-studio-primary transition-colors">Exhibitions & Press</a>
+                <a href="#about" class="premium-link nav-link hover:text-studio-primary transition-colors">The Artist</a>
+                <a href="#available-works" class="premium-link nav-link hover:text-studio-primary transition-colors">Original Works</a>
+                <a href="#exhibitions" class="premium-link nav-link hover:text-studio-primary transition-colors">Exhibitions & Press</a>
             </div>
 
             <!-- CTA & Cart Trigger Button -->
@@ -148,7 +210,7 @@
                     Private Advisory
                 </button>
                 <button onclick="toggleCartDrawer()" class="relative bg-studio-primary text-white text-xs uppercase tracking-widest px-3 sm:px-4 py-2.5 flex items-center gap-2 hover:bg-studio-accent transition-colors">
-                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <i data-lucide="bookmark" class="w-4 h-4"></i>
                     <span class="hidden sm:inline">Shortlist</span>
                     <span id="cart-count-badge" class="bg-studio-accent text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
@@ -158,7 +220,7 @@
 
     <!-- HERO SECTION -->
     <main id="main-content">
-    <header class="relative px-4 sm:px-6 py-14 md:py-24 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center min-h-[calc(100vh-112px)]">
+    <header class="reveal relative px-4 sm:px-6 py-14 md:py-24 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center min-h-[calc(100vh-112px)]">
         <div class="lg:col-span-7 space-y-7">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/80 fine-border text-studio-accent text-[11px] sm:text-xs tracking-widest uppercase rounded-full font-semibold shadow-sm">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Nigerian Thread Painting Studio
@@ -187,7 +249,7 @@
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Exhibitions</span>
                 </div>
                 <div>
-                    <span class="block font-serif text-2xl text-studio-primary">2</span>
+                    <span class="block font-serif text-2xl text-studio-primary">5</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Thread Works</span>
                 </div>
             </div>
@@ -195,7 +257,7 @@
 
         <div class="lg:col-span-5 relative">
             <div class="relative z-10 bg-white p-3 sm:p-4 lift-card border border-studio-border">
-                <img src="assets/artwork/the-weight-of-words.png" alt="The Weight of Words by Mary Adesakin" class="w-full h-[360px] sm:h-[460px] lg:h-[560px] object-cover filter brightness-95 contrast-105">
+                <img src="assets/artwork/the-weight-of-words.png" alt="The Weight of Words by Mary Adesakin" loading="eager" decoding="async" class="w-full h-[360px] sm:h-[460px] lg:h-[560px] object-cover filter brightness-95 contrast-105">
                 <div class="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 border-t border-studio-border pt-3">
                     <div>
                         <span class="text-xs tracking-widest text-studio-accent font-semibold uppercase">Featured Original Work</span>
@@ -224,28 +286,28 @@
                 </p>
             </div>
             <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="bg-white border border-studio-border p-6 lift-card">
+                <div class="reveal magnetic-card bg-white border border-studio-border p-6 lift-card">
                     <i data-lucide="graduation-cap" class="w-5 h-5 text-studio-accent mb-4"></i>
                     <h3 class="font-serif text-lg text-studio-primary">Education</h3>
                     <p class="text-sm text-studio-muted leading-relaxed mt-2">
                         Fine and Applied Arts, Adeyemi Federal University of Education, Ondo.
                     </p>
                 </div>
-                <div class="bg-white border border-studio-border p-6 lift-card">
+                <div class="reveal magnetic-card bg-white border border-studio-border p-6 lift-card" style="--reveal-delay: 80ms">
                     <i data-lucide="scissors" class="w-5 h-5 text-studio-accent mb-4"></i>
                     <h3 class="font-serif text-lg text-studio-primary">Practice</h3>
                     <p class="text-sm text-studio-muted leading-relaxed mt-2">
                         Thread painting, textile design, fabric dyeing, portraiture, and hand-built surface narratives.
                     </p>
                 </div>
-                <div class="bg-white border border-studio-border p-6 lift-card">
+                <div class="reveal magnetic-card bg-white border border-studio-border p-6 lift-card" style="--reveal-delay: 160ms">
                     <i data-lucide="map-pin" class="w-5 h-5 text-studio-accent mb-4"></i>
                     <h3 class="font-serif text-lg text-studio-primary">Base</h3>
                     <p class="text-sm text-studio-muted leading-relaxed mt-2">
                         Ile-Ife / Modakeke, Osun State, Nigeria, with recent exhibition activity in Nigeria and Paris.
                     </p>
                 </div>
-                <div class="bg-white border border-studio-border p-6 lift-card">
+                <div class="reveal magnetic-card bg-white border border-studio-border p-6 lift-card" style="--reveal-delay: 240ms">
                     <i data-lucide="languages" class="w-5 h-5 text-studio-accent mb-4"></i>
                     <h3 class="font-serif text-lg text-studio-primary">Languages</h3>
                     <p class="text-sm text-studio-muted leading-relaxed mt-2">
@@ -254,7 +316,7 @@
                 </div>
             </div>
             <div class="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-                <div class="lg:col-span-7 bg-white border border-studio-border p-8 md:p-10 lift-card">
+                <div class="reveal lg:col-span-7 bg-white border border-studio-border p-8 md:p-10 lift-card">
                     <span class="section-kicker">Artist Statement</span>
                     <p class="font-serif text-xl md:text-2xl text-studio-primary leading-relaxed mt-5">
                         Mary uses thread as both material and metaphor: a line that repairs, remembers, conceals, reveals, and connects.
@@ -263,7 +325,7 @@
                         Her works transform textile gestures into portraits of interior life. Across pieces such as <span class="italic">Loud Silence</span>, <span class="italic">Visible Within</span>, and <span class="italic">Maze of Uncertainty</span>, stitched surfaces become a way to speak about vulnerability, resilience, justice, femininity, and cultural inheritance.
                     </p>
                 </div>
-                <div class="lg:col-span-5 space-y-3">
+                <div class="reveal lg:col-span-5 space-y-3" style="--reveal-delay: 120ms">
                     <div class="bg-studio-primary text-white p-6">
                         <span class="text-[10px] uppercase tracking-widest text-studio-accent font-semibold">Material Language</span>
                         <p class="font-serif text-xl mt-2">Thread, canvas, jute, pigment, and hand-built texture.</p>
@@ -278,7 +340,7 @@
     </section>
 
     <!-- SECTION 1: CATALOGUE RAISONNÉ & DIRECT ACQUISITION -->
-    <section id="available-works" class="py-20 md:py-24 bg-white border-y border-studio-border">
+    <section id="available-works" class="reveal py-20 md:py-24 bg-white border-y border-studio-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
                 <div>
@@ -289,49 +351,49 @@
 
                 <!-- Filters -->
                 <div class="mt-6 md:mt-0 flex flex-wrap gap-2 text-[11px] uppercase tracking-wider" id="filter-buttons">
-                    <button onclick="filterArt('all')" class="filter-btn active bg-studio-primary text-white px-4 py-2.5 border border-studio-primary">All Works</button>
-                    <button onclick="filterArt('thread-canvas')" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Thread on Canvas</button>
-                    <button onclick="filterArt('thread-acrylic')" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Thread & Acrylic</button>
-                    <button onclick="filterArt('2025')" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2025 Works</button>
-                    <button onclick="filterArt('2026')" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2026 Works</button>
+                    <button onclick="filterArt('all', this)" class="filter-btn active bg-studio-primary text-white px-4 py-2.5 border border-studio-primary">All Works</button>
+                    <button onclick="filterArt('thread-canvas', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Thread on Canvas</button>
+                    <button onclick="filterArt('thread-acrylic', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">Thread & Acrylic</button>
+                    <button onclick="filterArt('2025', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2025 Works</button>
+                    <button onclick="filterArt('2026', this)" class="filter-btn bg-stone-50 text-studio-muted hover:bg-stone-100 px-4 py-2.5 border border-studio-border">2026 Works</button>
                 </div>
             </div>
 
             <!-- Artwork Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10 text-center">
-                <div class="border border-studio-border bg-studio-bg p-4">
-                    <span class="block font-serif text-2xl text-studio-primary" id="portfolio-total">0</span>
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-4">
+                    <span class="stat-number block font-serif text-2xl text-studio-primary" id="portfolio-total">0</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Catalogued Works</span>
                 </div>
-                <div class="border border-studio-border bg-studio-bg p-4">
-                    <span class="block font-serif text-2xl text-studio-primary" id="portfolio-available">0</span>
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-4">
+                    <span class="stat-number block font-serif text-2xl text-studio-primary" id="portfolio-available">0</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Available Originals</span>
                 </div>
-                <div class="border border-studio-border bg-studio-bg p-4">
-                    <span class="block font-serif text-2xl text-studio-primary" id="portfolio-prints">0</span>
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-4">
+                    <span class="stat-number block font-serif text-2xl text-studio-primary" id="portfolio-prints">0</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Thread Works</span>
                 </div>
-                <div class="border border-studio-border bg-studio-bg p-4">
-                    <span class="block font-serif text-2xl text-studio-primary" id="portfolio-sold">0</span>
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-4">
+                    <span class="stat-number block font-serif text-2xl text-studio-primary" id="portfolio-sold">0</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Private Collections</span>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-                <div class="border border-studio-border bg-studio-bg p-5 flex gap-3">
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-5 flex gap-3">
                     <i data-lucide="badge-check" class="w-5 h-5 text-studio-accent shrink-0"></i>
                     <div>
                         <h3 class="text-xs uppercase tracking-widest font-semibold text-studio-primary">Original Verification</h3>
                         <p class="text-xs text-studio-muted leading-relaxed mt-2">Each listed work is treated as a studio-confirmed original with acquisition details verified before payment.</p>
                     </div>
                 </div>
-                <div class="border border-studio-border bg-studio-bg p-5 flex gap-3">
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-5 flex gap-3">
                     <i data-lucide="file-text" class="w-5 h-5 text-studio-accent shrink-0"></i>
                     <div>
                         <h3 class="text-xs uppercase tracking-widest font-semibold text-studio-primary">Invoice Request</h3>
                         <p class="text-xs text-studio-muted leading-relaxed mt-2">Collectors can request a formal invoice after availability and shipping details are confirmed by the studio.</p>
                     </div>
                 </div>
-                <div class="border border-studio-border bg-studio-bg p-5 flex gap-3">
+                <div class="magnetic-card border border-studio-border bg-studio-bg p-5 flex gap-3">
                     <i data-lucide="package-check" class="w-5 h-5 text-studio-accent shrink-0"></i>
                     <div>
                         <h3 class="text-xs uppercase tracking-widest font-semibold text-studio-primary">Shipping Quote</h3>
@@ -346,7 +408,7 @@
     </section>
 
     <!-- SECTION 2: EXHIBITIONS & PRESS NEWS -->
-    <section id="exhibitions" class="py-20 md:py-24 bg-studio-bg border-b border-studio-border">
+    <section id="exhibitions" class="reveal py-20 md:py-24 bg-studio-bg border-b border-studio-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
                 <div>
@@ -394,7 +456,7 @@
                 </div>
 
                 <!-- Press / Biography Callout -->
-                <div class="bg-white p-8 md:p-10 border border-stone-200 lift-card relative">
+                <div class="magnetic-card bg-white p-8 md:p-10 border border-stone-200 lift-card relative">
                     <i data-lucide="quote" class="w-8 h-8 text-studio-accent/20 absolute top-6 left-6"></i>
                     <p class="relative z-10 text-lg font-serif italic text-studio-primary leading-relaxed mt-4">
                         "For Mary, every stitch is a story, and through her art she hopes to spark reflection, emotion, and meaningful conversation."
@@ -406,7 +468,7 @@
     </section>
 
     <!-- SECTION 3: NEWSLETTER & COLLECTOR LIST -->
-    <section id="newsletter" class="py-24 md:py-28 bg-studio-primary text-white relative overflow-hidden">
+    <section id="newsletter" class="reveal py-24 md:py-28 bg-studio-primary text-white relative overflow-hidden">
         <!-- Abstract Thread Graphic Background -->
         <div class="absolute inset-0 opacity-10 pointer-events-none">
             <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -435,7 +497,7 @@
     </section>
 
     <!-- SECTION 3: STUDIO THREADS & UPDATES -->
-    <section id="upcoming" class="py-20 bg-studio-primary text-white">
+    <section id="upcoming" class="reveal py-20 bg-studio-primary text-white">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div class="lg:col-span-6 space-y-6">
                 <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Studio Direction</span>
@@ -473,47 +535,47 @@
             </div>
 
             <div class="lg:col-span-6 grid grid-cols-2 gap-4">
-                <img src="assets/artwork/loud-silence.png" alt="Loud Silence by Mary Adesakin" class="w-full h-64 object-cover filter brightness-90 border border-stone-800">
-                <img src="assets/artwork/visible-within.png" alt="Visible Within by Mary Adesakin" class="w-full h-64 object-cover filter brightness-90 border border-stone-800 mt-8">
+                <img src="assets/artwork/loud-silence.png" alt="Loud Silence by Mary Adesakin" loading="lazy" decoding="async" class="w-full h-64 object-cover filter brightness-90 border border-stone-800">
+                <img src="assets/artwork/visible-within.png" alt="Visible Within by Mary Adesakin" loading="lazy" decoding="async" class="w-full h-64 object-cover filter brightness-90 border border-stone-800 mt-8">
             </div>
         </div>
     </section>
 
-    <!-- SECTION 4: ONLINE DATA COLLECTION & ANALYTICS MODULE -->
-    <section id="analytics" class="py-20 bg-white border-b border-studio-border">
+    <!-- SECTION 4: STUDIO AT A GLANCE -->
+    <section id="analytics" class="reveal py-20 bg-white border-b border-studio-border">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
                 <div>
-                    <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Smart Portfolio Architecture</span>
-                    <h2 class="font-serif text-3xl md:text-4xl text-studio-primary mt-1">Collector Intelligence Dashboard</h2>
-                    <p class="text-studio-muted text-sm mt-2">How this platform captures online data to optimize artwork pricing & exhibition inventory.</p>
+                    <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Studio At A Glance</span>
+                    <h2 class="font-serif text-3xl md:text-4xl text-studio-primary mt-1">Practice & Collector Notes</h2>
+                    <p class="text-studio-muted text-sm mt-2">A concise view of Mary Adesakin's current catalogue, medium, and inquiry process.</p>
                 </div>
                 <div class="mt-4 md:mt-0 text-xs text-studio-muted bg-stone-100 px-3 py-2 border border-stone-200">
-                    <i data-lucide="shield-check" class="w-4 h-4 inline mr-1 text-emerald-600"></i> Active Collector Tracking
+                    <i data-lucide="shield-check" class="w-4 h-4 inline mr-1 text-emerald-600"></i> Studio-confirmed originals
                 </div>
             </div>
 
-            <!-- Demo Metrics Grid -->
+            <!-- Studio Notes Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="p-5 bg-studio-bg border border-studio-border">
-                    <span class="text-xs text-studio-muted uppercase tracking-wider">Top Viewed Medium</span>
-                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">Oil & Gold Leaf</h4>
-                    <p class="text-xs text-emerald-600 mt-1">↑ 42% collector interest</p>
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Primary Medium</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">Thread Work</h4>
+                    <p class="text-xs text-studio-muted mt-1">Canvas, jute, acrylic, and textile surface</p>
                 </div>
                 <div class="p-5 bg-studio-bg border border-studio-border">
-                    <span class="text-xs text-studio-muted uppercase tracking-wider">Original Work Demand</span>
-                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">1 : 4.8 Ratio</h4>
-                    <p class="text-xs text-studio-muted mt-1">Strong interest in thread originals</p>
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Catalogue Range</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">$200 - $850</h4>
+                    <p class="text-xs text-studio-muted mt-1">Original listed works from the current catalogue</p>
                 </div>
                 <div class="p-5 bg-studio-bg border border-studio-border">
-                    <span class="text-xs text-studio-muted uppercase tracking-wider">Active Inquiries</span>
-                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">18 Collector Leads</h4>
-                    <p class="text-xs text-studio-accent font-medium mt-1">Ready for follow-up</p>
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Exhibitions</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">Nigeria & Paris</h4>
+                    <p class="text-xs text-studio-muted mt-1">LIMCAF, Deep in Thought, House of George, Paris</p>
                 </div>
                 <div class="p-5 bg-studio-bg border border-studio-border">
-                    <span class="text-xs text-studio-muted uppercase tracking-wider">Top Collector Cities</span>
-                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">New York & London</h4>
-                    <p class="text-xs text-studio-muted mt-1">Ideal for shipping quotes</p>
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Inquiry Path</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">Studio Direct</h4>
+                    <p class="text-xs text-studio-muted mt-1">Availability, invoice, and shipping confirmed by email</p>
                 </div>
             </div>
         </div>
@@ -522,7 +584,7 @@
 
     <!-- ARTWORK DETAIL / SELECTION MODAL -->
     <div id="art-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-studio-border relative">
+        <div class="modal-panel bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-studio-border relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black text-xl p-2 z-10">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
@@ -577,17 +639,9 @@
                                 <span id="modal-original-price" class="font-serif font-bold text-sm text-studio-primary">$0</span>
                             </label>
 
-                            <!-- Option B: Studio Follow-up -->
-                            <label class="flex items-center justify-between p-3 border border-stone-300 rounded cursor-pointer hover:border-studio-accent transition-all">
-                                <div class="flex items-center gap-3">
-                                    <input type="radio" name="purchase_type" value="print" id="radio-print">
-                                    <div>
-                                        <span class="text-xs font-semibold block">Studio Follow-up</span>
-                                        <span class="text-[10px] text-studio-muted">Use for shipping, invoice, or commission questions</span>
-                                    </div>
-                                </div>
-                                <span id="modal-print-price" class="font-serif font-bold text-sm text-studio-primary">$0</span>
-                            </label>
+                            <div class="p-3 border border-stone-200 bg-studio-bg text-xs text-studio-muted leading-relaxed">
+                                Shipping, invoice, and commission questions can be included in the collector inquiry after shortlisting the artwork.
+                            </div>
                         </div>
                     </div>
 
@@ -604,7 +658,7 @@
 
     <!-- CART DRAWER (SLIDE-OVER) -->
     <div id="cart-drawer" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex justify-end">
-        <div class="bg-white max-w-md w-full h-full flex flex-col justify-between shadow-2xl relative">
+        <div class="modal-panel bg-white max-w-md w-full h-full flex flex-col justify-between shadow-2xl relative">
             
             <!-- Cart Header -->
             <div class="p-6 border-b border-stone-200 flex justify-between items-center bg-studio-bg">
@@ -652,7 +706,7 @@
 
     <!-- ACQUISITION INQUIRY MODAL -->
     <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
+        <div class="modal-panel bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
             <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
@@ -726,7 +780,7 @@
 
     <!-- GENERAL INQUIRY MODAL -->
     <div id="inquiry-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white max-w-lg w-full p-8 border border-stone-200 relative">
+        <div class="modal-panel bg-white max-w-lg w-full p-8 border border-stone-200 relative">
             <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
@@ -745,7 +799,7 @@
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Collector Type</label>
-                    <select class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                    <select id="general-inquiry-type" class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
                         <option>Collector / Buyer</option>
                         <option>Gallery / Institution</option>
                         <option>Curator / Art Advisor</option>
@@ -754,7 +808,7 @@
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Inquiry Details</label>
-                    <textarea rows="3" placeholder="Tell us about the artwork, commission, exhibition, or collaboration you are interested in..." class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent"></textarea>
+                    <textarea id="general-inquiry-message" rows="3" placeholder="Tell us about the artwork, commission, exhibition, or collaboration you are interested in..." class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent"></textarea>
                 </div>
                 <button type="submit" class="w-full bg-studio-primary text-white py-3 text-xs uppercase tracking-widest hover:bg-studio-accent transition-colors">
                     Send Inquiry
@@ -773,7 +827,7 @@
     <footer class="bg-stone-100 py-16 border-t border-stone-200">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
             <div class="space-y-4 md:col-span-2">
-                <a href="#" class="font-serif text-2xl tracking-wider text-studio-primary font-semibold">ADESAKIN MARY</a>
+                <a href="#main-content" class="font-serif text-2xl tracking-wider text-studio-primary font-semibold">ADESAKIN MARY</a>
                 <p class="text-sm text-studio-muted max-w-sm leading-relaxed">
                     Nigerian thread painter and textile artist exploring identity, Yoruba heritage, emotional memory, and contemporary life through stitched canvas.
                 </p>
@@ -783,7 +837,6 @@
                     <p>Ile-Ife / Modakeke, Osun State, Nigeria</p>
                 </div>
                 <div class="flex gap-4 pt-2">
-                    <a href="#" aria-label="Instagram: Adesakin Mary Damilola" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
                     <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Adesakin Mary" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
                 </div>
             </div>
@@ -802,10 +855,9 @@
             <div>
                 <h5 class="text-xs uppercase tracking-widest text-studio-primary mb-4 font-bold">Inquiries & Policies</h5>
                 <ul class="space-y-3 text-sm text-studio-muted">
-                    <li><a href="#" onclick="openInquiryModal()" class="hover:text-studio-accent transition-colors">Private Commissions</a></li>
+                    <li><button type="button" onclick="openInquiryModal()" class="hover:text-studio-accent transition-colors text-left">Private Commissions</button></li>
                     <li><a href="mailto:adesakinmary2020@gmail.com" class="hover:text-studio-accent transition-colors">Studio Email</a></li>
                     <li><a href="tel:+2349067002871" class="hover:text-studio-accent transition-colors">Call Studio</a></li>
-                    <li><a href="#" class="hover:text-studio-accent transition-colors">Privacy Policy</a></li>
                 </ul>
             </div>
         </div>
@@ -827,7 +879,6 @@
                 medium: "Thread on Canvas",
                 dimensions: "30 x 32 inches",
                 originalPrice: 750,
-                printPrice: 0,
                 status: "Available",
                 category: "original",
                 edition: "Original work",
@@ -843,7 +894,6 @@
                 medium: "Thread and Acrylic on Canvas",
                 dimensions: "22 x 25 inches",
                 originalPrice: 500,
-                printPrice: 0,
                 status: "Available",
                 category: "original",
                 edition: "Original work",
@@ -859,7 +909,6 @@
                 medium: "Thread and Acrylic on Canvas",
                 dimensions: "22 x 25 inches",
                 originalPrice: 500,
-                printPrice: 0,
                 status: "Available",
                 category: "original",
                 edition: "Original work",
@@ -875,7 +924,6 @@
                 medium: "Thread on Jute",
                 dimensions: "42 x 51 inches",
                 originalPrice: 850,
-                printPrice: 0,
                 status: "Available",
                 category: "original",
                 edition: "Original work",
@@ -891,7 +939,6 @@
                 medium: "Thread on Canvas",
                 dimensions: "20.3 x 25.4 cm",
                 originalPrice: 200,
-                printPrice: 0,
                 status: "Available",
                 category: "original",
                 edition: "Original work",
@@ -904,12 +951,71 @@
         // CART STATE
         let cart = [];
         let selectedArtwork = null;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function setModalState(element, isOpen) {
+            element.classList.toggle('hidden', !isOpen);
+            element.classList.toggle('modal-opened', isOpen);
+            document.body.classList.toggle('modal-open', document.querySelectorAll('.modal-opened').length > 0 || isOpen);
+        }
+
+        function animateNumber(element, target) {
+            if(prefersReducedMotion) {
+                element.innerText = target;
+                return;
+            }
+            const start = Number(element.innerText) || 0;
+            const duration = 700;
+            const startTime = performance.now();
+            function tick(now) {
+                const progress = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                element.innerText = Math.round(start + (target - start) * eased);
+                if(progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        function initRevealMotion() {
+            const revealItems = document.querySelectorAll('.reveal');
+            if(prefersReducedMotion || !('IntersectionObserver' in window)) {
+                revealItems.forEach(item => item.classList.add('is-visible'));
+                return;
+            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.14 });
+            revealItems.forEach(item => observer.observe(item));
+        }
+
+        function initActiveNavigation() {
+            const links = Array.from(document.querySelectorAll('.nav-link'));
+            const sections = links
+                .map(link => document.querySelector(link.getAttribute('href')))
+                .filter(Boolean);
+            if(!('IntersectionObserver' in window)) return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        links.forEach(link => {
+                            link.classList.toggle('is-active', link.getAttribute('href') === `#${entry.target.id}`);
+                        });
+                    }
+                });
+            }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+            sections.forEach(section => observer.observe(section));
+        }
 
         function updatePortfolioStats() {
-            document.getElementById('portfolio-total').innerText = artworks.length;
-            document.getElementById('portfolio-available').innerText = artworks.filter(art => art.status === 'Available').length;
-            document.getElementById('portfolio-prints').innerText = artworks.filter(art => art.medium.toLowerCase().includes('thread')).length;
-            document.getElementById('portfolio-sold').innerText = artworks.filter(art => art.status === 'Sold').length;
+            animateNumber(document.getElementById('portfolio-total'), artworks.length);
+            animateNumber(document.getElementById('portfolio-available'), artworks.filter(art => art.status === 'Available').length);
+            animateNumber(document.getElementById('portfolio-prints'), artworks.filter(art => art.medium.toLowerCase().includes('thread')).length);
+            animateNumber(document.getElementById('portfolio-sold'), artworks.filter(art => art.status === 'Sold').length);
         }
 
         // RENDER ARTWORKS
@@ -925,7 +1031,7 @@
                 
                 card.innerHTML = `
                     <div class="relative overflow-hidden bg-stone-100">
-                        <img src="${art.image}" alt="${art.title}" class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700">
+                        <img src="${art.image}" alt="${art.title}" loading="lazy" decoding="async" class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <span class="absolute top-3 right-3 text-[10px] tracking-widest uppercase px-2.5 py-1 font-semibold ${
                             art.status === 'Available' ? 'bg-emerald-900 text-white' : 
@@ -954,17 +1060,10 @@
                                     ${art.originalPrice > 0 ? '$' + art.originalPrice.toLocaleString() : 'Sold'}
                                 </span>
                             </div>
-                            ${art.printPrice > 0 ? `
-                                <div class="flex justify-between items-center text-xs">
-                                    <span class="text-studio-muted">Studio Option:</span>
-                                    <span class="font-serif font-bold text-studio-accent">From $${art.printPrice}</span>
-                                </div>
-                            ` : `
-                                <div class="flex justify-between items-center text-xs">
-                                    <span class="text-studio-muted">Format:</span>
-                                    <span class="font-serif font-bold text-studio-accent">Original Only</span>
-                                </div>
-                            `}
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-studio-muted">Format:</span>
+                                <span class="font-serif font-bold text-studio-accent">Original Only</span>
+                            </div>
                             <div class="flex justify-between items-center gap-4 text-xs">
                                 <span class="text-studio-muted">Edition:</span>
                                 <span class="font-medium text-studio-primary text-right">${art.edition}</span>
@@ -977,7 +1076,7 @@
                             </button>
                             ${isOriginalAvailable ? `
                                 <button onclick="quickAddToCart(${art.id}, 'original')" class="bg-studio-accent text-white px-3.5 py-3 hover:bg-studio-primary transition-colors" title="Quick Add Original to Cart">
-                                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                                    <i data-lucide="bookmark-plus" class="w-4 h-4"></i>
                                 </button>
                             ` : ''}
                         </div>
@@ -989,13 +1088,13 @@
         }
 
         // FILTER LOGIC
-        function filterArt(type) {
+        function filterArt(type, trigger) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-studio-primary', 'text-white', 'border-studio-primary');
                 btn.classList.add('bg-stone-50', 'text-studio-muted', 'border-studio-border');
             });
-            event.target.classList.remove('bg-stone-50', 'text-studio-muted', 'border-studio-border');
-            event.target.classList.add('bg-studio-primary', 'text-white', 'border-studio-primary');
+            trigger.classList.remove('bg-stone-50', 'text-studio-muted', 'border-studio-border');
+            trigger.classList.add('bg-studio-primary', 'text-white', 'border-studio-primary');
 
             if(type === 'all') renderArtworks(artworks);
             else if(type === 'thread-canvas') renderArtworks(artworks.filter(a => a.medium === 'Thread on Canvas'));
@@ -1020,7 +1119,6 @@
             document.getElementById('modal-provenance').innerText = selectedArtwork.provenance;
 
             const radOrig = document.getElementById('radio-original');
-            const radPrint = document.getElementById('radio-print');
 
             if(selectedArtwork.originalPrice > 0) {
                 radOrig.disabled = false;
@@ -1028,31 +1126,19 @@
                 document.getElementById('modal-original-price').innerText = `$${selectedArtwork.originalPrice.toLocaleString()}`;
             } else {
                 radOrig.disabled = true;
-                radPrint.checked = true;
                 document.getElementById('modal-original-price').innerText = 'Sold';
             }
-
-            if(selectedArtwork.printPrice > 0) {
-                radPrint.disabled = false;
-                document.getElementById('modal-print-price').innerText = `$${selectedArtwork.printPrice}`;
-            } else {
-                radPrint.disabled = true;
-                document.getElementById('modal-print-price').innerText = 'Not offered';
-            }
-            document.getElementById('art-modal').classList.remove('hidden');
+            setModalState(document.getElementById('art-modal'), true);
         }
 
         function closeModal() {
-            document.getElementById('art-modal').classList.add('hidden');
+            setModalState(document.getElementById('art-modal'), false);
         }
 
         // CART MANAGEMENT LOGIC
         function addSelectedToCart() {
             if(!selectedArtwork) return;
-            const isOriginal = document.getElementById('radio-original').checked;
-            const format = isOriginal ? 'original' : 'print';
-            
-            addToCart(selectedArtwork.id, format);
+            addToCart(selectedArtwork.id, 'original');
             closeModal();
             toggleCartDrawer(true);
         }
@@ -1066,23 +1152,22 @@
             const item = artworks.find(a => a.id === id);
             if(!item) return;
 
-            const price = format === 'original' ? item.originalPrice : item.printPrice;
+            const price = item.originalPrice;
             if(price <= 0) {
-                showToast("This format is not currently available.");
+                showToast("This artwork is not currently available.");
                 return;
             }
-            const itemTitle = `${item.title} (${format === 'original' ? '1-of-1 Original Work' : 'Studio Follow-up'})`;
 
             // Check if already in cart
-            const existingIndex = cart.findIndex(c => c.id === id && c.format === format);
+            const existingIndex = cart.findIndex(c => c.id === id);
             if(existingIndex > -1) {
                 cart[existingIndex].qty += 1;
             } else {
                 cart.push({
                     id: item.id,
                     title: item.title,
-                    format: format,
-                    formatLabel: format === 'original' ? 'Original Artwork' : 'Studio Follow-up',
+                    format: 'original',
+                    formatLabel: 'Original Artwork',
                     price: price,
                     image: item.image,
                     qty: 1
@@ -1145,9 +1230,9 @@
         function toggleCartDrawer(forceOpen = false) {
             const drawer = document.getElementById('cart-drawer');
             if(forceOpen) {
-                drawer.classList.remove('hidden');
+                setModalState(drawer, true);
             } else {
-                drawer.classList.toggle('hidden');
+                setModalState(drawer, drawer.classList.contains('hidden'));
             }
         }
 
@@ -1169,11 +1254,11 @@
                 return;
             }
             toggleCartDrawer(false);
-            document.getElementById('checkout-modal').classList.remove('hidden');
+            setModalState(document.getElementById('checkout-modal'), true);
         }
 
         function closeCheckoutModal() {
-            document.getElementById('checkout-modal').classList.add('hidden');
+            setModalState(document.getElementById('checkout-modal'), false);
         }
 
         function handleFinalPayment(e) {
@@ -1192,17 +1277,20 @@
         }
         
         function openInquiryModal() {
-            document.getElementById('inquiry-modal').classList.remove('hidden');
+            setModalState(document.getElementById('inquiry-modal'), true);
         }
         
         function closeInquiryModal() {
-            document.getElementById('inquiry-modal').classList.add('hidden');
+            setModalState(document.getElementById('inquiry-modal'), false);
         }
         
         function handleInquirySubmit(e) {
             e.preventDefault();
+            const inquiryType = encodeURIComponent(document.getElementById('general-inquiry-type')?.value || 'Studio Inquiry');
+            const inquiryMessage = encodeURIComponent(document.getElementById('general-inquiry-message')?.value || '');
+            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${inquiryType}&body=Hello Mary,%0A%0A${inquiryMessage}%0A`;
             closeInquiryModal();
-            showToast("✓ Your inquiry has been sent to the studio.");
+            showToast("Inquiry draft opened for Mary Adesakin Studio.");
         }
 
         function showToast(msg) {
@@ -1217,9 +1305,19 @@
 
         // DOM READY INIT
         window.addEventListener('DOMContentLoaded', () => {
+            initRevealMotion();
+            initActiveNavigation();
             updatePortfolioStats();
             renderArtworks(artworks);
             updateCartUI();
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if(event.key !== 'Escape') return;
+            closeModal();
+            closeCheckoutModal();
+            closeInquiryModal();
+            setModalState(document.getElementById('cart-drawer'), false);
         });
     </script>
 </body>
