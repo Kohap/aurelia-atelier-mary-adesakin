@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kohap.github.io/aurelia-atelier-mary-adesakin/sitemap.xml
