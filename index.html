@@ -168,6 +168,13 @@
         .marquee-container { overflow: hidden; white-space: nowrap; }
         .marquee-content { display: inline-block; animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        section[id], header[id] { scroll-margin-top: 5.5rem; }
+        @media (max-width: 767px) {
+            body::before { background-size: auto, auto, 32px 32px, 32px 32px; }
+            .mobile-menu-open { box-shadow: 0 18px 36px rgba(28, 25, 23, 0.12); }
+            .mobile-modal { align-items: flex-end; padding: 0; }
+            .mobile-modal .modal-panel { max-height: 92dvh; border-bottom: 0; }
+        }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.001ms !important;
@@ -192,11 +199,11 @@
     </div>
 
     <!-- NAVIGATION BAR -->
-    <nav class="sticky top-0 z-40 bg-studio-bg/90 backdrop-blur-xl border-b border-studio-border">
+    <nav class="sticky top-0 z-40 bg-studio-bg/90 backdrop-blur-xl border-b border-studio-border relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
             <a href="#main-content" class="font-serif text-xl sm:text-2xl tracking-wider font-semibold text-studio-primary flex items-center gap-2 min-w-0">
                 <span class="w-2.5 h-2.5 rounded-full bg-studio-accent inline-block shrink-0"></span>
-                <span class="truncate">ADESAKIN MARY</span> <span class="hidden xs:inline text-xs sm:text-sm font-sans font-light tracking-widest text-studio-muted">STUDIO</span>
+                <span class="truncate">ADESAKIN MARY</span> <span class="hidden sm:inline text-xs sm:text-sm font-sans font-light tracking-widest text-studio-muted">STUDIO</span>
             </a>
 
             <!-- Desktop Links -->
@@ -217,13 +224,25 @@
                     <span class="hidden sm:inline">Shortlist</span>
                     <span id="cart-count-badge" class="bg-studio-accent text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
+                <button id="mobile-menu-button" type="button" onclick="toggleMobileMenu()" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open site navigation" class="md:hidden w-11 h-11 inline-flex items-center justify-center border border-studio-border text-studio-primary hover:border-studio-accent hover:text-studio-accent transition-colors">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute inset-x-0 top-full bg-studio-bg border-b border-studio-border px-4 py-4 mobile-menu-open">
+            <div class="grid grid-cols-2 gap-2 text-[11px] uppercase tracking-widest font-semibold text-studio-primary">
+                <a href="#about" onclick="closeMobileMenu()" class="min-h-11 flex items-center border border-studio-border px-3 hover:border-studio-accent hover:text-studio-accent transition-colors">The Artist</a>
+                <a href="#available-works" onclick="closeMobileMenu()" class="min-h-11 flex items-center border border-studio-border px-3 hover:border-studio-accent hover:text-studio-accent transition-colors">Original Works</a>
+                <a href="#commissions" onclick="closeMobileMenu()" class="min-h-11 flex items-center border border-studio-border px-3 hover:border-studio-accent hover:text-studio-accent transition-colors">Commissions</a>
+                <a href="#exhibitions" onclick="closeMobileMenu()" class="min-h-11 flex items-center border border-studio-border px-3 hover:border-studio-accent hover:text-studio-accent transition-colors">Exhibitions</a>
+                <a href="#newsletter" onclick="closeMobileMenu()" class="col-span-2 min-h-11 flex items-center justify-center bg-studio-primary text-white px-3 hover:bg-studio-accent transition-colors">Studio Circle</a>
             </div>
         </div>
     </nav>
 
     <!-- HERO SECTION -->
     <main id="main-content">
-    <header class="reveal relative px-4 sm:px-6 py-14 md:py-24 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center min-h-[calc(100vh-112px)]">
+    <header class="reveal relative px-4 sm:px-6 py-12 sm:py-14 md:py-24 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center min-h-0 md:min-h-[calc(100vh-112px)]">
         <div class="lg:col-span-7 space-y-7">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/80 fine-border text-studio-accent text-[11px] sm:text-xs tracking-widest uppercase rounded-full font-semibold shadow-sm">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Nigerian Thread Painting Studio
@@ -242,7 +261,7 @@
                     Join Collector List
                 </a>
             </div>
-            <div class="grid grid-cols-3 gap-5 max-w-xl pt-4 border-t border-studio-border">
+            <div class="grid grid-cols-3 gap-3 sm:gap-5 max-w-xl pt-4 border-t border-studio-border">
                 <div>
                     <span class="block font-serif text-2xl text-studio-primary">5</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Original Works</span>
@@ -588,7 +607,7 @@
                         </button>
                     </div>
                     <div id="vip-success-msg" class="hidden text-xs text-emerald-400 pt-1">
-                        Thank you. You have been added to the studio update list.
+                        An email draft has opened. Send it to request studio updates.
                     </div>
                 </form>
             </div>
@@ -642,7 +661,7 @@
     </main>
 
     <!-- ARTWORK DETAIL / SELECTION MODAL -->
-    <div id="art-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="art-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-panel bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-studio-border relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black text-xl p-2 z-10">
                 <i data-lucide="x" class="w-6 h-6"></i>
@@ -764,7 +783,7 @@
     </div>
 
     <!-- ACQUISITION INQUIRY MODAL -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="checkout-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-panel bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
             <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
@@ -790,7 +809,7 @@
                 <div class="space-y-3">
                     <h4 class="text-xs uppercase tracking-wider font-bold text-studio-primary border-b pb-1">2. Shipping Destination</h4>
                     <input id="collector-address" type="text" placeholder="Street Address" required class="w-full border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <input id="collector-city" type="text" placeholder="City" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
                         <input id="collector-region" type="text" placeholder="State / Region" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
                         <input id="collector-postal-code" type="text" placeholder="Postal Code" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
@@ -843,7 +862,7 @@
     </div>
 
     <!-- STUDIO POLICIES MODAL -->
-    <div id="policy-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="policy-title">
+    <div id="policy-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="policy-title">
         <div class="modal-panel bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
             <button onclick="closePolicyModal()" aria-label="Close studio policies" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
@@ -856,7 +875,7 @@
     </div>
 
     <!-- GENERAL INQUIRY MODAL -->
-    <div id="inquiry-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="inquiry-modal" class="mobile-modal fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-panel bg-white max-w-lg w-full p-8 border border-stone-200 relative">
             <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
                 <i data-lucide="x" class="w-6 h-6"></i>
@@ -868,11 +887,21 @@
             <form onsubmit="handleInquirySubmit(event)" class="mt-6 space-y-4">
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Full Name</label>
-                    <input type="text" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                    <input id="general-inquiry-name" type="text" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Email Address</label>
-                    <input type="email" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                    <input id="general-inquiry-email" type="email" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Phone / WhatsApp <span class="normal-case tracking-normal">(optional)</span></label>
+                        <input id="general-inquiry-phone" type="tel" class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Country / City</label>
+                        <input id="general-inquiry-location" type="text" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Collector Type</label>
@@ -881,12 +910,17 @@
                         <option>Gallery / Institution</option>
                         <option>Curator / Art Advisor</option>
                         <option>Commission Inquiry</option>
+                        <option>Private Advisory</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Inquiry Details</label>
-                    <textarea id="general-inquiry-message" rows="3" placeholder="Tell us about the artwork, commission, exhibition, or collaboration you are interested in..." class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent"></textarea>
+                    <textarea id="general-inquiry-message" rows="3" placeholder="Include the artwork title, commission idea, preferred size, proposed timeline, or exhibition details..." class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent"></textarea>
                 </div>
+                <label class="flex items-start gap-2 text-[11px] leading-relaxed text-studio-muted cursor-pointer">
+                    <input id="general-inquiry-policy-agreement" type="checkbox" required class="mt-0.5 accent-studio-accent">
+                    <span>I agree that this is an enquiry, not a purchase, and have read the <button type="button" onclick="openPolicyModal('terms')" class="underline hover:text-studio-accent">studio terms</button> and <button type="button" onclick="openPolicyModal('privacy')" class="underline hover:text-studio-accent">privacy policy</button>.</span>
+                </label>
                 <button type="submit" class="w-full bg-studio-primary text-white py-3 text-xs uppercase tracking-widest hover:bg-studio-accent transition-colors">
                     Send Inquiry
                 </button>
@@ -895,14 +929,14 @@
     </div>
 
     <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-studio-primary text-white px-5 py-3 text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3">
+    <div id="toast" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-sm z-50 hidden bg-studio-primary text-white px-5 py-3 text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3">
         <i data-lucide="check-circle-2" class="w-4 h-4 text-studio-accent"></i>
         <span id="toast-text">Action successful</span>
     </div>
 
     <!-- FOOTER -->
     <footer class="bg-stone-100 py-16 border-t border-stone-200">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
             <div class="space-y-4 md:col-span-2">
                 <a href="#main-content" class="font-serif text-2xl tracking-wider text-studio-primary font-semibold">ADESAKIN MARY</a>
                 <p class="text-sm text-studio-muted max-w-sm leading-relaxed">
@@ -914,10 +948,10 @@
                     <p>Ile-Ife / Modakeke, Osun State, Nigeria</p>
                 </div>
                 <div class="flex gap-4 pt-2">
-                    <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Adesakin Mary" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
-                    <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on Instagram" class="text-stone-400 hover:text-studio-accent transition-colors text-lg leading-none"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                    <a href="https://www.tiktok.com/@dammy017?_r=1&_t=ZS-98aw9mfksiq" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on TikTok" class="text-stone-400 hover:text-studio-accent transition-colors text-lg leading-none"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
-                    <a href="https://www.facebook.com/share/1DzBXHzfPN/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on Facebook" class="text-stone-400 hover:text-studio-accent transition-colors text-lg leading-none"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Adesakin Mary" title="Email Mary" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
+                    <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on Instagram" title="Instagram" class="text-stone-400 hover:text-studio-accent transition-colors text-lg leading-none"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.tiktok.com/@dammy017?_r=1&_t=ZS-98aw9mfksiq" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on TikTok" title="TikTok" class="text-stone-400 hover:text-studio-accent transition-colors text-lg leading-none"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+                    <a href="https://www.facebook.com/share/1DzBXHzfPN/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Follow Adesakin Mary on Facebook" title="Facebook" class="text-stone-400 hover:text-studio-accent transition-colors text-lg leading-none"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
                 </div>
             </div>
             
@@ -945,7 +979,7 @@
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center text-[10px] text-stone-400 uppercase tracking-widest">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center text-[10px] text-stone-400 uppercase tracking-widest">
             <p>© 2026 Adesakin Mary Studio. All Rights Reserved.</p>
             <p class="mt-2 md:mt-0">Built with love ❤️</p>
         </div>
@@ -1242,21 +1276,21 @@
                 return;
             }
 
-            // Check if already in cart
+            // Each listed item is a one-of-one original work.
             const existingIndex = cart.findIndex(c => c.id === id);
             if(existingIndex > -1) {
-                cart[existingIndex].qty += 1;
-            } else {
-                cart.push({
-                    id: item.id,
-                    title: item.title,
-                    format: 'original',
-                    formatLabel: 'Original Artwork',
-                    price: price,
-                    image: item.image,
-                    qty: 1
-                });
+                showToast(`"${item.title}" is already in your shortlist`);
+                return;
             }
+            cart.push({
+                id: item.id,
+                title: item.title,
+                format: 'original',
+                formatLabel: 'Original Artwork',
+                price: price,
+                image: item.image,
+                qty: 1
+            });
 
             updateCartUI();
             showToast(`Added "${item.title}" to shortlist`);
@@ -1356,9 +1390,7 @@
             e.preventDefault();
             window.location.href = buildInquiryEmail();
             closeCheckoutModal();
-            cart = [];
-            updateCartUI();
-            showToast("Inquiry draft opened for Mary Adesakin Studio.");
+            showToast("Inquiry draft opened. Your shortlist has been kept.");
         }
         
         function handleNewsletter(e) {
@@ -1371,8 +1403,23 @@
             window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
             document.getElementById('nl-success-msg').classList.remove('hidden');
         }
+
+        function handleVipSignup(e) {
+            e.preventDefault();
+            const email = encodeURIComponent(document.getElementById('vip-email').value || '');
+            const subject = encodeURIComponent('Request for Mary Adesakin studio updates');
+            const body = `Hello Mary,%0A%0APlease send me future original-work and studio updates.%0A%0AEmail: ${email}%0A`;
+            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${subject}&body=${body}`;
+            document.getElementById('vip-success-msg').classList.remove('hidden');
+        }
         
-        function openInquiryModal() {
+        function openInquiryModal(inquiryType = '') {
+            if(inquiryType) {
+                const selector = document.getElementById('general-inquiry-type');
+                if([...selector.options].some(option => option.value === inquiryType)) {
+                    selector.value = inquiryType;
+                }
+            }
             setModalState(document.getElementById('inquiry-modal'), true);
         }
         
@@ -1383,15 +1430,15 @@
         const studioPolicies = {
             terms: {
                 title: 'Terms of Service',
-                content: `<p>Mary Adesakin Studio presents artwork, prices, and availability for general information. A shortlist or enquiry does not reserve, sell, or constitute a contract for an artwork.</p><p>Original works are subject to prior sale. The studio confirms availability, final artwork details, shipping arrangements, delivery timing, and payment instructions in writing before payment is requested. Prices and availability may change before that confirmation.</p><p>Artwork photography is made to represent each work faithfully, but thread, canvas, jute, acrylic, scale, and colour can appear differently across screens. Please request further images or details before committing to acquire a work.</p><p>All artwork images, texts, and site content remain the intellectual property of Mary Adesakin unless stated otherwise. They may not be reproduced, distributed, or used commercially without written permission.</p>`
+                content: `<p>Mary Adesakin Studio presents artwork, prices, and availability for general information. A shortlist or enquiry does not reserve, sell, or constitute a contract for an artwork.</p><h4 class="font-semibold text-studio-primary">Acquisition process</h4><p>Original works are subject to prior sale. Before payment, the studio confirms in writing the artwork, availability, final price, shipping destination, delivery timing, and payment instructions. A sale is confirmed only when the studio issues written confirmation and receives cleared payment.</p><h4 class="font-semibold text-studio-primary">Artwork information</h4><p>Artwork photography is made to represent each work faithfully, but thread, canvas, jute, acrylic, scale, texture, and colour can appear differently across screens. Please request further images or details before committing to acquire a work. Prices exclude shipping, customs duties, and import taxes unless the studio confirms otherwise in writing.</p><h4 class="font-semibold text-studio-primary">Commissions</h4><p>Commission details, including concept, scale, medium, timeline, instalments, revisions, delivery, and cancellation terms, are agreed in writing before studio work begins. The studio may decline a commission that does not suit Mary’s practice or schedule.</p><h4 class="font-semibold text-studio-primary">Copyright</h4><p>All artwork images, texts, and site content remain the intellectual property of Mary Adesakin unless stated otherwise. They may not be reproduced, distributed, or used commercially without written permission.</p>`
             },
             returns: {
                 title: 'Return & Refund Policy',
-                content: `<p>Original artworks and made-to-order commissions are final sale once payment has been confirmed, because each work is unique or created specifically for its collector.</p><p>Please inspect a delivery promptly. If a work arrives damaged, contact the studio within 48 hours of delivery with your order details, photographs of the packaging, and clear images of the damage. The studio will review the matter and discuss an appropriate remedy, which may include repair, replacement where possible, or a refund.</p><p>Shipping, customs duties, import taxes, and return carriage are confirmed for each acquisition before payment. The studio cannot refund delays or charges caused by customs authorities or circumstances outside its control.</p>`
+                content: `<p>Original artworks and made-to-order commissions are final sale once payment has been confirmed, because each work is unique or created specifically for its collector.</p><h4 class="font-semibold text-studio-primary">Cancellations and changes of mind</h4><p>Change-of-mind returns and exchanges are not offered for original works. Commission cancellations and any deposit arrangements are governed by the written commission agreement provided before work begins.</p><h4 class="font-semibold text-studio-primary">Delivery damage</h4><p>Please inspect a delivery promptly. If a work arrives damaged, contact the studio within 48 hours of delivery with your order details, photographs of the outer packaging, and clear images of the damage. Keep the original packaging until the studio responds. The studio will review the matter and discuss an appropriate remedy, which may include repair, replacement where possible, or a refund.</p><h4 class="font-semibold text-studio-primary">Shipping and import charges</h4><p>Shipping, customs duties, import taxes, insurance, and return carriage are confirmed for each acquisition before payment. The studio cannot refund delays or charges caused by customs authorities or circumstances outside its control.</p>`
             },
             privacy: {
                 title: 'Privacy Policy',
-                content: `<p>Mary Adesakin Studio collects the information you choose to provide in an enquiry, including your name, email address, shipping destination, and message. This information is used only to respond to your enquiry, prepare an invoice or shipping quote, fulfil an agreed acquisition or commission, and keep studio records.</p><p>This website opens your email application to send enquiries and Studio Circle sign-ups; it does not process card payments or store payment-card details. Please do not send bank, card, or other sensitive financial information through the enquiry form.</p><p>The studio does not sell personal information. Information may be shared only with service providers needed to fulfil an agreed order, such as a shipping carrier, or where required by law. To ask about, correct, or request deletion of your information, email adesakinmary2020@gmail.com.</p>`
+                content: `<p>Mary Adesakin Studio collects the information you choose to provide in an enquiry, including your name, email address, phone number, location, shipping destination, and message. This information is used only to respond to your enquiry, prepare an invoice or shipping quote, fulfil an agreed acquisition or commission, and keep studio records.</p><h4 class="font-semibold text-studio-primary">How this website works</h4><p>This website opens your email application to send enquiries and Studio Circle sign-ups. It does not process card payments or store payment-card details. Please do not send bank, card, or other sensitive financial information through an enquiry email.</p><h4 class="font-semibold text-studio-primary">Sharing and your choices</h4><p>The studio does not sell personal information. Information may be shared only with service providers needed to fulfil an agreed order, such as a shipping carrier, or where required by law. To ask about, correct, or request deletion of your information, email adesakinmary2020@gmail.com.</p><h4 class="font-semibold text-studio-primary">External links</h4><p>Instagram, TikTok, Facebook, and any other external links operate under their own privacy policies. The studio is not responsible for how those third-party services collect or use information.</p>`
             }
         };
 
@@ -1409,8 +1456,13 @@
         function handleInquirySubmit(e) {
             e.preventDefault();
             const inquiryType = encodeURIComponent(document.getElementById('general-inquiry-type')?.value || 'Studio Inquiry');
+            const name = encodeURIComponent(document.getElementById('general-inquiry-name')?.value || '');
+            const email = encodeURIComponent(document.getElementById('general-inquiry-email')?.value || '');
+            const phone = encodeURIComponent(document.getElementById('general-inquiry-phone')?.value || 'Not provided');
+            const location = encodeURIComponent(document.getElementById('general-inquiry-location')?.value || '');
             const inquiryMessage = encodeURIComponent(document.getElementById('general-inquiry-message')?.value || '');
-            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${inquiryType}&body=Hello Mary,%0A%0A${inquiryMessage}%0A`;
+            const body = `Hello Mary,%0A%0AName: ${name}%0AEmail: ${email}%0APhone / WhatsApp: ${phone}%0ALocation: ${location}%0A%0AInquiry:%0A${inquiryMessage}%0A`;
+            window.location.href = `mailto:adesakinmary2020@gmail.com?subject=${inquiryType}&body=${body}`;
             closeInquiryModal();
             showToast("Inquiry draft opened for Mary Adesakin Studio.");
         }
@@ -1421,7 +1473,24 @@
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
         }
+
+        function toggleMobileMenu(forceOpen) {
+            const menu = document.getElementById('mobile-menu');
+            const button = document.getElementById('mobile-menu-button');
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', !shouldOpen);
+            button.setAttribute('aria-expanded', String(shouldOpen));
+            button.setAttribute('aria-label', shouldOpen ? 'Close site navigation' : 'Open site navigation');
+            button.innerHTML = `<i data-lucide="${shouldOpen ? 'x' : 'menu'}" class="w-5 h-5"></i>`;
+            lucide.createIcons();
+        }
+
+        function closeMobileMenu() {
+            toggleMobileMenu(false);
+        }
+
         function scrollToSection(id) {
+            closeMobileMenu();
             document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1440,6 +1509,7 @@
             closeCheckoutModal();
             closeInquiryModal();
             closePolicyModal();
+            closeMobileMenu();
             setModalState(document.getElementById('cart-drawer'), false);
         });
     </script>
