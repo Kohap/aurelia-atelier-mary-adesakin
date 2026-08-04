@@ -22,10 +22,12 @@ import './styles.css';
 import {
   artworkForHash,
   hasPaymentLink,
+  hasPrintPricing,
   isPositivePrice,
   money,
   normalizePrice,
   paymentUrlFor,
+  printOptionsFor,
 } from './app-utils.js';
 
 const FORMSPREE_INQUIRY_ENDPOINT = 'https://formspree.io/f/mppaawgd';
@@ -422,7 +424,7 @@ function App() {
                     <dt>{t.format}</dt>
                     <dd>Original + Print</dd>
                     <dt>{t.print}</dt>
-                    <dd>{isPositivePrice(art.printPrice) ? money(art.printPrice) : t.availableByInquiry}</dd>
+                    <dd><PrintPricing artwork={art} fallback={t.availableByInquiry} /></dd>
                   </dl>
                   <div className="card-actions">
                     <button type="button" onClick={() => openArtwork(art)}>{t.viewSelect}</button>
@@ -492,7 +494,7 @@ function App() {
               <dl>
                 <dt>Year</dt><dd>{selected.year}</dd>
                 <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : isPositivePrice(selected.originalPrice) ? money(selected.originalPrice) : t.priceOnRequest}</dd>
-                <dt>{t.print}</dt><dd>{isPositivePrice(selected.printPrice) ? money(selected.printPrice) : t.availableByInquiry}</dd>
+                <dt>{t.print}</dt><dd><PrintPricing artwork={selected} fallback={t.availableByInquiry} /></dd>
                 <dt>{t.edition}</dt><dd>{selected.edition}</dd>
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
               </dl>
@@ -666,13 +668,45 @@ function PolicyDialog({ policy, onClose }) {
   );
 }
 
+function PrintPricing({ artwork, fallback }) {
+  const options = printOptionsFor(artwork);
+
+  if (options.length) {
+    return (
+      <span className="print-options">
+        {options.map((option) => (
+          <span key={option.size}>
+            <span>{option.size}</span>
+            <strong>{money(option.price)}</strong>
+          </span>
+        ))}
+      </span>
+    );
+  }
+
+  return money(artwork.printPrice) || fallback;
+}
+
 function AdminPanel({ artworks, setArtworks, showToast }) {
   const pricedOriginals = artworks.filter((art) => isPositivePrice(art.originalPrice)).length;
-  const pricedPrints = artworks.filter((art) => isPositivePrice(art.printPrice)).length;
+  const pricedPrints = artworks.filter(hasPrintPricing).length;
 
   const updatePrice = (id, field, value) => {
     setArtworks((items) => items.map((art) => (
       art.id === id ? { ...art, [field]: normalizePrice(value) } : art
+    )));
+  };
+
+  const updatePrintOption = (id, optionIndex, value) => {
+    setArtworks((items) => items.map((art) => (
+      art.id === id
+        ? {
+          ...art,
+          printOptions: art.printOptions.map((option, index) => (
+            index === optionIndex ? { ...option, price: normalizePrice(value) } : option
+          )),
+        }
+        : art
     )));
   };
 
@@ -734,17 +768,33 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
                 placeholder="Price on request"
               />
             </label>
-            <label className="admin-field">
-              <span>Print price</span>
-              <input
-                type="number"
-                min="1"
-                step="1"
-                value={art.printPrice ?? ''}
-                onChange={(event) => updatePrice(art.id, 'printPrice', event.target.value)}
-                placeholder="Available by inquiry"
-              />
-            </label>
+            <div className="admin-print-fields">
+              {Array.isArray(art.printOptions) && art.printOptions.length ? art.printOptions.map((option, index) => (
+                <label className="admin-field" key={option.size}>
+                  <span>Print {option.size}</span>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={option.price ?? ''}
+                    onChange={(event) => updatePrintOption(art.id, index, event.target.value)}
+                    placeholder="Price"
+                  />
+                </label>
+              )) : (
+                <label className="admin-field">
+                  <span>Print price</span>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={art.printPrice ?? ''}
+                    onChange={(event) => updatePrice(art.id, 'printPrice', event.target.value)}
+                    placeholder="Available by inquiry"
+                  />
+                </label>
+              )}
+            </div>
           </article>
         ))}
       </div>

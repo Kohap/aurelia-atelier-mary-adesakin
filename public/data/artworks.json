@@ -7,8 +7,18 @@
     "year": "2025",
     "medium": "Thread on Canvas",
     "dimensions": "30 x 32 inches",
-    "originalPrice": 1000,
+    "originalPrice": 2500,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100
+      },
+      {
+        "size": "16 x 20 inches",
+        "price": 200
+      }
+    ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original catalogue work by Mary Adesakin Damilola.",
@@ -51,7 +61,7 @@
     "year": "2025",
     "medium": "Thread on Jute",
     "dimensions": "42 x 51 inches",
-    "originalPrice": 850,
+    "originalPrice": 3000,
     "printPrice": null,
     "status": "Available",
     "edition": "Original work",
@@ -95,8 +105,14 @@
     "year": "2026",
     "medium": "Mixed Media (Thread and Acrylic on Canvas)",
     "dimensions": "36 x 36 inches",
-    "originalPrice": null,
+    "originalPrice": 2500,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100
+      }
+    ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
@@ -117,8 +133,14 @@
     "year": "2026",
     "medium": "Thread and Acrylic on Canvas",
     "dimensions": "21 x 26 inches",
-    "originalPrice": null,
+    "originalPrice": 120,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100
+      }
+    ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
@@ -139,8 +161,14 @@
     "year": "2026",
     "medium": "Thread and Acrylic on Canvas",
     "dimensions": "18 x 19 inches",
-    "originalPrice": null,
+    "originalPrice": 700,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 70
+      }
+    ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
@@ -161,8 +189,14 @@
     "year": "2025",
     "medium": "Mixed Media (Thread and Acrylic on Canvas)",
     "dimensions": "20 x 24 inches",
-    "originalPrice": null,
+    "originalPrice": 1000,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100
+      }
+    ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
@@ -183,8 +217,14 @@
     "year": "2026",
     "medium": "Mixed Media (Thread and Acrylic on Canvas)",
     "dimensions": "17 x 17 inches",
-    "originalPrice": null,
+    "originalPrice": 900,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 70
+      }
+    ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",

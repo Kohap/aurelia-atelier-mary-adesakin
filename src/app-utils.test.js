@@ -4,9 +4,11 @@ import assert from 'node:assert/strict';
 import {
   artworkForHash,
   hasPaymentLink,
+  hasPrintPricing,
   money,
   normalizePrice,
   parseArtworkHash,
+  printOptionsFor,
 } from './app-utils.js';
 
 test('parseArtworkHash returns an artwork slug only for valid artwork routes', () => {
@@ -40,6 +42,20 @@ test('money formats positive prices and leaves missing prices blank', () => {
   assert.equal(money(1000), '$1,000 USD');
   assert.equal(money(null), '');
   assert.equal(money(0), '');
+});
+
+test('printOptionsFor returns only complete size-specific print prices', () => {
+  const artwork = {
+    printOptions: [
+      { size: '10 x 12 inches', price: 100 },
+      { size: '', price: 70 },
+      { size: '16 x 20 inches', price: 0 },
+    ],
+  };
+  assert.deepEqual(printOptionsFor(artwork), [{ size: '10 x 12 inches', price: 100 }]);
+  assert.equal(hasPrintPricing(artwork), true);
+  assert.equal(hasPrintPricing({ printPrice: 70 }), true);
+  assert.equal(hasPrintPricing({ printPrice: null }), false);
 });
 
 test('hasPaymentLink requires an available artwork and an approved HTTPS Stripe URL', () => {

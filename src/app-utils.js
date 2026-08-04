@@ -10,6 +10,18 @@ export const normalizePrice = (value) => {
   return Number.isFinite(number) && number > 0 ? number : null;
 };
 
+export const printOptionsFor = (artwork) => (
+  Array.isArray(artwork?.printOptions)
+    ? artwork.printOptions.filter((option) => (
+      typeof option?.size === 'string' && option.size.trim() && isPositivePrice(option.price)
+    ))
+    : []
+);
+
+export const hasPrintPricing = (artwork) => (
+  printOptionsFor(artwork).length > 0 || isPositivePrice(artwork?.printPrice)
+);
+
 export const parseArtworkHash = (hash) => {
   if (!hash.startsWith('#artwork/')) return null;
 

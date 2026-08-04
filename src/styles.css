@@ -202,6 +202,10 @@ h1 em { display: block; font-style: italic; font-weight: 500; }
 dl { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; margin: auto 0 0; border-top: 1px solid var(--border); padding-top: 14px; font-size: .8rem; }
 dt { color: var(--muted); }
 dd { margin: 0; font-weight: 700; text-align: right; }
+.print-options { display: grid; gap: 7px; }
+.print-options > span { display: grid; gap: 1px; }
+.print-options > span > span { color: var(--muted); font-size: .72rem; font-weight: 500; white-space: nowrap; }
+.print-options strong { color: var(--primary); }
 .card-actions { gap: 8px; margin-top: 4px; }
 .card-actions button:first-child { flex: 1; background: var(--primary); color: white; border-color: var(--primary); }
 
@@ -301,6 +305,7 @@ dd { margin: 0; font-weight: 700; text-align: right; }
   line-height: 1.5;
 }
 .admin-field { display: grid; gap: 7px; }
+.admin-print-fields { display: grid; gap: 10px; }
 .admin-field span {
   font-size: .66rem;
   font-weight: 800;
@@ -475,7 +480,7 @@ footer small {
   .trust-row { grid-template-columns: 1fr; }
   .admin-row { grid-template-columns: 72px minmax(0, 1fr); align-items: start; }
   .admin-row img { width: 72px; height: 72px; }
-  .admin-field { grid-column: 1 / -1; }
+  .admin-field, .admin-print-fields { grid-column: 1 / -1; }
   .modal-panel > img { min-height: 320px; max-height: 52vh; }
 }
 
