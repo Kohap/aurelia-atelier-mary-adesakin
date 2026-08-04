@@ -14,12 +14,13 @@ The site is designed for collectors, curators, galleries, and art advisors who w
 
 - React/Vite app structure for easier future editing
 - Admin-friendly JSON artwork catalogue in `public/data/artworks.json`
-- Browser admin screen at `/#admin` for editing original and print prices before exporting JSON
+- Browser admin screen at `/adesakin/admin/` for editing original and print prices before exporting JSON
 - Responsive artist portfolio and artwork catalogue
+- Separate Original Works and Print Works catalogue browsing
 - Original artwork cards with status, dimensions, medium, year, and inquiry flow
 - Collection browsing, search, and sort controls
 - Multilingual interface support for English, Yoruba, and French
-- Stripe deposit/payment link fields for available works
+- Paystack deposit, original, and print Product Link fields
 - Collector shortlist and acquisition inquiry modal
 - Formspree-powered studio inquiry and mailing list forms
 - Plausible analytics snippet
@@ -98,8 +99,9 @@ Publishing files:
 ## Maintenance Notes
 
 - Keep artwork data inside `public/data/artworks.json`.
-- Use `/#admin` to edit `originalPrice` and `printPrice`, export the updated JSON, replace `public/data/artworks.json`, then commit and push.
-- To add Stripe payments, paste real Stripe Payment Link URLs into `stripeDepositUrl` or `stripePaymentUrl` for each available artwork.
+- Use `/adesakin/admin/` to edit original and print prices, export the updated JSON, replace `public/data/artworks.json`, then commit and push.
+- To accept payments, create live Paystack Product Links and paste them into the original, deposit, and print link fields in `/adesakin/admin/`.
+- Never add a Paystack secret key to this repository. Secure digital delivery requires server-side transaction verification and signed download links.
 - Keep image filenames stable once they are published, unless the corresponding artwork record is updated.
 - Update `sitemap.xml` when the canonical URL changes.
 - Keep Formspree endpoints in `src/main.jsx` and analytics snippets in `index.html`.

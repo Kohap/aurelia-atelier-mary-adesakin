@@ -22,11 +22,15 @@ import './styles.css';
 import {
   artworkForHash,
   hasPaymentLink,
+  hasPrintPaymentLink,
   hasPrintPricing,
+  isAdminPath,
   isPositivePrice,
+  matchesCatalogueFilter,
   money,
   normalizePrice,
   paymentUrlFor,
+  printPaymentUrlFor,
   printOptionsFor,
 } from './app-utils.js';
 
@@ -70,12 +74,13 @@ const translations = {
     explore: 'Explore Catalogue',
     collectorList: 'Join Collector List',
     originalWorks: 'Original Works',
+    printWorks: 'Print Works',
     exhibitions: 'Exhibitions',
     threadWorks: 'Thread Works',
     catalogue: 'Collector Catalogue',
     catalogueTitle: 'Original Works & Studio Inquiries',
     searchPlaceholder: 'Search by title, series, material, or year',
-    allWorks: 'All Works',
+    allWorks: 'Original Works',
     pricedWorks: 'Priced Works',
     priceOnRequest: 'Price on Request',
     works2026: '2026 Works',
@@ -93,7 +98,7 @@ const translations = {
     addShortlist: 'Add to Collector Shortlist',
     payDeposit: 'Pay Deposit',
     payInFull: 'Pay in Full',
-    stripeMissing: 'Stripe link not added yet. Use inquiry for now.',
+    buyPrint: 'Buy Print',
     inquirySent: 'Inquiry sent to Mary Adesakin Studio.',
     linkCopied: 'Artwork link copied.',
     artist: 'The Artist Bio',
@@ -113,12 +118,13 @@ const translations = {
     explore: 'Wo Katalogi',
     collectorList: 'Darapo mo Akojopo',
     originalWorks: 'Awon Ise Atilẹba',
+    printWorks: 'Awon Print',
     exhibitions: 'Ifihan',
     threadWorks: 'Ise Okun',
     catalogue: 'Katalogi Akojopo',
     catalogueTitle: 'Awon Ise Atilẹba ati Ibeere Studio',
     searchPlaceholder: 'Wa nipa akole, jara, ohun elo, tabi odun',
-    allWorks: 'Gbogbo Ise',
+    allWorks: 'Awon Ise Atilẹba',
     pricedWorks: 'Ise pelu owo',
     priceOnRequest: 'Owo lori Ibeere',
     works2026: 'Ise 2026',
@@ -136,7 +142,7 @@ const translations = {
     addShortlist: 'Fi kun akojopo',
     payDeposit: 'San Deposit',
     payInFull: 'San ni kikun',
-    stripeMissing: 'A ko ti fi link Stripe kun. Lo inquiry fun bayi.',
+    buyPrint: 'Ra Print',
     inquirySent: 'Ibeere ti lo si Mary Adesakin Studio.',
     linkCopied: 'Link ise ti da ko.',
     artist: 'Olorin',
@@ -153,12 +159,13 @@ const translations = {
     explore: 'Explorer le catalogue',
     collectorList: 'Rejoindre la liste',
     originalWorks: 'Oeuvres originales',
+    printWorks: 'Tirages',
     exhibitions: 'Expositions',
     threadWorks: 'Oeuvres au fil',
     catalogue: 'Catalogue collectionneur',
     catalogueTitle: 'Oeuvres originales & demandes au studio',
     searchPlaceholder: 'Rechercher par titre, serie, materiau ou annee',
-    allWorks: 'Toutes les oeuvres',
+    allWorks: 'Oeuvres originales',
     pricedWorks: 'Oeuvres avec prix',
     priceOnRequest: 'Prix sur demande',
     works2026: 'Oeuvres 2026',
@@ -176,7 +183,7 @@ const translations = {
     addShortlist: 'Ajouter a la selection',
     payDeposit: 'Payer un acompte',
     payInFull: 'Payer en totalite',
-    stripeMissing: 'Lien Stripe pas encore ajoute. Utilisez la demande pour le moment.',
+    buyPrint: 'Acheter le tirage',
     inquirySent: 'Demande envoyee au studio Mary Adesakin.',
     linkCopied: 'Lien de l oeuvre copie.',
     artist: "L'artiste",
@@ -200,7 +207,7 @@ function App() {
   const [policyName, setPolicyName] = useState(null);
   const [toast, setToast] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [adminMode, setAdminMode] = useState(() => window.location.hash === '#admin');
+  const adminMode = isAdminPath(window.location.pathname);
   const t = translations[lang];
   const featuredArt = artworks.find((art) => art.slug === 'the-weight-of-words');
 
@@ -226,13 +233,6 @@ function App() {
   }, [lang]);
 
   useEffect(() => {
-    const handleRoute = () => setAdminMode(window.location.hash === '#admin');
-    handleRoute();
-    window.addEventListener('hashchange', handleRoute);
-    return () => window.removeEventListener('hashchange', handleRoute);
-  }, []);
-
-  useEffect(() => {
     if (!toast) return undefined;
     const timer = setTimeout(() => setToast(''), 2600);
     return () => clearTimeout(timer);
@@ -241,13 +241,8 @@ function App() {
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return artworks.filter((art) => {
-      const matchesFilter =
-        filter === 'all' ||
-        (filter === 'priced' && art.status === 'Available' && isPositivePrice(art.originalPrice)) ||
-        (filter === 'request' && art.status !== 'Sold' && !isPositivePrice(art.originalPrice)) ||
-        (filter === '2026' && art.year === '2026');
       const haystack = [art.title, art.collection, art.medium, art.year, art.dimensions].join(' ').toLowerCase();
-      return matchesFilter && (!needle || haystack.includes(needle));
+      return matchesCatalogueFilter(art, filter) && (!needle || haystack.includes(needle));
     });
   }, [artworks, filter, query]);
 
@@ -294,23 +289,24 @@ function App() {
     setShortlist((items) => items.filter((item) => item.id !== id));
   };
 
-  const handlePaymentLink = (art, type) => {
-    if (!hasPaymentLink(art, type)) return;
-    window.open(paymentUrlFor(art, type), '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <>
       <header className="topbar">
-        <a href="#main" className="brand">
+        <a href={adminMode ? import.meta.env.BASE_URL : '#main'} className="brand">
           <img src={`${import.meta.env.BASE_URL}assets/favicon.svg`} alt="Adesakin Mary Studio" />
           <span>Adesakin Mary</span>
         </a>
         <nav className={menuOpen ? 'nav open' : 'nav'}>
-          <a href="#artist" onClick={() => setMenuOpen(false)}>{t.artist}</a>
-          <a href="#catalogue" onClick={() => setMenuOpen(false)}>{t.originalWorks}</a>
-          <a href="#exhibitions" onClick={() => setMenuOpen(false)}>{t.exhibitions}</a>
-          <a href="#admin" onClick={() => setMenuOpen(false)}>Admin</a>
+          {adminMode ? (
+            <a href={import.meta.env.BASE_URL}>View public site</a>
+          ) : (
+            <>
+              <a href="#artist" onClick={() => setMenuOpen(false)}>{t.artist}</a>
+              <a href="#catalogue" onClick={() => { setFilter('all'); setMenuOpen(false); }}>{t.originalWorks}</a>
+              <a href="#catalogue" onClick={() => { setFilter('prints'); setMenuOpen(false); }}>{t.printWorks}</a>
+              <a href="#exhibitions" onClick={() => setMenuOpen(false)}>{t.exhibitions}</a>
+            </>
+          )}
         </nav>
         <div className="tools">
           <label className="language">
@@ -390,6 +386,7 @@ function App() {
             <div className="filters">
               {[
                 ['all', t.allWorks],
+                ['prints', t.printWorks],
                 ['priced', t.pricedWorks],
                 ['request', t.priceOnRequest],
                 ['2026', t.works2026],
@@ -419,12 +416,21 @@ function App() {
                   <p className="spec">{art.medium} / {art.dimensions}</p>
                   <p>{artworkDescription(art, lang)}</p>
                   <dl>
-                    <dt>{t.originalPainting}</dt>
-                    <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}</dd>
-                    <dt>{t.format}</dt>
-                    <dd>Original + Print</dd>
-                    <dt>{t.print}</dt>
-                    <dd><PrintPricing artwork={art} fallback={t.availableByInquiry} /></dd>
+                    {filter === 'prints' ? (
+                      <>
+                        <dt>{t.print}</dt>
+                        <dd><PrintPricing artwork={art} fallback={t.availableByInquiry} /></dd>
+                        <dt>{t.format}</dt>
+                        <dd>{t.printWorks}</dd>
+                      </>
+                    ) : (
+                      <>
+                        <dt>{t.originalPainting}</dt>
+                        <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}</dd>
+                        <dt>{t.format}</dt>
+                        <dd>{t.originalPainting}</dd>
+                      </>
+                    )}
                   </dl>
                   <div className="card-actions">
                     <button type="button" onClick={() => openArtwork(art)}>{t.viewSelect}</button>
@@ -494,14 +500,14 @@ function App() {
               <dl>
                 <dt>Year</dt><dd>{selected.year}</dd>
                 <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : isPositivePrice(selected.originalPrice) ? money(selected.originalPrice) : t.priceOnRequest}</dd>
-                <dt>{t.print}</dt><dd><PrintPricing artwork={selected} fallback={t.availableByInquiry} /></dd>
+                <dt>{t.print}</dt><dd><PrintPricing artwork={selected} fallback={t.availableByInquiry} buyLabel={t.buyPrint} /></dd>
                 <dt>{t.edition}</dt><dd>{selected.edition}</dd>
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
               </dl>
               <div className="modal-actions">
                 <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
-                {hasPaymentLink(selected, 'deposit') ? <button type="button" onClick={() => handlePaymentLink(selected, 'deposit')}><ExternalLink size={16} /> {t.payDeposit}</button> : null}
-                {hasPaymentLink(selected, 'full') ? <button type="button" onClick={() => handlePaymentLink(selected, 'full')}><ExternalLink size={16} /> {t.payInFull}</button> : null}
+                {hasPaymentLink(selected, 'deposit') ? <a href={paymentUrlFor(selected, 'deposit')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payDeposit}</a> : null}
+                {hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null}
                 {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
                 <a href={`mailto:adesakinmary2020@gmail.com?subject=Artwork inquiry: ${encodeURIComponent(selected.title)}`}>{t.requestDetails}</a>
               </div>
@@ -668,7 +674,7 @@ function PolicyDialog({ policy, onClose }) {
   );
 }
 
-function PrintPricing({ artwork, fallback }) {
+function PrintPricing({ artwork, fallback, buyLabel }) {
   const options = printOptionsFor(artwork);
 
   if (options.length) {
@@ -678,6 +684,11 @@ function PrintPricing({ artwork, fallback }) {
           <span key={option.size}>
             <span>{option.size}</span>
             <strong>{money(option.price)}</strong>
+            {hasPrintPaymentLink(option) ? (
+              <a className="print-buy-link" href={printPaymentUrlFor(option)} target="_blank" rel="noreferrer">
+                <ExternalLink size={14} /> {buyLabel}
+              </a>
+            ) : null}
           </span>
         ))}
       </span>
@@ -697,13 +708,21 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
     )));
   };
 
-  const updatePrintOption = (id, optionIndex, value) => {
+  const updateField = (id, field, value) => {
+    setArtworks((items) => items.map((art) => (
+      art.id === id ? { ...art, [field]: value.trim() } : art
+    )));
+  };
+
+  const updatePrintOption = (id, optionIndex, field, value) => {
     setArtworks((items) => items.map((art) => (
       art.id === id
         ? {
           ...art,
           printOptions: art.printOptions.map((option, index) => (
-            index === optionIndex ? { ...option, price: normalizePrice(value) } : option
+            index === optionIndex
+              ? { ...option, [field]: field === 'price' ? normalizePrice(value) : value.trim() }
+              : option
           )),
         }
         : art
@@ -730,7 +749,7 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
         <div>
           <span className="kicker"><Settings size={16} /> Catalogue Admin</span>
           <h1>Artwork Pricing Editor</h1>
-          <p>Edit original artwork prices and print prices, then export the updated JSON for the site catalogue.</p>
+          <p>Edit prices and add verified Paystack Product Links, then export the updated JSON for the site catalogue.</p>
         </div>
         <button type="button" className="primary admin-download" onClick={exportJson}>
           <Download size={16} /> Export JSON
@@ -744,7 +763,7 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
       </div>
 
       <div className="admin-note">
-        <strong>How to publish price edits:</strong>
+        <strong>How to publish catalogue edits:</strong>
         <span>Export the JSON, replace <code>public/data/artworks.json</code> with the download, then commit and push.</span>
       </div>
 
@@ -777,7 +796,7 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
                     min="1"
                     step="1"
                     value={option.price ?? ''}
-                    onChange={(event) => updatePrintOption(art.id, index, event.target.value)}
+                    onChange={(event) => updatePrintOption(art.id, index, 'price', event.target.value)}
                     placeholder="Price"
                   />
                 </label>
@@ -794,6 +813,40 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
                   />
                 </label>
               )}
+            </div>
+            <div className="admin-payment-fields">
+              <label className="admin-field">
+                <span>Original Paystack Product Link</span>
+                <input
+                  type="url"
+                  inputMode="url"
+                  value={art.paystackPaymentUrl ?? ''}
+                  onChange={(event) => updateField(art.id, 'paystackPaymentUrl', event.target.value)}
+                  placeholder="https://paystack.com/buy/..."
+                />
+              </label>
+              <label className="admin-field">
+                <span>Deposit Paystack Payment Link</span>
+                <input
+                  type="url"
+                  inputMode="url"
+                  value={art.paystackDepositUrl ?? ''}
+                  onChange={(event) => updateField(art.id, 'paystackDepositUrl', event.target.value)}
+                  placeholder="https://paystack.com/pay/..."
+                />
+              </label>
+              {Array.isArray(art.printOptions) ? art.printOptions.map((option, index) => (
+                <label className="admin-field" key={`payment-${option.size}`}>
+                  <span>Print {option.size} Paystack Product Link</span>
+                  <input
+                    type="url"
+                    inputMode="url"
+                    value={option.paystackPaymentUrl ?? ''}
+                    onChange={(event) => updatePrintOption(art.id, index, 'paystackPaymentUrl', event.target.value)}
+                    placeholder="https://paystack.com/buy/..."
+                  />
+                </label>
+              )) : null}
             </div>
           </article>
         ))}

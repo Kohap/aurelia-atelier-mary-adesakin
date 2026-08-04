@@ -22,6 +22,14 @@ export const hasPrintPricing = (artwork) => (
   printOptionsFor(artwork).length > 0 || isPositivePrice(artwork?.printPrice)
 );
 
+export const matchesCatalogueFilter = (artwork, filter) => (
+  filter === 'all' ||
+  (filter === 'prints' && hasPrintPricing(artwork)) ||
+  (filter === 'priced' && artwork?.status === 'Available' && isPositivePrice(artwork?.originalPrice)) ||
+  (filter === 'request' && artwork?.status !== 'Sold' && !isPositivePrice(artwork?.originalPrice)) ||
+  (filter === '2026' && artwork?.year === '2026')
+);
+
 export const parseArtworkHash = (hash) => {
   if (!hash.startsWith('#artwork/')) return null;
 
@@ -37,20 +45,33 @@ export const artworkForHash = (artworks, hash) => {
   return slug ? artworks.find((artwork) => artwork.slug === slug) || null : null;
 };
 
+export const isAdminPath = (pathname) => {
+  if (typeof pathname !== 'string') return false;
+  return pathname.replace(/\/+$/, '').endsWith('/adesakin/admin');
+};
+
 export const paymentUrlFor = (artwork, type) => (
-  type === 'deposit' ? artwork?.stripeDepositUrl : artwork?.stripePaymentUrl
+  type === 'deposit' ? artwork?.paystackDepositUrl : artwork?.paystackPaymentUrl
 );
 
-export const hasPaymentLink = (artwork, type) => {
-  if (artwork?.status !== 'Available') return false;
+export const printPaymentUrlFor = (option) => option?.paystackPaymentUrl;
 
-  const url = paymentUrlFor(artwork, type);
-  if (typeof url !== 'string') return false;
+export const isPaystackPaymentUrl = (value) => {
+  if (typeof value !== 'string' || !value.trim()) return false;
 
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'https:' && ['buy.stripe.com', 'checkout.stripe.com'].includes(parsed.hostname);
+    const parsed = new URL(value);
+    const approvedHost = parsed.hostname === 'paystack.com' || parsed.hostname.endsWith('.paystack.com');
+    const approvedPath = parsed.pathname.startsWith('/pay/') || parsed.pathname.startsWith('/buy/');
+    return parsed.protocol === 'https:' && approvedHost && approvedPath;
   } catch {
     return false;
   }
 };
+
+export const hasPaymentLink = (artwork, type) => {
+  if (artwork?.status !== 'Available') return false;
+  return isPaystackPaymentUrl(paymentUrlFor(artwork, type));
+};
+
+export const hasPrintPaymentLink = (option) => isPaystackPaymentUrl(printPaymentUrlFor(option));

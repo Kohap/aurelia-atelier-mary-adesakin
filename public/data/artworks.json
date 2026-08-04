@@ -12,19 +12,21 @@
     "printOptions": [
       {
         "size": "10 x 12 inches",
-        "price": 100
+        "price": 100,
+        "paystackPaymentUrl": ""
       },
       {
         "size": "16 x 20 inches",
-        "price": 200
+        "price": 200,
+        "paystackPaymentUrl": ""
       }
     ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original catalogue work by Mary Adesakin Damilola.",
     "image": "assets/artwork/the-weight-of-words.png",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "This art piece depicts a man immersed in a newspaper, seated in his private library. The work reflects on media, solitude, and the psychological weight of staying informed in an age of constant updates.",
       "yo": "Ise yi n wo bi iroyin, ipalemo inu, ati iwuwo ero se n kan eniyan.",
@@ -45,8 +47,8 @@
     "edition": "Original work",
     "provenance": "Original catalogue work by Mary Adesakin Damilola.",
     "image": "assets/artwork/maze-of-uncertainty-sold-2025.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "Maze of Uncertainty was created as a reflection on the moments in life when the path ahead feels unclear. Through the woman's contemplative gaze and the shifting colors of the background, I explore how vulnerability and strength coexist in times of doubt.",
       "yo": "Maze of Uncertainty n soro nipa akoko ti ona iwaju ko ye wa, ati bi ailera ati agbara se le wa papo.",
@@ -67,8 +69,8 @@
     "edition": "Original work",
     "provenance": "Featured at the Life In My City Art Festival Ondo Regional Zone.",
     "image": "assets/artwork/loud-silence.png",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "Loud Silence captures a frozen scream, a suspended moment of agony, a cry for breath, and a plea for justice. The loose vertical threads split the face and conceal the voice.",
       "yo": "Loud Silence n mu igbe inu, irora, ati ipe fun ododo han pelu okun.",
@@ -89,8 +91,8 @@
     "edition": "Original work",
     "provenance": "Original catalogue work by Mary Adesakin Damilola.",
     "image": "assets/artwork/visible-within.png",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "This work depicts the eye as the window of the soul, using thread to materialize emotional release. Turquoise strands transform tears into a symbol of healing rather than fragility.",
       "yo": "Ise yi lo oju gege bi ferese okan, pelu okun ti o so omije di ami iwosan.",
@@ -110,15 +112,16 @@
     "printOptions": [
       {
         "size": "10 x 12 inches",
-        "price": 100
+        "price": 100,
+        "paystackPaymentUrl": ""
       }
     ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
     "image": "assets/artwork/hands-that-wont-let-go.png",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "A violinist held by multiple hands, tracing the fragile line between guidance, inherited pressure, and the desire for self-expression.",
       "yo": "Olorin violin ti owo pupo di mu, laarin itoju, ipa, ati ife lati so ara re han.",
@@ -133,20 +136,21 @@
     "year": "2026",
     "medium": "Thread and Acrylic on Canvas",
     "dimensions": "21 x 26 inches",
-    "originalPrice": 120,
+    "originalPrice": 1200,
     "printPrice": null,
     "printOptions": [
       {
         "size": "10 x 12 inches",
-        "price": 100
+        "price": 100,
+        "paystackPaymentUrl": ""
       }
     ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
     "image": "assets/artwork/the-ife-muse.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "Inspired by ancient Ife bronze heads, this portrait reconnects facial markings, memory, and Yoruba heritage through thread.",
       "yo": "Ise yi ni imisi lati ori idẹ Ife atijo, ti o so iranti ati asa Yoruba po pelu okun.",
@@ -166,15 +170,16 @@
     "printOptions": [
       {
         "size": "10 x 12 inches",
-        "price": 70
+        "price": 70,
+        "paystackPaymentUrl": ""
       }
     ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
     "image": "assets/artwork/beauty-in-becoming.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "A quiet portrait of identity, vulnerability, and growth, where thread lines and a rose hold space for resilience and renewal.",
       "yo": "Aworan idakẹjẹ nipa idanimọ, idagbasoke, ati agbara lati tun ara se.",
@@ -194,15 +199,16 @@
     "printOptions": [
       {
         "size": "10 x 12 inches",
-        "price": 100
+        "price": 100,
+        "paystackPaymentUrl": ""
       }
     ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
     "image": "assets/artwork/the-calm-before-clarity.png",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "A contemplative gaze held within shifting colour, approaching uncertainty as a space for reflection, resilience, and possibility.",
       "yo": "Wiwo inu ninu awon awo ti n yipada, n ri aidaniloju gege bi aaye ero ati ireti.",
@@ -222,15 +228,16 @@
     "printOptions": [
       {
         "size": "10 x 12 inches",
-        "price": 70
+        "price": 70,
+        "paystackPaymentUrl": ""
       }
     ],
     "status": "Available",
     "edition": "Original work",
     "provenance": "Original portfolio work by Mary Adesakin Damilola.",
     "image": "assets/artwork/rare-like-a-blue-rose.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "A vivid affirmation of self-possession: finding light within and letting it shine fully, whatever the odds.",
       "yo": "Ifihan ti igboya ati imole inu, pelu agbara lati tan ni kikun.",
@@ -251,8 +258,8 @@
     "edition": "Original work",
     "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
     "image": "assets/artwork/in-her-prime.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "Sold original work from Mary Adesakin's 2024 catalogue.",
       "yo": "Ise atilẹba ti ta lati katalogi Mary Adesakin 2024.",
@@ -273,8 +280,8 @@
     "edition": "Original work",
     "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
     "image": "assets/artwork/in-her-prime-green.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "Sold original work from Mary Adesakin's 2024 catalogue, centered on women's education, service, and the fullness of feminine becoming.",
       "yo": "Ise ti ta, nipa eko obinrin, ise iranlowo, ati idagbasoke obinrin.",
@@ -295,8 +302,8 @@
     "edition": "Original work",
     "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
     "image": "assets/artwork/stitched-in-time.jpg",
-    "stripeDepositUrl": "",
-    "stripePaymentUrl": "",
+    "paystackDepositUrl": "",
+    "paystackPaymentUrl": "",
     "description": {
       "en": "Inspired by the Olojo Festival in Ile-Ife, this work reimagines the spiritual and ancestral resonance of bata drum traditions.",
       "yo": "Imisi lati Odun Olojo ni Ile-Ife, ti o tun ro ohun bata ati iranti awon baba nla.",

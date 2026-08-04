@@ -11,7 +11,7 @@ const bySlug = new Map(catalogue.map((artwork) => [artwork.slug, artwork]));
 test('collector catalogue contains the confirmed original and print prices', () => {
   const expected = {
     'the-weight-of-words': [2500, [['10 x 12 inches', 100], ['16 x 20 inches', 200]]],
-    'the-ife-muse': [120, [['10 x 12 inches', 100]]],
+    'the-ife-muse': [1200, [['10 x 12 inches', 100]]],
     'beauty-in-becoming': [700, [['10 x 12 inches', 70]]],
     'loud-silence': [3000, []],
     'rare-like-a-blue-rose': [900, [['10 x 12 inches', 70]]],
