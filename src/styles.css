@@ -51,7 +51,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--card);
 }
 .language select { border: 0; background: transparent; color: var(--primary); outline: 0; }
-.shortlist, .menu, .card-actions button, .modal-actions button, .contact-band button { cursor: pointer; }
+.shortlist, .menu, .card-actions button, .modal-actions button, .contact-band button, .admin-download { cursor: pointer; }
 .menu { display: none; width: 42px; height: 42px; border: 1px solid var(--border); background: var(--card); }
 
 .hero, .artist, .catalogue, .exhibitions {
@@ -223,6 +223,95 @@ dd { margin: 0; font-weight: 700; text-align: right; }
 .exhibitions ul { margin: 24px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .exhibitions li { border-bottom: 1px solid var(--border); padding-bottom: 12px; color: var(--muted); }
 
+.admin-panel {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: clamp(44px, 7vw, 84px) clamp(16px, 4vw, 48px);
+}
+.admin-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.admin-head h1 { font-size: clamp(2.2rem, 5vw, 4.25rem); }
+.admin-head p { max-width: 680px; color: var(--muted); line-height: 1.7; }
+.admin-download { justify-content: center; border-radius: 0; }
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.admin-summary p, .admin-note, .admin-row {
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+.admin-summary p {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 18px;
+}
+.admin-summary strong { font-family: Cinzel, serif; font-size: 1.7rem; }
+.admin-summary span, .admin-note, .admin-artwork p, .admin-field span { color: var(--muted); }
+.admin-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  font-size: .86rem;
+}
+.admin-note code {
+  color: var(--primary);
+  background: #f5f5f4;
+  border: 1px solid var(--border);
+  padding: 2px 5px;
+}
+.admin-table { display: grid; gap: 12px; }
+.admin-row {
+  display: grid;
+  grid-template-columns: 84px minmax(220px, 1fr) minmax(160px, .32fr) minmax(160px, .32fr);
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+}
+.admin-row img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  background: #f5f5f4;
+}
+.admin-artwork { min-width: 0; }
+.admin-artwork h2 {
+  margin-top: 8px;
+  font-size: clamp(1rem, 2vw, 1.28rem);
+  overflow-wrap: anywhere;
+}
+.admin-artwork p {
+  margin: 6px 0 0;
+  font-size: .78rem;
+  line-height: 1.5;
+}
+.admin-field { display: grid; gap: 7px; }
+.admin-field span {
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.admin-field input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--border);
+  background: #fafaf9;
+  color: var(--primary);
+  padding: 0 12px;
+  outline-color: var(--accent);
+}
+
 footer {
   display: flex;
   justify-content: space-between;
@@ -295,11 +384,14 @@ footer small { align-self: end; }
     border-bottom: 1px solid var(--border);
   }
   .nav.open { display: grid; gap: 14px; }
-  .hero, .artist, .section-head, footer, .modal-panel { grid-template-columns: 1fr; }
+  .hero, .artist, .section-head, footer, .modal-panel, .admin-head { grid-template-columns: 1fr; }
   .hero, .artist { display: grid; }
   .section-head { display: grid; align-items: start; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .trust-row { grid-template-columns: 1fr; }
+  .admin-row { grid-template-columns: 72px minmax(0, 1fr); align-items: start; }
+  .admin-row img { width: 72px; height: 72px; }
+  .admin-field { grid-column: 1 / -1; }
   .modal-panel > img { min-height: 320px; max-height: 52vh; }
 }
 
@@ -314,6 +406,9 @@ footer small { align-self: end; }
   .featured img { height: 360px; }
   .grid { grid-template-columns: 1fr; }
   .art-card > img { height: 360px; }
+  .admin-summary { grid-template-columns: 1fr; }
+  .admin-row { grid-template-columns: 1fr; }
+  .admin-row img { width: 100%; height: 180px; }
   .contact-band form { flex-direction: column; }
   footer { flex-direction: column; }
 }

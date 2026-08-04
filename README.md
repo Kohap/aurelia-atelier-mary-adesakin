@@ -14,6 +14,7 @@ The site is designed for collectors, curators, galleries, and art advisors who w
 
 - React/Vite app structure for easier future editing
 - Admin-friendly JSON artwork catalogue in `public/data/artworks.json`
+- Browser admin screen at `/#admin` for editing original and print prices before exporting JSON
 - Responsive artist portfolio and artwork catalogue
 - Original artwork cards with status, dimensions, medium, year, and inquiry flow
 - Collection browsing, search, and sort controls
@@ -97,6 +98,7 @@ Publishing files:
 ## Maintenance Notes
 
 - Keep artwork data inside `public/data/artworks.json`.
+- Use `/#admin` to edit `originalPrice` and `printPrice`, export the updated JSON, replace `public/data/artworks.json`, then commit and push.
 - To add Stripe payments, paste real Stripe Payment Link URLs into `stripeDepositUrl` or `stripePaymentUrl` for each available artwork.
 - Keep image filenames stable once they are published, unless the corresponding artwork record is updated.
 - Update `sitemap.xml` when the canonical URL changes.

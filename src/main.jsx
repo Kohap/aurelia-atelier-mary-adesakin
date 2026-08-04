@@ -5,6 +5,7 @@ import {
   Bookmark,
   BookmarkPlus,
   CheckCircle2,
+  Download,
   ExternalLink,
   Globe2,
   Link as LinkIcon,
@@ -12,6 +13,7 @@ import {
   Menu,
   Search,
   Send,
+  Settings,
   ShieldCheck,
   Sparkles,
   X,
@@ -147,6 +149,11 @@ const translations = {
 const money = (value) => value ? `$${value.toLocaleString()} USD` : '';
 const artworkDescription = (art, lang) => art.description?.[lang] || art.description?.en || '';
 const artworkUrl = (art) => `${window.location.origin}${window.location.pathname}#artwork/${art.slug}`;
+const normalizePrice = (value) => {
+  if (value === '') return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+};
 
 function App() {
   const [artworks, setArtworks] = useState([]);
@@ -157,6 +164,7 @@ function App() {
   const [shortlist, setShortlist] = useState([]);
   const [toast, setToast] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [adminMode, setAdminMode] = useState(() => window.location.hash === '#admin');
   const t = translations[lang];
 
   useEffect(() => {
@@ -169,6 +177,7 @@ function App() {
   useEffect(() => {
     if (!artworks.length) return;
     const openFromHash = () => {
+      if (window.location.hash === '#admin') return;
       const slug = decodeURIComponent(window.location.hash || '').replace('#artwork/', '');
       if (!slug) return;
       const art = artworks.find((item) => item.slug === slug);
@@ -178,6 +187,13 @@ function App() {
     window.addEventListener('hashchange', openFromHash);
     return () => window.removeEventListener('hashchange', openFromHash);
   }, [artworks]);
+
+  useEffect(() => {
+    const handleRoute = () => setAdminMode(window.location.hash === '#admin');
+    handleRoute();
+    window.addEventListener('hashchange', handleRoute);
+    return () => window.removeEventListener('hashchange', handleRoute);
+  }, []);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -257,6 +273,7 @@ function App() {
           <a href="#artist" onClick={() => setMenuOpen(false)}>{t.artist}</a>
           <a href="#catalogue" onClick={() => setMenuOpen(false)}>{t.originalWorks}</a>
           <a href="#exhibitions" onClick={() => setMenuOpen(false)}>{t.exhibitions}</a>
+          <a href="#admin" onClick={() => setMenuOpen(false)}>Admin</a>
         </nav>
         <div className="tools">
           <label className="language">
@@ -277,6 +294,10 @@ function App() {
       </header>
 
       <main id="main">
+        {adminMode ? (
+          <AdminPanel artworks={artworks} setArtworks={setArtworks} showToast={showToast} />
+        ) : (
+          <>
         <section className="hero">
           <div className="hero-copy">
             <span className="kicker"><Sparkles size={16} /> {t.heroKicker}</span>
@@ -358,7 +379,7 @@ function App() {
                     <dt>{t.format}</dt>
                     <dd>Original + Print</dd>
                     <dt>{t.print}</dt>
-                    <dd>{t.availableByInquiry}</dd>
+                    <dd>{art.printPrice ? money(art.printPrice) : t.availableByInquiry}</dd>
                   </dl>
                   <div className="card-actions">
                     <button type="button" onClick={() => openArtwork(art)}>{t.viewSelect}</button>
@@ -389,6 +410,8 @@ function App() {
             <li>Life In My City Art Festival, 2024</li>
           </ul>
         </section>
+          </>
+        )}
       </main>
 
       <footer>
@@ -418,6 +441,8 @@ function App() {
               <p>{artworkDescription(selected, lang)}</p>
               <dl>
                 <dt>Year</dt><dd>{selected.year}</dd>
+                <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : selected.originalPrice ? money(selected.originalPrice) : t.priceOnRequest}</dd>
+                <dt>{t.print}</dt><dd>{selected.printPrice ? money(selected.printPrice) : t.availableByInquiry}</dd>
                 <dt>{t.edition}</dt><dd>{selected.edition}</dd>
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
               </dl>
@@ -434,6 +459,92 @@ function App() {
 
       {toast ? <div className="toast">{toast}</div> : null}
     </>
+  );
+}
+
+function AdminPanel({ artworks, setArtworks, showToast }) {
+  const pricedOriginals = artworks.filter((art) => art.originalPrice).length;
+  const pricedPrints = artworks.filter((art) => art.printPrice).length;
+
+  const updatePrice = (id, field, value) => {
+    setArtworks((items) => items.map((art) => (
+      art.id === id ? { ...art, [field]: normalizePrice(value) } : art
+    )));
+  };
+
+  const exportJson = () => {
+    const json = JSON.stringify(artworks, null, 2);
+    const blob = new Blob([`${json}\n`], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'artworks.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast('Updated artworks.json downloaded.');
+  };
+
+  return (
+    <section id="admin" className="admin-panel">
+      <div className="admin-head">
+        <div>
+          <span className="kicker"><Settings size={16} /> Catalogue Admin</span>
+          <h1>Artwork Pricing Editor</h1>
+          <p>Edit original artwork prices and print prices, then export the updated JSON for the site catalogue.</p>
+        </div>
+        <button type="button" className="primary admin-download" onClick={exportJson}>
+          <Download size={16} /> Export JSON
+        </button>
+      </div>
+
+      <div className="admin-summary">
+        <p><strong>{artworks.length}</strong><span>Total works</span></p>
+        <p><strong>{pricedOriginals}</strong><span>Original prices</span></p>
+        <p><strong>{pricedPrints}</strong><span>Print prices</span></p>
+      </div>
+
+      <div className="admin-note">
+        <strong>How to publish price edits:</strong>
+        <span>Export the JSON, replace <code>public/data/artworks.json</code> with the download, then commit and push.</span>
+      </div>
+
+      <div className="admin-table" aria-label="Artwork price editor">
+        {artworks.map((art) => (
+          <article className="admin-row" key={art.id}>
+            <img src={`${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" />
+            <div className="admin-artwork">
+              <span className={art.status === 'Sold' ? 'sold badge' : 'available badge'}>{art.status}</span>
+              <h2>{art.title}</h2>
+              <p>{art.medium} / {art.dimensions} / {art.year}</p>
+            </div>
+            <label className="admin-field">
+              <span>Original price</span>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={art.originalPrice ?? ''}
+                onChange={(event) => updatePrice(art.id, 'originalPrice', event.target.value)}
+                placeholder="Price on request"
+              />
+            </label>
+            <label className="admin-field">
+              <span>Print price</span>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={art.printPrice ?? ''}
+                onChange={(event) => updatePrice(art.id, 'printPrice', event.target.value)}
+                placeholder="Available by inquiry"
+              />
+            </label>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
