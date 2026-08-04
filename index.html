@@ -1099,7 +1099,7 @@
                 medium: "Thread and Acrylic on Canvas",
                 dimensions: "22 x 25 inches",
                 originalPrice: 500,
-                status: "Available",
+                status: "Sold",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original catalogue work by Mary Adesakin Damilola.",
@@ -1159,7 +1159,7 @@
                 medium: "Mixed Media (Thread and Acrylic on Canvas)",
                 dimensions: "36 x 36 inches",
                 originalPrice: null,
-                status: "Inquire",
+                status: "Available",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original portfolio work by Mary Adesakin Damilola.",
@@ -1174,7 +1174,7 @@
                 medium: "Thread and Acrylic on Canvas",
                 dimensions: "21 x 26 inches",
                 originalPrice: null,
-                status: "Inquire",
+                status: "Available",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original portfolio work by Mary Adesakin Damilola.",
@@ -1189,7 +1189,7 @@
                 medium: "Thread and Acrylic on Canvas",
                 dimensions: "18 x 19 inches",
                 originalPrice: null,
-                status: "Inquire",
+                status: "Available",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original portfolio work by Mary Adesakin Damilola.",
@@ -1204,7 +1204,7 @@
                 medium: "Mixed Media (Thread and Acrylic on Canvas)",
                 dimensions: "22 x 25 inches",
                 originalPrice: null,
-                status: "Inquire",
+                status: "Available",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original portfolio work by Mary Adesakin Damilola.",
@@ -1219,7 +1219,7 @@
                 medium: "Mixed Media (Thread and Acrylic on Canvas)",
                 dimensions: "20 x 24 inches",
                 originalPrice: null,
-                status: "Inquire",
+                status: "Available",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original portfolio work by Mary Adesakin Damilola.",
@@ -1234,12 +1234,57 @@
                 medium: "Mixed Media (Thread and Acrylic on Canvas)",
                 dimensions: "17 x 17 inches",
                 originalPrice: null,
-                status: "Inquire",
+                status: "Available",
                 category: "original",
                 edition: "Original work",
                 provenance: "Original portfolio work by Mary Adesakin Damilola.",
                 image: "assets/artwork/rare-like-a-blue-rose.jpg",
                 description: "A vivid affirmation of self-possession: finding light within and letting it shine fully, whatever the odds."
+            },
+            {
+                id: 12,
+                title: "In Her Prime",
+                collection: "Early Thread Narratives",
+                year: "2024",
+                medium: "Threadcollage and Acrylic on Canvas",
+                dimensions: "16 x 20 inches",
+                originalPrice: null,
+                status: "Sold",
+                category: "original",
+                edition: "Original work",
+                provenance: "Sold catalogue work by Mary Adesakin Damilola.",
+                image: "assets/artwork/in-her-prime.jpg",
+                description: "Sold original work from Mary Adesakin's 2024 catalogue."
+            },
+            {
+                id: 13,
+                title: "Maze of Uncertainty",
+                collection: "Maze of Uncertainty",
+                year: "2025",
+                medium: "Thread and Acrylic on Canvas",
+                dimensions: "20 x 24 inches",
+                originalPrice: null,
+                status: "Sold",
+                category: "original",
+                edition: "Original work",
+                provenance: "Sold catalogue work by Mary Adesakin Damilola.",
+                image: "assets/artwork/maze-of-uncertainty-sold.jpg",
+                description: "A reflection on the quiet strength of pausing, reflecting, and enduring with dignity through uncertainty."
+            },
+            {
+                id: 15,
+                title: "Stitched in Time",
+                collection: "Yoruba Heritage",
+                year: "2025",
+                medium: "Thread and Acrylic on Canvas",
+                dimensions: "18 x 22 inches",
+                originalPrice: null,
+                status: "Sold",
+                category: "original",
+                edition: "Original work",
+                provenance: "Sold catalogue work by Mary Adesakin Damilola.",
+                image: "assets/artwork/stitched-in-time.jpg",
+                description: "Inspired by the Olojo Festival in Ile-Ife, this work reimagines the spiritual and ancestral resonance of bata drum traditions."
             }
         ];
 
@@ -1360,8 +1405,8 @@
             const query = artworkSearchQuery.trim().toLowerCase();
             let results = artworks.filter(art => {
                 const matchesFilter = activeArtworkFilter === 'all'
-                    || (activeArtworkFilter === 'available' && art.status === 'Available')
-                    || (activeArtworkFilter === 'inquire' && art.status === 'Inquire')
+                    || (activeArtworkFilter === 'available' && art.status === 'Available' && art.originalPrice > 0)
+                    || (activeArtworkFilter === 'inquire' && art.status !== 'Sold' && !art.originalPrice)
                     || (activeArtworkFilter === 'thread-canvas' && art.medium === 'Thread on Canvas')
                     || (activeArtworkFilter === 'thread-acrylic' && art.medium.includes('Acrylic'))
                     || (activeArtworkFilter === '2025' && art.year === '2025')
@@ -1400,6 +1445,7 @@
                 card.className = "bg-white border border-studio-border group hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-900/10 transition-all duration-300 flex flex-col justify-between";
                 
                 const isOriginalAvailable = art.status === "Available" && art.originalPrice > 0;
+                const isOriginalInquiryOnly = art.status !== 'Sold' && !art.originalPrice;
                 
                 card.innerHTML = `
                     <div class="relative overflow-hidden bg-stone-100">
@@ -1428,8 +1474,8 @@
                         <div class="border-t border-stone-100 pt-4 space-y-2">
                             <div class="flex justify-between items-center text-xs">
                                 <span class="text-studio-muted">Original Painting:</span>
-                                <span class="font-serif font-bold ${isOriginalAvailable ? 'text-studio-primary' : art.status === 'Inquire' ? 'text-studio-accent' : 'line-through text-stone-400'}">
-                                    ${art.originalPrice > 0 ? '$' + art.originalPrice.toLocaleString() : art.status === 'Inquire' ? 'Price on request' : 'Sold'}
+                                <span class="font-serif font-bold ${isOriginalAvailable ? 'text-studio-primary' : isOriginalInquiryOnly ? 'text-studio-accent' : 'line-through text-stone-400'}">
+                                    ${art.originalPrice > 0 ? '$' + art.originalPrice.toLocaleString() : isOriginalInquiryOnly ? 'Price on request' : 'Sold'}
                                 </span>
                             </div>
                             <div class="flex justify-between items-center text-xs">
@@ -1521,6 +1567,8 @@
             const radOrig = document.getElementById('radio-original');
             const shortlistButton = document.getElementById('modal-shortlist-button');
 
+            const canRequestOriginal = selectedArtwork.status !== 'Sold';
+
             if(selectedArtwork.originalPrice > 0) {
                 radOrig.disabled = false;
                 radOrig.checked = true;
@@ -1529,9 +1577,9 @@
                 shortlistButton.innerHTML = '<i data-lucide="bookmark-plus" class="w-4 h-4"></i> Add to Collector Shortlist';
             } else {
                 radOrig.disabled = true;
-                document.getElementById('modal-original-price').innerText = selectedArtwork.status === 'Inquire' ? 'Price on request' : 'Sold';
-                shortlistButton.onclick = selectedArtwork.status === 'Inquire' ? requestSelectedArtworkDetails : closeModal;
-                shortlistButton.innerHTML = selectedArtwork.status === 'Inquire'
+                document.getElementById('modal-original-price').innerText = canRequestOriginal ? 'Price on request' : 'Sold';
+                shortlistButton.onclick = canRequestOriginal ? requestSelectedArtworkDetails : closeModal;
+                shortlistButton.innerHTML = canRequestOriginal
                     ? '<i data-lucide="mail" class="w-4 h-4"></i> Request Artwork Details'
                     : '<i data-lucide="x" class="w-4 h-4"></i> Artwork Unavailable';
             }
