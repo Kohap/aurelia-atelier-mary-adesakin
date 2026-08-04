@@ -277,7 +277,7 @@
             </div>
             <div class="grid grid-cols-3 gap-3 sm:gap-5 max-w-xl pt-4 border-t border-studio-border">
                 <div>
-                    <span class="block font-serif text-2xl text-studio-primary">11</span>
+                    <span id="hero-original-count" class="block font-serif text-2xl text-studio-primary">14</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Original Works</span>
                 </div>
                 <div>
@@ -285,7 +285,7 @@
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Exhibitions</span>
                 </div>
                 <div>
-                    <span class="block font-serif text-2xl text-studio-primary">11</span>
+                    <span id="hero-thread-count" class="block font-serif text-2xl text-studio-primary">14</span>
                     <span class="text-[10px] uppercase tracking-widest text-studio-muted">Thread Works</span>
                 </div>
             </div>
@@ -1373,6 +1373,8 @@
         }
 
         function updatePortfolioStats() {
+            animateNumber(document.getElementById('hero-original-count'), artworks.length);
+            animateNumber(document.getElementById('hero-thread-count'), artworks.filter(art => art.medium.toLowerCase().includes('thread')).length);
             animateNumber(document.getElementById('portfolio-total'), artworks.length);
             animateNumber(document.getElementById('portfolio-available'), artworks.filter(art => art.status === 'Available').length);
             animateNumber(document.getElementById('portfolio-prints'), artworks.filter(art => art.medium.toLowerCase().includes('thread')).length);
