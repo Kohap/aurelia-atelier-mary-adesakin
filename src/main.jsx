@@ -301,7 +301,7 @@ function App() {
         <section className="hero">
           <div className="hero-copy">
             <span className="kicker"><Sparkles size={16} /> {t.heroKicker}</span>
-            <h1>{t.heroTitle}<em>{t.heroTitleAccent}</em></h1>
+            <h1>{t.heroTitle} <em>{t.heroTitleAccent}</em></h1>
             <p>{t.heroCopy}</p>
             <div className="actions">
               <a href="#catalogue" className="primary">{t.explore}<ArrowDown size={16} /></a>
