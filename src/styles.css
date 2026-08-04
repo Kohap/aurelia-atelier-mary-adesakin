@@ -17,6 +17,11 @@ body {
   background: var(--bg);
   color: var(--primary);
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -75,13 +80,13 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.72rem;
   font-weight: 800;
 }
-h1, h2, h3 { font-family: Cinzel, serif; margin: 0; }
+h1, h2, h3 { font-family: Cinzel, serif; margin: 0; letter-spacing: .01em; }
 h1 {
   max-width: 760px;
   margin-top: 18px;
   font-size: clamp(2.75rem, 7vw, 5.7rem);
-  line-height: 1;
-  font-weight: 400;
+  line-height: .98;
+  font-weight: 500;
 }
 h1 em { display: block; font-style: italic; font-weight: 500; }
 .hero-copy p, .artist p, .art-card p, .modal-copy p {
@@ -315,6 +320,7 @@ dd { margin: 0; font-weight: 700; text-align: right; }
 footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 24px;
   padding: 44px clamp(16px, 4vw, 48px);
   background: #f5f5f4;
@@ -322,8 +328,42 @@ footer {
   color: var(--muted);
 }
 footer strong { color: var(--primary); font-family: Cinzel, serif; text-transform: uppercase; letter-spacing: .12em; }
-.socials { gap: 14px; font-size: 1.1rem; }
-footer small { align-self: end; }
+footer p { margin: 8px 0 0; line-height: 1.55; }
+.footer-links {
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+}
+.socials { gap: 10px; font-size: 1.1rem; }
+.socials a {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--primary);
+  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+.socials a:hover, .socials a:focus-visible {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+.socials i {
+  display: block;
+  font-size: 1.06rem;
+  line-height: 1;
+}
+footer small {
+  color: #8a817a;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
 
 .modal {
   position: fixed;
@@ -415,5 +455,6 @@ footer small { align-self: end; }
   .admin-row { grid-template-columns: 1fr; }
   .admin-row img { width: 100%; height: 180px; }
   .contact-band form { flex-direction: column; }
-  footer { flex-direction: column; }
+  footer { flex-direction: column; align-items: flex-start; }
+  .footer-links { justify-items: start; }
 }

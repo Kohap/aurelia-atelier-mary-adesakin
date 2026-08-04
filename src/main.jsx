@@ -420,13 +420,15 @@ function App() {
           <p>adesakinmary2020@gmail.com / +234 906 700 2871</p>
           <p>Ile-Ife, Osun State, Nigeria</p>
         </div>
-        <div className="socials">
-          <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Mary"><Mail size={18} /></a>
-          <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noreferrer" aria-label="Instagram"><i className="fa-brands fa-instagram" /></a>
-          <a href="https://www.tiktok.com/@dammy017?_r=1&_t=ZS-98aw9mfksiq" target="_blank" rel="noreferrer" aria-label="TikTok"><i className="fa-brands fa-tiktok" /></a>
-          <a href="https://www.facebook.com/share/1DzBXHzfPN/?mibextid=wwXIfr" target="_blank" rel="noreferrer" aria-label="Facebook"><i className="fa-brands fa-facebook-f" /></a>
+        <div className="footer-links">
+          <div className="socials">
+            <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Mary"><Mail size={18} /></a>
+            <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noreferrer" aria-label="Instagram"><i className="fa-brands fa-instagram" /></a>
+            <a href="https://www.tiktok.com/@dammy017?_r=1&_t=ZS-98aw9mfksiq" target="_blank" rel="noreferrer" aria-label="TikTok"><i className="fa-brands fa-tiktok" /></a>
+            <a href="https://www.facebook.com/share/1DzBXHzfPN/?mibextid=wwXIfr" target="_blank" rel="noreferrer" aria-label="Facebook"><i className="fa-brands fa-facebook-f" /></a>
+          </div>
+          <small>Built with love ❤️</small>
         </div>
-        <small>Built with love ❤️</small>
       </footer>
 
       {selected ? (
