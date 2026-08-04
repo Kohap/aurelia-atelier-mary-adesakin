@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURELIA ATELIER — Fine Art Portfolio & Collector Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        studio: {
+                            bg: '#FDFBF7',          // Warm Alabaster Linen
+                            card: '#FFFFFF',
+                            primary: '#1C1917',       // Rich Charcoal
+                            accent: '#A85536',        // Warm Terracotta / Sienna
+                            accentLight: '#F5ECE6',   // Soft Sienna Tint
+                            muted: '#78716C',         // Muted Stone
+                            border: '#E7E5E4',        // Warm Border
+                            gold: '#D4AF37',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FDFBF7;
+            color: #1C1917;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .marquee-container { overflow: hidden; white-space: nowrap; }
+        .marquee-content { display: inline-block; animation: marquee 25s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-studio-accent selection:text-white pb-20">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-studio-primary text-studio-accentLight text-xs tracking-widest uppercase py-2.5 px-4 text-center border-b border-studio-accent/20">
+        <span>Upcoming Series: <strong>"Echoes of Grace"</strong> — Private Collector Preview Starts Oct 15</span>
+        <button onclick="scrollToSection('upcoming')" class="underline ml-2 hover:text-studio-accent transition-colors">Request VIP Access</button>
+    </div>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="sticky top-0 z-40 bg-studio-bg/95 backdrop-blur-md border-b border-studio-border">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="font-serif text-2xl tracking-wider font-semibold text-studio-primary flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-studio-accent inline-block"></span>
+                AURELIA <span class="text-sm font-sans font-light tracking-widest text-studio-muted">ATELIER</span>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-medium text-studio-muted">
+                <a href="#about" class="hover:text-studio-primary transition-colors">The Artist</a>
+                <a href="#available-works" class="hover:text-studio-primary transition-colors">Original Works</a>
+                <a href="#exhibitions" class="hover:text-studio-primary transition-colors">Exhibitions & Press</a>
+            </div>
+
+            <!-- CTA & Cart Trigger Button -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openInquiryModal('General Advisory')" class="hidden sm:inline-block border border-studio-primary text-studio-primary text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-studio-primary hover:text-white transition-colors">
+                    Private Advisory
+                </button>
+                <button onclick="toggleCartDrawer()" class="relative bg-studio-primary text-white text-xs uppercase tracking-widest px-4 py-2.5 flex items-center gap-2 hover:bg-studio-accent transition-colors">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span>Cart</span>
+                    <span id="cart-count-badge" class="bg-studio-accent text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative px-6 py-16 md:py-24 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-studio-accentLight text-studio-accent text-xs tracking-widest uppercase rounded-full font-medium">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Contemporary Fine Art Studio
+            </div>
+            <h1 class="font-serif text-4xl md:text-6xl text-studio-primary font-light leading-tight">
+                Evocative Abstractions <br><span class="italic font-normal">for the Discerning Collector</span>
+            </h1>
+            <p class="text-studio-muted text-base md:text-lg max-w-xl font-light leading-relaxed">
+                Exploring femininity, texture, and temporal elegance. Acquire original oil compositions and museum-grade archival prints direct from the artist's studio with insured global delivery.
+            </p>
+            <div class="pt-4 flex flex-wrap gap-4 items-center">
+                <a href="#available-works" class="bg-studio-accent text-white px-8 py-4 text-xs uppercase tracking-widest hover:bg-studio-primary transition-all flex items-center gap-2 font-medium shadow-md">
+                    Explore Catalogue <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </a>
+                <a href="#newsletter" class="border border-studio-primary text-studio-primary px-8 py-4 text-xs uppercase tracking-widest hover:bg-studio-primary hover:text-white transition-all font-medium">
+                    Join Collector List
+                </a>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 relative">
+            <div class="relative z-10 bg-white p-4 shadow-xl border border-studio-border">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1000&q=80" alt="Featured Original Art" class="w-full h-[460px] object-cover filter brightness-95 contrast-105">
+                <div class="mt-4 flex justify-between items-end border-t border-studio-border pt-3">
+                    <div>
+                        <span class="text-xs tracking-widest text-studio-accent font-semibold uppercase">Featured Original Masterwork</span>
+                        <h3 class="font-serif text-lg text-studio-primary">Solitude in Ochre No. 4</h3>
+                        <p class="text-xs text-studio-muted">48" × 60" — Oil & Gold Leaf on Linen</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-medium border border-emerald-200">Available</span>
+                        <p class="font-serif font-bold text-lg text-studio-primary mt-1">$6,800 USD</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Decorative Accent -->
+            <div class="absolute -bottom-6 -right-6 w-full h-full bg-studio-accentLight -z-10 border border-studio-accent/20"></div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: CATALOGUE RAISONNÉ & DIRECT ACQUISITION -->
+    <section id="available-works" class="py-20 bg-white border-y border-studio-border">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Catalogue Raisonné</span>
+                    <h2 class="font-serif text-3xl md:text-4xl text-studio-primary mt-1">Available Artworks & Pricing</h2>
+                    <p class="text-studio-muted text-sm mt-2">Acquire verified original masterworks or authenticated museum-grade archival prints.</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="mt-6 md:mt-0 flex flex-wrap gap-2 text-xs uppercase tracking-wider" id="filter-buttons">
+                    <button onclick="filterArt('all')" class="filter-btn active bg-studio-primary text-white px-4 py-2">All Works</button>
+                    <button onclick="filterArt('original')" class="filter-btn bg-stone-100 text-studio-muted hover:bg-stone-200 px-4 py-2">Originals Available</button>
+                    <button onclick="filterArt('print')" class="filter-btn bg-stone-100 text-studio-muted hover:bg-stone-200 px-4 py-2">Fine Art Prints</button>
+                    <button onclick="filterArt('sold')" class="filter-btn bg-stone-100 text-studio-muted hover:bg-stone-200 px-4 py-2">Private Collections (Sold)</button>
+                </div>
+            </div>
+
+            <!-- Artwork Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="artwork-grid">
+                <!-- Javascript will render artwork cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: EXHIBITIONS & PRESS NEWS -->
+    <section id="exhibitions" class="py-20 bg-studio-bg border-b border-studio-border">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Curriculum Vitae</span>
+                    <h2 class="font-serif text-3xl md:text-4xl text-studio-primary mt-1">Exhibitions & Press</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Exhibition List -->
+                <div class="space-y-6">
+                    <h3 class="font-serif text-xl border-b border-stone-200 pb-2">Selected Exhibitions</h3>
+                    
+                    <div class="flex justify-between items-start group cursor-default">
+                        <div>
+                            <h4 class="font-serif text-lg text-studio-primary group-hover:text-studio-accent transition-colors">L'exposition</h4>
+                            <p class="text-sm text-studio-muted mt-1">Group Exhibition of Contemporary African Voices</p>
+                        </div>
+                        <span class="text-xs text-stone-400 font-mono">Paris, FR</span>
+                    </div>
+
+                    <div class="flex justify-between items-start group cursor-default">
+                        <div>
+                            <h4 class="font-serif text-lg text-studio-primary group-hover:text-studio-accent transition-colors">Deep in Thought</h4>
+                            <p class="text-sm text-studio-muted mt-1">Annual Contemporary Art Showcase</p>
+                        </div>
+                        <span class="text-xs text-stone-400 font-mono">2024</span>
+                    </div>
+
+                    <div class="flex justify-between items-start group cursor-default">
+                        <div>
+                            <h4 class="font-serif text-lg text-studio-primary group-hover:text-studio-accent transition-colors">Life In My City Art Festival (LIMCAF)</h4>
+                            <p class="text-sm text-studio-muted mt-1">National Emerging Artists Exhibition</p>
+                        </div>
+                        <span class="text-xs text-stone-400 font-mono">Nigeria</span>
+                    </div>
+                </div>
+
+                <!-- Press / Biography Callout -->
+                <div class="bg-white p-8 border border-stone-200 shadow-sm relative">
+                    <i data-lucide="quote" class="w-8 h-8 text-studio-accent/20 absolute top-6 left-6"></i>
+                    <p class="relative z-10 text-lg font-serif italic text-studio-primary leading-relaxed mt-4">
+                        "Mary's art is deeply personal... using her hands to stitch not just images, but emotions, memories, and cultural narratives."
+                    </p>
+                    <p class="text-xs uppercase tracking-widest text-studio-accent mt-6 font-semibold">— Studio Biography</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: NEWSLETTER & VIP COLLECTOR LIST -->
+    <section id="newsletter" class="py-24 bg-studio-primary text-white relative overflow-hidden">
+        <!-- Abstract Thread Graphic Background -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M0,50 Q25,10 50,50 T100,50" stroke="white" stroke-width="0.5" fill="none" />
+                <path d="M0,60 Q30,90 60,40 T100,60" stroke="white" stroke-width="0.3" fill="none" />
+            </svg>
+        </div>
+
+        <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
+            <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Private Advisory</span>
+            <h2 class="font-serif text-3xl md:text-5xl font-light mt-2 mb-4">Join the Collector List</h2>
+            <p class="text-stone-400 text-sm leading-relaxed mb-8">
+                Subscribe to receive private preview links for upcoming collections, exhibition news, and exclusive studio insights before public release.
+            </p>
+
+            <form onsubmit="handleNewsletter(event)" class="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto">
+                <input type="email" id="nl-email" placeholder="Email Address" required class="bg-transparent border border-stone-600 px-6 py-4 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-studio-accent flex-1 rounded-none">
+                <button type="submit" class="bg-studio-accent text-white px-8 py-4 text-xs uppercase tracking-widest font-semibold hover:bg-white hover:text-studio-primary transition-colors border border-studio-accent hover:border-white">
+                    Subscribe
+                </button>
+            </form>
+            <div id="nl-success-msg" class="hidden text-xs text-emerald-400 pt-4">
+                ✓ Thank you. You have been added to the private mailing list.
+            </div>
+        </div>
+    </section>
+
+    <!-- ARTWORK DETAIL MODAL -->
+                            <span>Linea Fine Art</span>
+                            <button onclick="copyName('Linea Fine Art')" class="text-xs text-studio-accent hover:underline">Copy</button>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span>Monochrome & Form</span>
+                            <button onclick="copyName('Monochrome & Form')" class="text-xs text-studio-accent hover:underline">Copy</button>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span>[SURNAME] Contemporary</span>
+                            <button onclick="copyName('[SURNAME] Contemporary')" class="text-xs text-studio-accent hover:underline">Copy</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: UPCOMING COLLECTIONS & PRIVATE PREVIEW -->
+    <section id="upcoming" class="py-20 bg-studio-primary text-white">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-6 space-y-6">
+                <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Exhibition Teaser</span>
+                <h2 class="font-serif text-3xl md:text-5xl font-light leading-tight">Upcoming Collection: <br><span class="italic text-studio-accent">"Echoes of Grace"</span></h2>
+                <p class="text-stone-400 text-sm leading-relaxed">
+                    A limited 12-piece series exploring architectural textures and subtle pigment overlays. Original works will be offered first to verified collectors prior to public gallery release.
+                </p>
+                <div class="grid grid-cols-3 gap-4 border-y border-stone-800 py-6 text-center">
+                    <div>
+                        <span class="block text-2xl font-serif text-studio-accent">12</span>
+                        <span class="text-[10px] uppercase tracking-widest text-stone-400">Original Pieces</span>
+                    </div>
+                    <div>
+                        <span class="block text-2xl font-serif text-studio-accent">50</span>
+                        <span class="text-[10px] uppercase tracking-widest text-stone-400">Prints / Piece</span>
+                    </div>
+                    <div>
+                        <span class="block text-2xl font-serif text-studio-accent">Oct 15</span>
+                        <span class="text-[10px] uppercase tracking-widest text-stone-400">VIP Access Date</span>
+                    </div>
+                </div>
+
+                <form onsubmit="handleVipSignup(event)" class="space-y-3 pt-2">
+                    <label class="block text-xs uppercase tracking-widest text-stone-300">Join Private Collector List for First Right of Refusal</label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="email" id="vip-email" placeholder="Enter your email address" required class="bg-stone-900 border border-stone-700 px-4 py-3 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-studio-accent flex-1">
+                        <button type="submit" class="bg-studio-accent text-white px-6 py-3 text-xs uppercase tracking-widest font-semibold hover:bg-white hover:text-studio-primary transition-colors">
+                            Request Private Pass
+                        </button>
+                    </div>
+                    <div id="vip-success-msg" class="hidden text-xs text-emerald-400 pt-1">
+                        ✓ VIP pass requested! Check your email for private catalog unlock codes upon release.
+                    </div>
+                </form>
+            </div>
+
+            <div class="lg:col-span-6 grid grid-cols-2 gap-4">
+                <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80" alt="Collection Teaser 1" class="w-full h-64 object-cover filter brightness-90 border border-stone-800">
+                <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80" alt="Collection Teaser 2" class="w-full h-64 object-cover filter brightness-90 border border-stone-800 mt-8">
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: ONLINE DATA COLLECTION & ANALYTICS MODULE -->
+    <section id="analytics" class="py-20 bg-white border-b border-studio-border">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Smart Portfolio Architecture</span>
+                    <h2 class="font-serif text-3xl md:text-4xl text-studio-primary mt-1">Collector Intelligence Dashboard</h2>
+                    <p class="text-studio-muted text-sm mt-2">How this platform captures online data to optimize artwork pricing & exhibition inventory.</p>
+                </div>
+                <div class="mt-4 md:mt-0 text-xs text-studio-muted bg-stone-100 px-3 py-2 border border-stone-200">
+                    <i data-lucide="shield-check" class="w-4 h-4 inline mr-1 text-emerald-600"></i> Active Collector Tracking
+                </div>
+            </div>
+
+            <!-- Demo Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="p-5 bg-studio-bg border border-studio-border">
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Top Viewed Medium</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">Oil & Gold Leaf</h4>
+                    <p class="text-xs text-emerald-600 mt-1">↑ 42% collector interest</p>
+                </div>
+                <div class="p-5 bg-studio-bg border border-studio-border">
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Print vs Original Demand</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">1 : 4.8 Ratio</h4>
+                    <p class="text-xs text-studio-muted mt-1">High conversion on $380 prints</p>
+                </div>
+                <div class="p-5 bg-studio-bg border border-studio-border">
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Active Inquiries</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">18 Collector Leads</h4>
+                    <p class="text-xs text-studio-accent font-medium mt-1">Ready for follow-up</p>
+                </div>
+                <div class="p-5 bg-studio-bg border border-studio-border">
+                    <span class="text-xs text-studio-muted uppercase tracking-wider">Top Collector Cities</span>
+                    <h4 class="text-xl font-serif font-bold text-studio-primary mt-2">New York & London</h4>
+                    <p class="text-xs text-studio-muted mt-1">Ideal for shipping quotes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARTWORK DETAIL / SELECTION MODAL -->
+    <div id="art-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-studio-border relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black text-xl p-2 z-10">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
+                <div class="md:col-span-6 flex items-center justify-center bg-stone-100">
+                    <img id="modal-img" src="" alt="" class="max-h-[450px] w-full object-contain">
+                </div>
+
+                <div class="md:col-span-6 space-y-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span id="modal-status" class="text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded font-medium border border-emerald-200">Available</span>
+                                <h3 id="modal-title" class="font-serif text-2xl font-bold text-studio-primary mt-2">Artwork Title</h3>
+                                <p id="modal-specs" class="text-xs text-studio-muted">Medium & Dimensions</p>
+                            </div>
+                        </div>
+
+                        <p id="modal-desc" class="text-xs text-studio-muted mt-4 leading-relaxed">
+                            Includes signed Certificate of Authenticity. Archival museum-quality materials. Delivered in custom padded artwork crate.
+                        </p>
+
+                        <!-- ACQUISITION TYPE SELECTOR -->
+                        <div class="mt-6 border-t border-stone-200 pt-4 space-y-3">
+                            <span class="text-xs uppercase tracking-widest text-studio-primary font-semibold block">Select Format:</span>
+                            
+                            <!-- Option A: Original -->
+                            <label class="flex items-center justify-between p-3 border border-stone-300 rounded cursor-pointer hover:border-studio-accent transition-all">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="purchase_type" value="original" checked id="radio-original">
+                                    <div>
+                                        <span class="text-xs font-semibold block">Original Painting</span>
+                                        <span class="text-[10px] text-studio-muted">1-of-1 Original Piece with CoA</span>
+                                    </div>
+                                </div>
+                                <span id="modal-original-price" class="font-serif font-bold text-sm text-studio-primary">$0</span>
+                            </label>
+
+                            <!-- Option B: Fine Art Print -->
+                            <label class="flex items-center justify-between p-3 border border-stone-300 rounded cursor-pointer hover:border-studio-accent transition-all">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="purchase_type" value="print" id="radio-print">
+                                    <div>
+                                        <span class="text-xs font-semibold block">Limited Fine Art Print</span>
+                                        <span class="text-[10px] text-studio-muted">Hahnemühle Rag Paper (Ed. of 50)</span>
+                                    </div>
+                                </div>
+                                <span id="modal-print-price" class="font-serif font-bold text-sm text-studio-primary">$0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart CTA inside Modal -->
+                    <div class="pt-4 border-t border-stone-200 flex gap-2">
+                        <button onclick="addSelectedToCart()" class="flex-1 bg-studio-accent text-white py-3.5 text-xs uppercase tracking-widest hover:bg-studio-primary transition-colors flex items-center justify-center gap-2 font-semibold">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add to Cart & Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER (SLIDE-OVER) -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex justify-end">
+        <div class="bg-white max-w-md w-full h-full flex flex-col justify-between shadow-2xl relative">
+            
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-stone-200 flex justify-between items-center bg-studio-bg">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-studio-accent"></i>
+                    <h3 class="font-serif text-lg font-bold text-studio-primary">Collector Cart</h3>
+                </div>
+                <button onclick="toggleCartDrawer()" class="text-stone-400 hover:text-black">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="p-6 flex-1 overflow-y-auto space-y-4" id="cart-items-container">
+                <!-- JS Inject Cart Items -->
+            </div>
+
+            <!-- Cart Summary & Checkout Footer -->
+            <div class="p-6 border-t border-stone-200 bg-stone-50 space-y-4">
+                <div class="space-y-1.5 text-xs">
+                    <div class="flex justify-between text-studio-muted">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal" class="font-serif font-semibold text-studio-primary">$0</span>
+                    </div>
+                    <div class="flex justify-between text-studio-muted">
+                        <span>Insured Art Shipping</span>
+                        <span id="cart-shipping" class="text-emerald-700 font-medium">Calculated at checkout</span>
+                    </div>
+                    <div class="flex justify-between text-studio-primary font-bold text-sm border-t border-stone-200 pt-2">
+                        <span>Total Due</span>
+                        <span id="cart-total" class="font-serif text-lg text-studio-accent">$0</span>
+                    </div>
+                </div>
+
+                <button onclick="openCheckoutModal()" id="btn-proceed-checkout" class="w-full bg-studio-primary text-white py-4 text-xs uppercase tracking-widest font-semibold hover:bg-studio-accent transition-all flex items-center justify-center gap-2 shadow-lg">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Proceed to Collector Checkout
+                </button>
+
+                <p class="text-[10px] text-center text-studio-muted">
+                    <i data-lucide="shield-check" class="w-3 h-3 inline text-emerald-600 mr-1"></i> Authenticity & Insured Transit Guaranteed
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-stone-200 relative p-6 md:p-8">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <div class="mb-6 border-b border-stone-200 pb-4">
+                <span class="text-xs uppercase tracking-widest text-studio-accent font-semibold">Secure Acquisition</span>
+                <h3 class="font-serif text-2xl font-bold text-studio-primary mt-1">Collector Checkout</h3>
+            </div>
+
+            <form onsubmit="handleFinalPayment(event)" class="space-y-6">
+                
+                <!-- Step 1: Collector Details -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-wider font-bold text-studio-primary border-b pb-1">1. Collector Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" placeholder="First & Last Name" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input type="email" placeholder="Email Address (for Certificate of Authenticity)" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                    </div>
+                </div>
+
+                <!-- Step 2: Shipping Destination -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-wider font-bold text-studio-primary border-b pb-1">2. Insured Shipping Address</h4>
+                    <input type="text" placeholder="Street Address" required class="w-full border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <input type="text" placeholder="City" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input type="text" placeholder="State / Region" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                        <input type="text" placeholder="Postal Code" required class="border border-stone-300 p-2.5 text-xs focus:outline-none focus:border-studio-accent">
+                    </div>
+                </div>
+
+                <!-- Step 3: Payment Method -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-wider font-bold text-studio-primary border-b pb-1">3. Payment Preference</h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <label class="border p-3 rounded flex items-center gap-2 cursor-pointer text-xs font-medium hover:border-studio-accent">
+                            <input type="radio" name="payment_method" value="card" checked>
+                            <span>Credit Card</span>
+                        </label>
+                        <label class="border p-3 rounded flex items-center gap-2 cursor-pointer text-xs font-medium hover:border-studio-accent">
+                            <input type="radio" name="payment_method" value="wire">
+                            <span>Bank Wire Transfer</span>
+                        </label>
+                        <label class="border p-3 rounded flex items-center gap-2 cursor-pointer text-xs font-medium hover:border-studio-accent">
+                            <input type="radio" name="payment_method" value="apple">
+                            <span>Apple Pay</span>
+                        </label>
+                    </div>
+
+                    <div class="bg-stone-50 p-4 border border-stone-200 rounded space-y-3">
+                        <input type="text" placeholder="Card Number" class="w-full border border-stone-300 p-2.5 text-xs bg-white focus:outline-none focus:border-studio-accent">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" placeholder="MM / YY" class="border border-stone-300 p-2.5 text-xs bg-white focus:outline-none focus:border-studio-accent">
+                            <input type="text" placeholder="CVC" class="border border-stone-300 p-2.5 text-xs bg-white focus:outline-none focus:border-studio-accent">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary Line -->
+                <div class="bg-studio-accentLight p-4 border border-studio-accent/20 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="text-studio-muted block">Total Investment</span>
+                        <span id="checkout-final-total" class="font-serif font-bold text-lg text-studio-primary">$0 USD</span>
+                    </div>
+                    <span class="text-[10px] text-studio-accent font-semibold uppercase">Free Insured Art Freight Included</span>
+                </div>
+
+                <button type="submit" class="w-full bg-studio-accent text-white py-4 text-xs uppercase tracking-widest font-semibold hover:bg-studio-primary transition-colors flex items-center justify-center gap-2 shadow-xl">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Complete Acquisition
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- GENERAL INQUIRY MODAL -->
+    <div id="inquiry-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-lg w-full p-8 border border-stone-200 relative">
+            <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <h3 class="font-serif text-2xl font-semibold text-studio-primary">Private Advisory & Commissions</h3>
+            <p class="text-xs text-studio-muted mt-1">Submit your request for bespoke original works, gallery placement, or print licensing.</p>
+
+            <form onsubmit="handleInquirySubmit(event)" class="mt-6 space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Full Name</label>
+                    <input type="text" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Email Address</label>
+                    <input type="email" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Collector Type</label>
+                    <select class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                        <option>Private Collector</option>
+                        <option>Interior Designer / Decorator</option>
+                        <option>Art Advisor / Curator</option>
+                        <option>Corporate Acquisition</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Inquiry Details</label>
+                    <textarea rows="3" placeholder="Tell us about the space or artwork you are interested in..." class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-studio-primary text-white py-3 text-xs uppercase tracking-widest hover:bg-studio-accent transition-colors">
+                    Send Inquiry
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-studio-primary text-white px-5 py-3 text-xs uppercase tracking-widest shadow-2xl flex items-center gap-3">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-studio-accent"></i>
+        <span id="toast-text">Action successful</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-stone-100 py-16 border-t border-stone-200">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="space-y-4 md:col-span-2">
+                <a href="#" class="font-serif text-2xl tracking-wider text-studio-primary font-semibold">ADESAKIN MARY</a>
+                <p class="text-sm text-studio-muted max-w-sm leading-relaxed">
+                    Contemporary thread painting exploring identity, Nigerian heritage, and the delicate balance of emotion through textile and canvas.
+                </p>
+                <div class="flex gap-4 pt-2">
+                    <a href="#" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-stone-400 hover:text-studio-accent transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="text-xs uppercase tracking-widest text-studio-primary mb-4 font-bold">Gallery Navigation</h5>
+                <ul class="space-y-3 text-sm text-studio-muted">
+                    <li><a href="#about" class="hover:text-studio-accent transition-colors">Artist Biography</a></li>
+                    <li><a href="#available-works" class="hover:text-studio-accent transition-colors">Available Artworks</a></li>
+                    <li><a href="#exhibitions" class="hover:text-studio-accent transition-colors">Selected Exhibitions</a></li>
+                    <li><a href="#newsletter" class="hover:text-studio-accent transition-colors">Join Mailing List</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="text-xs uppercase tracking-widest text-studio-primary mb-4 font-bold">Inquiries & Policies</h5>
+                <ul class="space-y-3 text-sm text-studio-muted">
+                    <li><a href="#" onclick="openInquiryModal()" class="hover:text-studio-accent transition-colors">Private Commissions</a></li>
+                    <li><a href="#" class="hover:text-studio-accent transition-colors">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-studio-accent transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-studio-accent transition-colors">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center text-[10px] text-stone-400 uppercase tracking-widest">
+            <p>© 2026 Adesakin Mary Studio. All Rights Reserved.</p>
+            <p class="mt-2 md:mt-0">Platform design curated for fine art collection.</p>
+        </div>
+    </footer>
+
+    <!-- GENERAL INQUIRY MODAL (Hidden by default, triggered by footer) -->
+    <div id="inquiry-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-lg w-full p-8 border border-stone-200 relative">
+            <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-stone-500 hover:text-black">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="font-serif text-2xl font-semibold text-studio-primary">Studio Inquiry</h3>
+            <p class="text-xs text-studio-muted mt-1">Submit a request regarding commissions or gallery representation.</p>
+            <form onsubmit="handleInquirySubmit(event)" class="mt-6 space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Full Name</label>
+                    <input type="text" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Email Address</label>
+                    <input type="email" required class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-studio-muted mb-1">Message</label>
+                    <textarea rows="4" class="w-full border border-stone-300 p-2.5 text-xs text-studio-primary focus:outline-none focus:border-studio-accent"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-studio-primary text-white py-3 text-xs uppercase tracking-widest hover:bg-studio-accent transition-colors">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ADESAKIN MARY ACTUAL ARTWORK DATASET (From Provided PDF)
+                dimensions: "40\" × 40\"",
+                originalPrice: 5100,
+                printPrice: 310,
+                status: "Available",
+                category: "original",
+                image: "https://images.unsplash.com/photo-1578926377703-668e4035a5e8?auto=format&fit=crop&w=800&q=80",
+                description: "A bold, feminine exploration of dark spatial balance and fluid charcoal gestures."
+            },
+            {
+                id: 5,
+                title: "Ethereal Form II",
+                medium: "Watercolor & Gouache on Cotton Paper",
+                dimensions: "24\" × 36\"",
+                originalPrice: 0,
+                printPrice: 180,
+                status: "Sold",
+                category: "sold",
+                image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80",
+                description: "Original in private collection."
+            },
+            {
+                id: 6,
+                title: "Aura of the Modern Woman",
+                medium: "Oil on Linen",
+                dimensions: "60\" × 72\"",
+                originalPrice: 11500,
+                printPrice: 550,
+                status: "Available",
+                category: "original",
+                image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80",
+                description: "Museum-scale statement piece exploring grace, strength, and spatial harmony."
+            }
+        ];
+
+        // CART STATE
+        let cart = [];
+        let selectedArtwork = null;
+
+        // RENDER ARTWORKS
+        function renderArtworks(data) {
+            const grid = document.getElementById('artwork-grid');
+            grid.innerHTML = '';
+
+            data.forEach(art => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-studio-border group hover:shadow-lg transition-all flex flex-col justify-between";
+                
+                const isOriginalAvailable = art.status === "Available";
+                
+                card.innerHTML = `
+                    <div class="relative overflow-hidden bg-stone-100">
+                        <img src="${art.image}" alt="${art.title}" class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-3 right-3 text-[10px] tracking-widest uppercase px-2.5 py-1 font-semibold ${
+                            art.status === 'Available' ? 'bg-emerald-900 text-white' : 
+                            art.status === 'Prints Only' ? 'bg-amber-800 text-white' : 'bg-stone-800 text-stone-300'
+                        }">
+                            ${art.status}
+                        </span>
+                    </div>
+
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <span class="text-[10px] uppercase tracking-widest text-studio-accent font-semibold">${art.medium}</span>
+                            <h3 class="font-serif text-xl font-bold text-studio-primary mt-1">${art.title}</h3>
+                            <p class="text-xs text-studio-muted">${art.dimensions}</p>
+                        </div>
+
+                        <!-- PRICING MATRIX -->
+                        <div class="border-t border-stone-100 pt-3 space-y-1">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-studio-muted">Original Painting:</span>
+                                <span class="font-serif font-bold ${isOriginalAvailable ? 'text-studio-primary' : 'line-through text-stone-400'}">
+                                    ${art.originalPrice > 0 ? '$' + art.originalPrice.toLocaleString() : 'Sold'}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-studio-muted">Archival Print:</span>
+                                <span class="font-serif font-bold text-studio-accent">
+                                    From $${art.printPrice}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="openArtworkModal(${art.id})" class="flex-1 bg-studio-bg border border-studio-border text-studio-primary py-2.5 text-xs uppercase tracking-widest hover:bg-studio-primary hover:text-white transition-all">
+                                View & Select
+                            </button>
+                            ${isOriginalAvailable ? `
+                                <button onclick="quickAddToCart(${art.id}, 'original')" class="bg-studio-accent text-white px-3 py-2.5 hover:bg-studio-primary transition-colors" title="Quick Add Original to Cart">
+                                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // FILTER LOGIC
+        function filterArt(type) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-studio-primary', 'text-white');
+                btn.classList.add('bg-stone-100', 'text-studio-muted');
+            });
+            event.target.classList.remove('bg-stone-100', 'text-studio-muted');
+            event.target.classList.add('bg-studio-primary', 'text-white');
+
+            if(type === 'all') renderArtworks(artworks);
+            else if(type === 'original') renderArtworks(artworks.filter(a => a.status === 'Available'));
+            else if(type === 'print') renderArtworks(artworks.filter(a => a.printPrice > 0));
+            else if(type === 'sold') renderArtworks(artworks.filter(a => a.status === 'Sold' || a.status === 'Prints Only'));
+        }
+
+        // MODAL LOGIC
+        function openArtworkModal(id) {
+            selectedArtwork = artworks.find(a => a.id === id);
+            if(!selectedArtwork) return;
+
+            document.getElementById('modal-img').src = selectedArtwork.image;
+            document.getElementById('modal-title').innerText = selectedArtwork.title;
+            document.getElementById('modal-specs').innerText = `${selectedArtwork.medium} — ${selectedArtwork.dimensions}`;
+            document.getElementById('modal-desc').innerText = selectedArtwork.description;
+            document.getElementById('modal-status').innerText = selectedArtwork.status;
+
+            const radOrig = document.getElementById('radio-original');
+            const radPrint = document.getElementById('radio-print');
+
+            if(selectedArtwork.originalPrice > 0) {
+                radOrig.disabled = false;
+                radOrig.checked = true;
+                document.getElementById('modal-original-price').innerText = `$${selectedArtwork.originalPrice.toLocaleString()}`;
+            } else {
+                radOrig.disabled = true;
+                radPrint.checked = true;
+                document.getElementById('modal-original-price').innerText = 'Sold';
+            }
+
+            document.getElementById('modal-print-price').innerText = `$${selectedArtwork.printPrice}`;
+            document.getElementById('art-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('art-modal').classList.add('hidden');
+        }
+
+        // CART MANAGEMENT LOGIC
+        function addSelectedToCart() {
+            if(!selectedArtwork) return;
+            const isOriginal = document.getElementById('radio-original').checked;
+            const format = isOriginal ? 'original' : 'print';
+            
+            addToCart(selectedArtwork.id, format);
+            closeModal();
+            toggleCartDrawer(true);
+        }
+
+        function quickAddToCart(id, format) {
+            addToCart(id, format);
+            toggleCartDrawer(true);
+        }
+
+        function addToCart(id, format) {
+            const item = artworks.find(a => a.id === id);
+            if(!item) return;
+
+            const price = format === 'original' ? item.originalPrice : item.printPrice;
+            const itemTitle = `${item.title} (${format === 'original' ? '1-of-1 Original Canvas' : 'Limited Archival Print'})`;
+
+            // Check if already in cart
+            const existingIndex = cart.findIndex(c => c.id === id && c.format === format);
+            if(existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({
+                    id: item.id,
+                    title: item.title,
+                    format: format,
+                    formatLabel: format === 'original' ? 'Original Canvas' : 'Archival Print (Edition of 50)',
+                    price: price,
+                    image: item.image,
+                    qty: 1
+                });
+            }
+
+            updateCartUI();
+            showToast(`Added "${item.title}" to cart`);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const countBadge = document.getElementById('cart-count-badge');
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            countBadge.innerText = totalItems;
+
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+
+            if(cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-studio-muted">
+                        <i data-lucide="shopping-bag" class="w-10 h-10 mx-auto mb-3 opacity-40"></i>
+                        <p class="text-xs">Your collector cart is currently empty.</p>
+                    </div>
+                `;
+            } else {
+                cart.forEach((item, idx) => {
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between p-3 bg-stone-50 border border-stone-200 rounded";
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image}" class="w-12 h-12 object-cover rounded">
+                            <div>
+                                <h4 class="font-serif text-xs font-bold text-studio-primary">${item.title}</h4>
+                                <span class="text-[10px] text-studio-accent block">${item.formatLabel}</span>
+                                <span class="text-xs font-semibold">$${item.price.toLocaleString()} USD</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" class="text-stone-400 hover:text-red-600 p-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            document.getElementById('cart-subtotal').innerText = `$${subtotal.toLocaleString()} USD`;
+            document.getElementById('cart-total').innerText = `$${subtotal.toLocaleString()} USD`;
+            document.getElementById('checkout-final-total').innerText = `$${subtotal.toLocaleString()} USD`;
+
+            lucide.createIcons();
+        }
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            if(forceOpen) {
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.toggle('hidden');
+            }
+        }
+
+        // CHECKOUT MODAL LOGIC
+        function openCheckoutModal() {
+            if(cart.length === 0) {
+                showToast("Cart is empty. Select an artwork first.");
+                return;
+            }
+            toggleCartDrawer(false);
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        function handleFinalPayment(e) {
+            e.preventDefault();
+            closeCheckoutModal();
+            cart = [];
+            updateCartUI();
+            showToast("✓ Acquisition Request Sent to Studio. We will contact you shortly.");
+        }
+        
+        function handleNewsletter(e) {
+            e.preventDefault();
+            document.getElementById('nl-success-msg').classList.remove('hidden');
+            document.getElementById('nl-email').value = '';
+        }
+        
+        function openInquiryModal() {
+            document.getElementById('inquiry-modal').classList.remove('hidden');
+        }
+        
+        function closeInquiryModal() {
+            document.getElementById('inquiry-modal').classList.add('hidden');
+        }
+        
+        function handleInquirySubmit(e) {
+            e.preventDefault();
+            closeInquiryModal();
+            showToast("✓ Your inquiry has been sent to the studio.");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // DOM READY INIT
+        window.addEventListener('DOMContentLoaded', () => {
+            renderArtworks(artworks);
+            updateCartUI();
+        });
+    </script>
+</body>
+</html>
