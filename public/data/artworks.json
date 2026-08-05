@@ -43,6 +43,13 @@
     "dimensions": "20 x 24 inches",
     "originalPrice": null,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100,
+        "paystackPaymentUrl": ""
+      }
+    ],
     "status": "Sold",
     "edition": "Original work",
     "provenance": "Original catalogue work by Mary Adesakin Damilola.",
@@ -247,13 +254,20 @@
   {
     "id": 12,
     "slug": "the-weight",
-    "title": "The Weight",
+    "title": "The Weight We Carry",
     "collection": "Early Thread Narratives",
     "year": "2024",
     "medium": "Threadcollage and Acrylic on Canvas",
     "dimensions": "16 x 20 inches",
     "originalPrice": null,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100,
+        "paystackPaymentUrl": ""
+      }
+    ],
     "status": "Sold",
     "edition": "Original work",
     "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
@@ -276,6 +290,13 @@
     "dimensions": "16 x 20 inches",
     "originalPrice": null,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100,
+        "paystackPaymentUrl": ""
+      }
+    ],
     "status": "Sold",
     "edition": "Original work",
     "provenance": "Sold catalogue work by Mary Adesakin Damilola.",
@@ -298,6 +319,13 @@
     "dimensions": "18 x 22 inches",
     "originalPrice": null,
     "printPrice": null,
+    "printOptions": [
+      {
+        "size": "10 x 12 inches",
+        "price": 100,
+        "paystackPaymentUrl": ""
+      }
+    ],
     "status": "Sold",
     "edition": "Original work",
     "provenance": "Sold catalogue work by Mary Adesakin Damilola.",

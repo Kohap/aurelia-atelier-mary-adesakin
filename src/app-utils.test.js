@@ -71,7 +71,7 @@ test('printOptionsFor returns only complete size-specific print prices', () => {
   assert.equal(hasPrintPricing({ printPrice: null }), false);
 });
 
-test('Print Works includes only catalogue entries with valid print pricing', () => {
+test('Print includes only catalogue entries with valid print pricing', () => {
   const printWork = { printOptions: [{ size: '10 x 12 inches', price: 100 }] };
   const originalOnly = { originalPrice: 1200, status: 'Available' };
   assert.equal(matchesCatalogueFilter(printWork, 'prints'), true);

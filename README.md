@@ -16,7 +16,7 @@ The site is designed for collectors, curators, galleries, and art advisors who w
 - Admin-friendly JSON artwork catalogue in `public/data/artworks.json`
 - Browser admin screen at `/adesakin/admin/` for editing original and print prices before exporting JSON
 - Responsive artist portfolio and artwork catalogue
-- Separate Original Works and Print Works catalogue browsing
+- Separate Original Works and Print catalogue browsing
 - Original artwork cards with status, dimensions, medium, year, and inquiry flow
 - Collection browsing, search, and sort controls
 - Multilingual interface support for English, Yoruba, and French
