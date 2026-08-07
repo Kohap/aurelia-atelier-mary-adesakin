@@ -43,7 +43,6 @@ const FORMSPREE_INQUIRY_ENDPOINT = 'https://formspree.io/f/mppaawgd';
 const FORMSPREE_STUDIO_CIRCLE_ENDPOINT = 'https://formspree.io/f/mwleepdn';
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ?? '';
 const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_TOKEN ?? '';
-const DEPOSIT_RATIO = 0.3;
 const MAX_ARTWORK_IMAGE_BYTES = 15 * 1024 * 1024;
 const ALLOWED_ARTWORK_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
@@ -186,7 +185,6 @@ const translations = {
     requestDetails: 'Request Artwork Details',
     unavailable: 'Artwork Unavailable',
     addShortlist: 'Add to Collector Shortlist',
-    payDeposit: 'Pay Deposit',
     payInFull: 'Pay in Full',
     buyPrint: 'Buy Print',
     inquirySent: 'Inquiry sent to Mary Adesakin Studio.',
@@ -230,7 +228,6 @@ const translations = {
     requestDetails: 'Beere Alaye Ise',
     unavailable: 'Ise yi ko wa',
     addShortlist: 'Fi kun akojopo',
-    payDeposit: 'San Deposit',
     payInFull: 'San ni kikun',
     buyPrint: 'Ra Print',
     inquirySent: 'Ibeere ti lo si Mary Adesakin Studio.',
@@ -271,7 +268,6 @@ const translations = {
     requestDetails: 'Demander les details',
     unavailable: 'Oeuvre indisponible',
     addShortlist: 'Ajouter a la selection',
-    payDeposit: 'Payer un acompte',
     payInFull: 'Payer en totalite',
     buyPrint: 'Acheter le tirage',
     inquirySent: 'Demande envoyee au studio Mary Adesakin.',
@@ -616,15 +612,9 @@ function App() {
               <div className="modal-actions">
                 <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
                 {PAYSTACK_PUBLIC_KEY && selected.status === 'Available' && isPositivePrice(selected.originalPrice) ? (
-                  <>
-                    <button type="button" onClick={() => openCheckout(selected, Math.round(selected.originalPrice * DEPOSIT_RATIO), '30% deposit')}><CreditCard size={16} /> {t.payDeposit}</button>
-                    <button type="button" onClick={() => openCheckout(selected, selected.originalPrice, 'Full price')}><CreditCard size={16} /> {t.payInFull}</button>
-                  </>
+                  <button type="button" onClick={() => openCheckout(selected, selected.originalPrice, 'Full price')}><CreditCard size={16} /> {t.payInFull}</button>
                 ) : (
-                  <>
-                    {hasPaymentLink(selected, 'deposit') ? <a href={paymentUrlFor(selected, 'deposit')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payDeposit}</a> : null}
-                    {hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null}
-                  </>
+                  hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null
                 )}
                 {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
                 <button
