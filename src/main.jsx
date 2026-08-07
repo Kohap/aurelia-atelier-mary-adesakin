@@ -914,7 +914,9 @@ function PrintPricing({ artwork, fallback, buyLabel, onBuy }) {
 }
 
 function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -942,13 +944,15 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
         ref: `${artwork.slug}-${Date.now()}`,
         metadata: {
           custom_fields: [
+            { display_name: 'Buyer Name', variable_name: 'buyer_name', value: name },
+            { display_name: 'Phone', variable_name: 'phone', value: phone },
             { display_name: 'Artwork', variable_name: 'artwork', value: artwork.title },
             { display_name: 'Item', variable_name: 'item', value: label },
           ],
         },
         onSuccess: (transaction) => {
           onClose();
-          showToast(`Payment received. Reference: ${transaction.reference}`);
+          showToast(`Payment received. Reference: ${transaction.reference}. The studio will be in touch about delivery.`);
         },
         onCancel: () => {},
       });
@@ -971,17 +975,40 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
           <p className="spec">{label} — {money(amount)}</p>
           <form className="checkout-form" onSubmit={handleSubmit}>
             <label className="admin-field">
-              <span>Your email address</span>
+              <span>Full name</span>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+                autoFocus
+                required
+              />
+            </label>
+            <label className="admin-field">
+              <span>Email address</span>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
-                autoFocus
                 required
               />
             </label>
+            <label className="admin-field">
+              <span>Phone number</span>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+234 800 000 0000"
+                autoComplete="tel"
+                required
+              />
+            </label>
+            <p className="checkout-note">After payment the studio will contact you to confirm your shipping address and arrange delivery.</p>
             {error ? <p className="form-error" role="alert">{error}</p> : null}
             <button type="submit" className="primary" disabled={loading}>
               {loading ? 'Loading…' : `Pay ${money(amount)}`}

@@ -260,6 +260,7 @@ dd { margin: 0; font-weight: 700; text-align: right; }
 .admin-head-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .checkout-form { display: flex; flex-direction: column; gap: 14px; }
 .checkout-form .primary { align-self: flex-start; }
+.checkout-note { margin: 0; font-size: .82rem; color: var(--muted); line-height: 1.6; }
 .admin-add-panel {
   margin-bottom: 18px;
   border: 1px solid var(--border);
