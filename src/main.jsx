@@ -1025,6 +1025,11 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
   const [draft, setDraft] = useState(emptyArtworkDraft);
   const [draftImage, setDraftImage] = useState(null);
   const [draftError, setDraftError] = useState('');
+  const [testAmount, setTestAmount] = useState('10');
+  const [testCheckout, setTestCheckout] = useState(null);
+  const [payments, setPayments] = useState(null);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
+  const [paymentsPage, setPaymentsPage] = useState(1);
   const pricedOriginals = artworks.filter((art) => isPositivePrice(art.originalPrice)).length;
   const pricedPrints = artworks.filter(hasPrintPricing).length;
 
@@ -1148,6 +1153,23 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
       setDraftError(error instanceof Error ? error.message : 'The artwork could not be added.');
     } finally {
       setAddingArtwork(false);
+    }
+  };
+
+  const loadPayments = async (page = 1) => {
+    setPaymentsLoading(true);
+    try {
+      const res = await fetch(`/api/transactions?perPage=20&page=${page}&status=success`, {
+        headers: { 'x-admin-token': ADMIN_TOKEN },
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? 'Failed to load');
+      const body = await res.json();
+      setPayments(body);
+      setPaymentsPage(page);
+    } catch (err) {
+      showToast(err.message ?? 'Could not load payments.');
+    } finally {
+      setPaymentsLoading(false);
     }
   };
 
@@ -1295,6 +1317,89 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
         <span>Click <strong>Publish</strong> to push changes live instantly. Use <strong>Export JSON</strong> as a backup for git deployment.</span>
       </div>
 
+      {PAYSTACK_PUBLIC_KEY ? (
+        <details className="admin-add-panel">
+          <summary><CreditCard size={18} /> Test Checkout</summary>
+          <div className="admin-test-checkout">
+            <p className="admin-add-help">Open a real Paystack checkout with your current public key. Use this to verify the payment flow before going live. Enter your test card details to complete a test payment.</p>
+            <div className="admin-test-row">
+              <label className="admin-field">
+                <span>Test amount (USD)</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={testAmount}
+                  onChange={(e) => setTestAmount(e.target.value)}
+                />
+              </label>
+              <button
+                type="button"
+                className="primary"
+                onClick={() => setTestCheckout({ slug: 'test-payment', title: 'Test Payment', collection: 'Admin Test', originalPrice: Number(testAmount) || 10 })}
+              >
+                <CreditCard size={16} /> Open Test Checkout
+              </button>
+            </div>
+          </div>
+        </details>
+      ) : null}
+
+      <details className="admin-add-panel">
+        <summary><ExternalLink size={18} /> Payment Records</summary>
+        <div className="admin-payments">
+          <div className="admin-payments-head">
+            <p className="admin-add-help">Recent successful payments from Paystack. Requires <code>PAYSTACK_SECRET_KEY</code> to be configured on the server.</p>
+            <button type="button" className="primary" onClick={() => loadPayments(1)} disabled={paymentsLoading}>
+              {paymentsLoading ? 'Loading…' : payments ? 'Refresh' : 'Load Payments'}
+            </button>
+          </div>
+          {payments ? (
+            payments.data?.length ? (
+              <>
+                <div className="admin-payments-table" role="table" aria-label="Payment records">
+                  <div className="admin-payments-row admin-payments-header" role="row">
+                    <span role="columnheader">Date</span>
+                    <span role="columnheader">Buyer</span>
+                    <span role="columnheader">Artwork</span>
+                    <span role="columnheader">Amount</span>
+                    <span role="columnheader">Reference</span>
+                  </div>
+                  {payments.data.map((tx) => {
+                    const fields = Array.isArray(tx.metadata?.custom_fields) ? tx.metadata.custom_fields : [];
+                    const field = (name) => fields.find((f) => f.variable_name === name)?.value ?? '—';
+                    const date = new Date(tx.paid_at ?? tx.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                    return (
+                      <div className="admin-payments-row" role="row" key={tx.id}>
+                        <span role="cell">{date}</span>
+                        <span role="cell">
+                          <strong>{field('buyer_name')}</strong>
+                          <small>{tx.customer?.email}</small>
+                          <small>{field('phone')}</small>
+                        </span>
+                        <span role="cell">
+                          <strong>{field('artwork')}</strong>
+                          <small>{field('item')}</small>
+                        </span>
+                        <span role="cell">{money(tx.amount / 100)}</span>
+                        <span role="cell" className="admin-payments-ref">{tx.reference}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="admin-payments-nav">
+                  <button type="button" onClick={() => loadPayments(paymentsPage - 1)} disabled={paymentsLoading || paymentsPage <= 1}>← Previous</button>
+                  <span>Page {paymentsPage}</span>
+                  <button type="button" onClick={() => loadPayments(paymentsPage + 1)} disabled={paymentsLoading || payments.data.length < 20}>Next →</button>
+                </div>
+              </>
+            ) : (
+              <p className="admin-add-help" style={{ padding: '18px' }}>No payments found.</p>
+            )
+          ) : null}
+        </div>
+      </details>
+
       <div className="admin-table" aria-label="Artwork price editor">
         {artworks.map((art) => (
           <article className="admin-row" key={art.id}>
@@ -1381,6 +1486,16 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
           </article>
         ))}
       </div>
+
+      {testCheckout ? (
+        <CheckoutDialog
+          artwork={testCheckout}
+          amount={Number(testAmount) || 10}
+          label="Test payment"
+          onClose={() => setTestCheckout(null)}
+          showToast={showToast}
+        />
+      ) : null}
     </section>
   );
 }
