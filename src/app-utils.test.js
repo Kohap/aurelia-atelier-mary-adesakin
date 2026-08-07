@@ -10,9 +10,12 @@ import {
   isPaystackPaymentUrl,
   matchesCatalogueFilter,
   money,
+  nextArtworkId,
   normalizePrice,
   parseArtworkHash,
   printOptionsFor,
+  slugifyArtworkTitle,
+  uniqueArtworkSlug,
 } from './app-utils.js';
 
 test('isAdminPath recognizes only the dedicated admin route', () => {
@@ -77,6 +80,13 @@ test('Print includes only catalogue entries with valid print pricing', () => {
   assert.equal(matchesCatalogueFilter(printWork, 'prints'), true);
   assert.equal(matchesCatalogueFilter(originalOnly, 'prints'), false);
   assert.equal(matchesCatalogueFilter(originalOnly, 'all'), true);
+});
+
+test('new artwork helpers create stable unique identifiers', () => {
+  const artworks = [{ id: 4, slug: 'quiet-strength' }, { id: 12, slug: 'quiet-strength-2' }];
+  assert.equal(slugifyArtworkTitle('  À Quiet Strength!  '), 'a-quiet-strength');
+  assert.equal(uniqueArtworkSlug('Quiet Strength', artworks), 'quiet-strength-3');
+  assert.equal(nextArtworkId(artworks), 13);
 });
 
 test('Paystack links require an approved HTTPS Paystack payment or product page', () => {

@@ -5,9 +5,11 @@ import {
   Bookmark,
   BookmarkPlus,
   CheckCircle2,
+  CreditCard,
   Download,
   ExternalLink,
   Globe2,
+  ImagePlus,
   Link as LinkIcon,
   Mail,
   Menu,
@@ -25,17 +27,104 @@ import {
   hasPrintPaymentLink,
   hasPrintPricing,
   isAdminPath,
+  isPaystackPaymentUrl,
   isPositivePrice,
   matchesCatalogueFilter,
   money,
+  nextArtworkId,
   normalizePrice,
   paymentUrlFor,
   printPaymentUrlFor,
   printOptionsFor,
+  uniqueArtworkSlug,
 } from './app-utils.js';
 
 const FORMSPREE_INQUIRY_ENDPOINT = 'https://formspree.io/f/mppaawgd';
 const FORMSPREE_STUDIO_CIRCLE_ENDPOINT = 'https://formspree.io/f/mwleepdn';
+const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ?? '';
+const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_TOKEN ?? '';
+const DEPOSIT_RATIO = 0.3;
+const MAX_ARTWORK_IMAGE_BYTES = 15 * 1024 * 1024;
+const ALLOWED_ARTWORK_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+const emptyArtworkDraft = () => ({
+  title: '',
+  collection: '',
+  year: String(new Date().getFullYear()),
+  medium: '',
+  dimensions: '',
+  originalPrice: '',
+  status: 'Available',
+  edition: 'Original work',
+  provenance: 'Original catalogue work by Mary Adesakin Damilola.',
+  description: '',
+  printSize: '',
+  printPrice: '',
+  paystackPaymentUrl: '',
+  paystackDepositUrl: '',
+  printPaystackUrl: '',
+});
+
+const loadArtworkImage = async (file) => {
+  if (typeof createImageBitmap === 'function') {
+    const bitmap = await createImageBitmap(file);
+    return {
+      source: bitmap,
+      width: bitmap.width,
+      height: bitmap.height,
+      release: () => bitmap.close(),
+    };
+  }
+
+  const sourceUrl = URL.createObjectURL(file);
+  const image = new Image();
+  image.src = sourceUrl;
+  await image.decode();
+  return {
+    source: image,
+    width: image.naturalWidth,
+    height: image.naturalHeight,
+    release: () => URL.revokeObjectURL(sourceUrl),
+  };
+};
+
+const optimizeArtworkUpload = async (file, slug) => {
+  if (!ALLOWED_ARTWORK_IMAGE_TYPES.has(file.type)) {
+    throw new Error('Choose a JPG, PNG, or WebP image.');
+  }
+  if (file.size > MAX_ARTWORK_IMAGE_BYTES) {
+    throw new Error('The image must be 15 MB or smaller.');
+  }
+
+  const image = await loadArtworkImage(file);
+  const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(image.width * scale));
+  canvas.height = Math.max(1, Math.round(image.height * scale));
+  const context = canvas.getContext('2d');
+  if (!context) {
+    image.release();
+    throw new Error('This browser could not prepare the image.');
+  }
+  context.drawImage(image.source, 0, 0, canvas.width, canvas.height);
+  image.release();
+
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.78));
+  if (!blob) throw new Error('This browser could not prepare the image.');
+
+  return { blob, filename: `${slug}.webp` };
+};
+
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
 
 const policies = {
   terms: {
@@ -43,6 +132,7 @@ const policies = {
     content: [
       'Artwork, prices, and availability shown on this website are for general information. A shortlist or inquiry does not reserve an artwork or create a sale.',
       'Before payment, the studio confirms the work, final price, availability, shipping destination, delivery timing, and payment instructions in writing. Prices exclude shipping, customs duties, and import taxes unless confirmed otherwise.',
+      'Shipping arrangements will begin seven days after payment has been completed. A certificate of authenticity will be issued and shipped with the artwork.',
       'Artwork images aim to represent each piece faithfully, but colour, texture, and scale can differ across screens. Copyright in the artwork, images, and text remains with Mary Adesakin unless agreed otherwise in writing.',
     ],
   },
@@ -208,15 +298,21 @@ function App() {
   const [policyName, setPolicyName] = useState(null);
   const [toast, setToast] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [checkoutTarget, setCheckoutTarget] = useState(null);
   const adminMode = isAdminPath(window.location.pathname);
   const t = translations[lang];
   const featuredArt = artworks.find((art) => art.slug === 'the-weight-of-words');
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}data/artworks.json`)
-      .then((res) => res.json())
-      .then(setArtworks)
-      .catch(() => setToast('Unable to load artwork data.'));
+    const load = async () => {
+      try {
+        const blobRes = await fetch('/api/catalogue');
+        if (blobRes.ok) return blobRes.json();
+      } catch { /* fall through to bundled static file */ }
+      const staticRes = await fetch(`${import.meta.env.BASE_URL}data/artworks.json`);
+      return staticRes.json();
+    };
+    load().then(setArtworks).catch(() => setToast('Unable to load artwork data.'));
   }, []);
 
   useEffect(() => {
@@ -262,6 +358,11 @@ function App() {
     if (window.location.hash.startsWith('#artwork/')) {
       window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
     }
+  };
+
+  const openCheckout = (artwork, amount, label) => {
+    setCheckoutTarget({ artwork, amount, label });
+    closeArtwork();
   };
 
   const copyLink = async (art) => {
@@ -354,7 +455,12 @@ function App() {
             </div>
           </div>
           <article className="featured">
-            <img src={`${import.meta.env.BASE_URL}${featuredArt?.image || 'assets/artwork/the-weight-of-words.png'}`} alt={featuredArt?.title || 'The Weight of Words'} />
+            <img
+              src={`${import.meta.env.BASE_URL}${featuredArt?.image || 'assets/artwork/the-weight-of-words.webp'}`}
+              alt={featuredArt?.title || 'The Weight of Words'}
+              fetchPriority="high"
+              decoding="async"
+            />
             <div>
               <span>{featuredArt?.status === 'Sold' ? t.sold : t.available}</span>
               <h2>{featuredArt?.title || 'The Weight of Words'}</h2>
@@ -407,7 +513,7 @@ function App() {
           <div className="grid">
             {filtered.map((art) => (
               <article className="art-card" key={art.id}>
-                <img src={`${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" />
+                <img src={`${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" decoding="async" />
                 <div className="art-body">
                   <div className="art-meta">
                     <span>{art.collection}</span>
@@ -494,7 +600,7 @@ function App() {
         <Dialog labelledBy="artwork-title" onClose={closeArtwork}>
           <div className="modal-panel artwork-modal-panel">
             <button type="button" className="close" onClick={closeArtwork} aria-label="Close artwork details"><X /></button>
-            <img src={`${import.meta.env.BASE_URL}${selected.image}`} alt={selected.title} />
+            <img src={`${import.meta.env.BASE_URL}${selected.image}`} alt={selected.title} decoding="async" />
             <div className="modal-copy">
               <span className={selected.status === 'Sold' ? 'sold badge' : 'available badge'}>{selected.status === 'Sold' ? t.sold : t.available}</span>
               <h2 id="artwork-title">{selected.title}</h2>
@@ -503,14 +609,23 @@ function App() {
               <dl>
                 <dt>Year</dt><dd>{selected.year}</dd>
                 <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : isPositivePrice(selected.originalPrice) ? money(selected.originalPrice) : t.priceOnRequest}</dd>
-                <dt>{t.print}</dt><dd><PrintPricing artwork={selected} fallback={t.availableByInquiry} buyLabel={t.buyPrint} /></dd>
+                <dt>{t.print}</dt><dd><PrintPricing artwork={selected} fallback={t.availableByInquiry} buyLabel={t.buyPrint} onBuy={PAYSTACK_PUBLIC_KEY ? (option) => openCheckout(selected, option.price, `Print ${option.size}`) : null} /></dd>
                 <dt>{t.edition}</dt><dd>{selected.edition}</dd>
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
               </dl>
               <div className="modal-actions">
                 <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
-                {hasPaymentLink(selected, 'deposit') ? <a href={paymentUrlFor(selected, 'deposit')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payDeposit}</a> : null}
-                {hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null}
+                {PAYSTACK_PUBLIC_KEY && selected.status === 'Available' && isPositivePrice(selected.originalPrice) ? (
+                  <>
+                    <button type="button" onClick={() => openCheckout(selected, Math.round(selected.originalPrice * DEPOSIT_RATIO), '30% deposit')}><CreditCard size={16} /> {t.payDeposit}</button>
+                    <button type="button" onClick={() => openCheckout(selected, selected.originalPrice, 'Full price')}><CreditCard size={16} /> {t.payInFull}</button>
+                  </>
+                ) : (
+                  <>
+                    {hasPaymentLink(selected, 'deposit') ? <a href={paymentUrlFor(selected, 'deposit')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payDeposit}</a> : null}
+                    {hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null}
+                  </>
+                )}
                 {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
                 <button
                   type="button"
@@ -556,6 +671,16 @@ function App() {
 
       {policyName ? (
         <PolicyDialog policy={policies[policyName]} onClose={() => setPolicyName(null)} />
+      ) : null}
+
+      {checkoutTarget ? (
+        <CheckoutDialog
+          artwork={checkoutTarget.artwork}
+          amount={checkoutTarget.amount}
+          label={checkoutTarget.label}
+          onClose={() => setCheckoutTarget(null)}
+          showToast={showToast}
+        />
       ) : null}
 
       {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
@@ -648,7 +773,7 @@ function ShortlistDialog({ items, onClose, onRemove, onOpenPrivacy }) {
             <ul className="shortlist-items">
               {items.map((art) => (
                 <li key={art.id}>
-                  <img src={`${import.meta.env.BASE_URL}${art.image}`} alt="" />
+                  <img src={`${import.meta.env.BASE_URL}${art.image}`} alt="" loading="lazy" decoding="async" />
                   <span><strong>{art.title}</strong><small>{money(art.originalPrice) || 'Price on request'}</small></span>
                   <button type="button" onClick={() => onRemove(art.id)} aria-label={`Remove ${art.title} from shortlist`}><X size={16} /></button>
                 </li>
@@ -770,7 +895,7 @@ function PolicyDialog({ policy, onClose }) {
   );
 }
 
-function PrintPricing({ artwork, fallback, buyLabel }) {
+function PrintPricing({ artwork, fallback, buyLabel, onBuy }) {
   const options = printOptionsFor(artwork);
 
   if (options.length) {
@@ -780,7 +905,11 @@ function PrintPricing({ artwork, fallback, buyLabel }) {
           <span key={option.size}>
             <span>{option.size}</span>
             <strong>{money(option.price)}</strong>
-            {hasPrintPaymentLink(option) ? (
+            {PAYSTACK_PUBLIC_KEY && isPositivePrice(option.price) && onBuy ? (
+              <button type="button" className="print-buy-link" onClick={() => onBuy(option)}>
+                <CreditCard size={14} /> {buyLabel}
+              </button>
+            ) : hasPrintPaymentLink(option) ? (
               <a className="print-buy-link" href={printPaymentUrlFor(option)} target="_blank" rel="noreferrer">
                 <ExternalLink size={14} /> {buyLabel}
               </a>
@@ -794,7 +923,91 @@ function PrintPricing({ artwork, fallback, buyLabel }) {
   return money(artwork.printPrice) || fallback;
 }
 
+function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      if (!window.PaystackPop) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://js.paystack.co/v1/inline.js';
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('Could not load the payment service. Check your connection and try again.'));
+          document.head.appendChild(script);
+        });
+      }
+
+      const handler = window.PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email,
+        amount: amount * 100,
+        currency: 'USD',
+        ref: `${artwork.slug}-${Date.now()}`,
+        metadata: {
+          custom_fields: [
+            { display_name: 'Artwork', variable_name: 'artwork', value: artwork.title },
+            { display_name: 'Item', variable_name: 'item', value: label },
+          ],
+        },
+        onSuccess: (transaction) => {
+          onClose();
+          showToast(`Payment received. Reference: ${transaction.reference}`);
+        },
+        onCancel: () => {},
+      });
+
+      handler.openIframe();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Payment could not be started.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog labelledBy="checkout-title" onClose={onClose}>
+      <div className="modal-panel compact-modal">
+        <button type="button" className="close" onClick={onClose} aria-label="Close checkout"><X /></button>
+        <div className="modal-copy">
+          <span className="kicker">{artwork.collection}</span>
+          <h2 id="checkout-title">{artwork.title}</h2>
+          <p className="spec">{label} — {money(amount)}</p>
+          <form className="checkout-form" onSubmit={handleSubmit}>
+            <label className="admin-field">
+              <span>Your email address</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                autoFocus
+                required
+              />
+            </label>
+            {error ? <p className="form-error" role="alert">{error}</p> : null}
+            <button type="submit" className="primary" disabled={loading}>
+              {loading ? 'Loading…' : `Pay ${money(amount)}`}
+            </button>
+          </form>
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
 function AdminPanel({ artworks, setArtworks, showToast }) {
+  const [addingArtwork, setAddingArtwork] = useState(false);
+  const [draft, setDraft] = useState(emptyArtworkDraft);
+  const [draftImage, setDraftImage] = useState(null);
+  const [draftError, setDraftError] = useState('');
   const pricedOriginals = artworks.filter((art) => isPositivePrice(art.originalPrice)).length;
   const pricedPrints = artworks.filter(hasPrintPricing).length;
 
@@ -825,8 +1038,105 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
     )));
   };
 
+  const updateDraft = (field, value) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+  };
+
+  const addArtwork = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    if (!form.reportValidity()) return;
+    if (!draftImage) {
+      setDraftError('Choose an artwork image.');
+      return;
+    }
+    const printPrice = normalizePrice(draft.printPrice);
+    const printSize = draft.printSize.trim();
+    if (Boolean(printPrice) !== Boolean(printSize)) {
+      setDraftError('Add both a print size and a print price, or leave both blank.');
+      return;
+    }
+    const paymentLinks = [draft.paystackPaymentUrl, draft.paystackDepositUrl, draft.printPaystackUrl];
+    if (paymentLinks.some((link) => link.trim() && !isPaystackPaymentUrl(link.trim()))) {
+      setDraftError('Use a valid secure Paystack payment or product link.');
+      return;
+    }
+
+    setAddingArtwork(true);
+    setDraftError('');
+
+    try {
+      const slug = uniqueArtworkSlug(draft.title, artworks);
+      const preparedImage = await optimizeArtworkUpload(draftImage, slug);
+      const previewImage = URL.createObjectURL(preparedImage.blob);
+
+      let imageUrl = `assets/artwork/${preparedImage.filename}`;
+      let uploadedToBlob = false;
+      try {
+        const uploadRes = await fetch(
+          `/api/upload-artwork?filename=${encodeURIComponent(preparedImage.filename)}`,
+          { method: 'POST', body: preparedImage.blob, headers: { 'content-type': 'image/webp', 'x-admin-token': ADMIN_TOKEN } },
+        );
+        if (uploadRes.ok) {
+          const result = await uploadRes.json();
+          imageUrl = result.url;
+          uploadedToBlob = true;
+        }
+      } catch {
+        // Blob API not available (local dev) — fall through to local download
+      }
+      if (!uploadedToBlob) downloadBlob(preparedImage.blob, preparedImage.filename);
+
+      const artwork = {
+        id: nextArtworkId(artworks),
+        slug,
+        title: draft.title.trim(),
+        collection: draft.collection.trim(),
+        year: draft.year.trim(),
+        medium: draft.medium.trim(),
+        dimensions: draft.dimensions.trim(),
+        originalPrice: normalizePrice(draft.originalPrice),
+        printPrice: null,
+        ...(printPrice && printSize ? {
+          printOptions: [{
+            size: printSize,
+            price: printPrice,
+            paystackPaymentUrl: draft.printPaystackUrl.trim(),
+          }],
+        } : {}),
+        status: draft.status,
+        edition: draft.edition.trim(),
+        provenance: draft.provenance.trim(),
+        image: imageUrl,
+        paystackDepositUrl: draft.paystackDepositUrl.trim(),
+        paystackPaymentUrl: draft.paystackPaymentUrl.trim(),
+        description: {
+          en: draft.description.trim(),
+          yo: '',
+          fr: '',
+        },
+        _previewImage: previewImage,
+      };
+
+      setArtworks((items) => [...items, artwork]);
+      setDraft(emptyArtworkDraft());
+      setDraftImage(null);
+      form.reset();
+      showToast(
+        uploadedToBlob
+          ? `${artwork.title} added. Image uploaded to storage.`
+          : `${artwork.title} added. Optimised image downloaded — copy to public/assets/artwork/.`,
+      );
+    } catch (error) {
+      setDraftError(error instanceof Error ? error.message : 'The artwork could not be added.');
+    } finally {
+      setAddingArtwork(false);
+    }
+  };
+
   const exportJson = () => {
-    const json = JSON.stringify(artworks, null, 2);
+    const publishableArtworks = artworks.map(({ _previewImage, ...artwork }) => artwork);
+    const json = JSON.stringify(publishableArtworks, null, 2);
     const blob = new Blob([`${json}\n`], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -839,18 +1149,123 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
     showToast('Updated artworks.json downloaded.');
   };
 
+  const publishCatalogue = async () => {
+    const publishableArtworks = artworks.map(({ _previewImage, ...artwork }) => artwork);
+    const json = JSON.stringify(publishableArtworks, null, 2);
+    try {
+      const res = await fetch('/api/publish-catalogue', {
+        method: 'POST',
+        body: `${json}\n`,
+        headers: { 'content-type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+      });
+      if (!res.ok) throw new Error();
+      showToast('Catalogue published to storage.');
+    } catch {
+      showToast('Publish failed — use Export JSON as a backup.');
+    }
+  };
+
   return (
     <section id="admin" className="admin-panel">
       <div className="admin-head">
         <div>
           <span className="kicker"><Settings size={16} /> Catalogue Admin</span>
-          <h1>Artwork Pricing Editor</h1>
-          <p>Edit prices and add verified Paystack Product Links, then export the updated JSON for the site catalogue.</p>
+          <h1>Artwork Catalogue Editor</h1>
+          <p>Add artworks, edit prices, and add verified Paystack Product Links, then export the updated catalogue.</p>
         </div>
-        <button type="button" className="primary admin-download" onClick={exportJson}>
-          <Download size={16} /> Export JSON
-        </button>
+        <div className="admin-head-actions">
+          <button type="button" className="primary" onClick={publishCatalogue}>
+            <Send size={16} /> Publish
+          </button>
+          <button type="button" className="admin-download" onClick={exportJson}>
+            <Download size={16} /> Export JSON
+          </button>
+        </div>
       </div>
+
+      <details className="admin-add-panel">
+        <summary><ImagePlus size={18} /> Add New Artwork</summary>
+        <form className="admin-add-form" onSubmit={addArtwork}>
+          <label className="admin-field">
+            <span>Artwork title</span>
+            <input value={draft.title} onChange={(event) => updateDraft('title', event.target.value)} maxLength="120" required />
+          </label>
+          <label className="admin-field">
+            <span>Collection</span>
+            <input value={draft.collection} onChange={(event) => updateDraft('collection', event.target.value)} maxLength="120" required />
+          </label>
+          <label className="admin-field">
+            <span>Year</span>
+            <input value={draft.year} onChange={(event) => updateDraft('year', event.target.value)} inputMode="numeric" pattern="[0-9]{4}" maxLength="4" required />
+          </label>
+          <label className="admin-field">
+            <span>Status</span>
+            <select value={draft.status} onChange={(event) => updateDraft('status', event.target.value)}>
+              <option value="Available">Available</option>
+              <option value="Sold">Sold</option>
+            </select>
+          </label>
+          <label className="admin-field">
+            <span>Medium</span>
+            <input value={draft.medium} onChange={(event) => updateDraft('medium', event.target.value)} maxLength="160" required />
+          </label>
+          <label className="admin-field">
+            <span>Dimensions</span>
+            <input value={draft.dimensions} onChange={(event) => updateDraft('dimensions', event.target.value)} maxLength="80" placeholder="24 x 30 inches" required />
+          </label>
+          <label className="admin-field">
+            <span>Original price in USD</span>
+            <input type="number" min="1" step="1" value={draft.originalPrice} onChange={(event) => updateDraft('originalPrice', event.target.value)} placeholder="Leave blank for price on request" />
+          </label>
+          <label className="admin-field">
+            <span>Edition</span>
+            <input value={draft.edition} onChange={(event) => updateDraft('edition', event.target.value)} maxLength="100" required />
+          </label>
+          <label className="admin-field admin-field-wide">
+            <span>Description</span>
+            <textarea value={draft.description} onChange={(event) => updateDraft('description', event.target.value)} rows="4" maxLength="1200" required />
+          </label>
+          <label className="admin-field admin-field-wide">
+            <span>Provenance</span>
+            <input value={draft.provenance} onChange={(event) => updateDraft('provenance', event.target.value)} maxLength="240" required />
+          </label>
+          <label className="admin-field">
+            <span>Print size</span>
+            <input value={draft.printSize} onChange={(event) => updateDraft('printSize', event.target.value)} maxLength="80" placeholder="10 x 12 inches" />
+          </label>
+          <label className="admin-field">
+            <span>Print price in USD</span>
+            <input type="number" min="1" step="1" value={draft.printPrice} onChange={(event) => updateDraft('printPrice', event.target.value)} />
+          </label>
+          {PAYSTACK_PUBLIC_KEY ? (
+            <p className="admin-add-help admin-field-wide">Paystack Inline is active — checkout uses the artwork price automatically. No manual payment links needed.</p>
+          ) : (
+            <>
+              <label className="admin-field">
+                <span>Original Paystack Product Link</span>
+                <input type="url" inputMode="url" value={draft.paystackPaymentUrl} onChange={(event) => updateDraft('paystackPaymentUrl', event.target.value)} placeholder="https://paystack.com/buy/..." />
+              </label>
+              <label className="admin-field">
+                <span>Deposit Paystack Link</span>
+                <input type="url" inputMode="url" value={draft.paystackDepositUrl} onChange={(event) => updateDraft('paystackDepositUrl', event.target.value)} placeholder="https://paystack.com/pay/..." />
+              </label>
+              <label className="admin-field">
+                <span>Print Paystack Product Link</span>
+                <input type="url" inputMode="url" value={draft.printPaystackUrl} onChange={(event) => updateDraft('printPaystackUrl', event.target.value)} placeholder="https://paystack.com/buy/..." />
+              </label>
+            </>
+          )}
+          <label className="admin-field">
+            <span>Artwork image</span>
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setDraftImage(event.target.files?.[0] || null)} required />
+          </label>
+          <p className="admin-add-help admin-field-wide">The image is resized to 1,400 pixels max and converted to WebP. On Vercel it uploads to storage automatically; in local development it downloads — copy it to <code>public/assets/artwork</code> before pushing.</p>
+          {draftError ? <p className="form-error admin-field-wide" role="alert">{draftError}</p> : null}
+          <button className="primary admin-add-submit" type="submit" disabled={addingArtwork}>
+            <ImagePlus size={16} /> {addingArtwork ? 'Preparing Artwork...' : 'Add Artwork'}
+          </button>
+        </form>
+      </details>
 
       <div className="admin-summary">
         <p><strong>{artworks.length}</strong><span>Total works</span></p>
@@ -860,13 +1275,13 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
 
       <div className="admin-note">
         <strong>How to publish catalogue edits:</strong>
-        <span>Export the JSON, replace <code>public/data/artworks.json</code> with the download, then commit and push.</span>
+        <span>Click <strong>Publish</strong> to push changes live instantly. Use <strong>Export JSON</strong> as a backup for git deployment.</span>
       </div>
 
       <div className="admin-table" aria-label="Artwork price editor">
         {artworks.map((art) => (
           <article className="admin-row" key={art.id}>
-            <img src={`${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" />
+            <img src={art._previewImage || `${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" decoding="async" />
             <div className="admin-artwork">
               <span className={art.status === 'Sold' ? 'sold badge' : 'available badge'}>{art.status}</span>
               <h2>{art.title}</h2>
@@ -910,40 +1325,42 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
                 </label>
               )}
             </div>
-            <div className="admin-payment-fields">
-              <label className="admin-field">
-                <span>Original Paystack Product Link</span>
-                <input
-                  type="url"
-                  inputMode="url"
-                  value={art.paystackPaymentUrl ?? ''}
-                  onChange={(event) => updateField(art.id, 'paystackPaymentUrl', event.target.value)}
-                  placeholder="https://paystack.com/buy/..."
-                />
-              </label>
-              <label className="admin-field">
-                <span>Deposit Paystack Payment Link</span>
-                <input
-                  type="url"
-                  inputMode="url"
-                  value={art.paystackDepositUrl ?? ''}
-                  onChange={(event) => updateField(art.id, 'paystackDepositUrl', event.target.value)}
-                  placeholder="https://paystack.com/pay/..."
-                />
-              </label>
-              {Array.isArray(art.printOptions) ? art.printOptions.map((option, index) => (
-                <label className="admin-field" key={`payment-${option.size}`}>
-                  <span>Print {option.size} Paystack Product Link</span>
+            {!PAYSTACK_PUBLIC_KEY ? (
+              <div className="admin-payment-fields">
+                <label className="admin-field">
+                  <span>Original Paystack Product Link</span>
                   <input
                     type="url"
                     inputMode="url"
-                    value={option.paystackPaymentUrl ?? ''}
-                    onChange={(event) => updatePrintOption(art.id, index, 'paystackPaymentUrl', event.target.value)}
+                    value={art.paystackPaymentUrl ?? ''}
+                    onChange={(event) => updateField(art.id, 'paystackPaymentUrl', event.target.value)}
                     placeholder="https://paystack.com/buy/..."
                   />
                 </label>
-              )) : null}
-            </div>
+                <label className="admin-field">
+                  <span>Deposit Paystack Payment Link</span>
+                  <input
+                    type="url"
+                    inputMode="url"
+                    value={art.paystackDepositUrl ?? ''}
+                    onChange={(event) => updateField(art.id, 'paystackDepositUrl', event.target.value)}
+                    placeholder="https://paystack.com/pay/..."
+                  />
+                </label>
+                {Array.isArray(art.printOptions) ? art.printOptions.map((option, index) => (
+                  <label className="admin-field" key={`payment-${option.size}`}>
+                    <span>Print {option.size} Paystack Product Link</span>
+                    <input
+                      type="url"
+                      inputMode="url"
+                      value={option.paystackPaymentUrl ?? ''}
+                      onChange={(event) => updatePrintOption(art.id, index, 'paystackPaymentUrl', event.target.value)}
+                      placeholder="https://paystack.com/buy/..."
+                    />
+                  </label>
+                )) : null}
+              </div>
+            ) : null}
           </article>
         ))}
       </div>

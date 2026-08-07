@@ -257,6 +257,42 @@ dd { margin: 0; font-weight: 700; text-align: right; }
 .admin-head h1 { font-size: clamp(2.2rem, 5vw, 4.25rem); }
 .admin-head p { max-width: 680px; color: var(--muted); line-height: 1.7; }
 .admin-download { justify-content: center; border-radius: 0; }
+.admin-head-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.checkout-form { display: flex; flex-direction: column; gap: 14px; }
+.checkout-form .primary { align-self: flex-start; }
+.admin-add-panel {
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+.admin-add-panel summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 17px 18px;
+  color: var(--primary);
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+.admin-add-panel summary::-webkit-details-marker { display: none; }
+.admin-add-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 18px;
+  border-top: 1px solid var(--border);
+}
+.admin-field-wide { grid-column: 1 / -1; }
+.admin-add-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+.admin-add-help code { color: var(--primary); }
+.admin-add-submit { width: fit-content; justify-content: center; border-radius: 0; cursor: pointer; }
+.admin-add-submit:disabled { cursor: wait; opacity: .65; }
 .admin-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -328,7 +364,7 @@ dd { margin: 0; font-weight: 700; text-align: right; }
   letter-spacing: .13em;
   text-transform: uppercase;
 }
-.admin-field input {
+.admin-field input, .admin-field select, .admin-field textarea {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--border);
@@ -337,6 +373,7 @@ dd { margin: 0; font-weight: 700; text-align: right; }
   padding: 0 12px;
   outline-color: var(--accent);
 }
+.admin-field textarea { padding-block: 11px; resize: vertical; }
 
 footer {
   display: flex;
@@ -508,6 +545,8 @@ footer small {
   .admin-row img { width: 72px; height: 72px; }
   .admin-field, .admin-print-fields, .admin-payment-fields { grid-column: 1 / -1; }
   .admin-payment-fields { grid-template-columns: 1fr; }
+  .admin-add-form { grid-template-columns: 1fr; }
+  .admin-field-wide { grid-column: 1; }
   .modal-panel > img { min-height: 320px; max-height: 52vh; }
 }
 

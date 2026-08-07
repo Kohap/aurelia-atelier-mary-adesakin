@@ -15,6 +15,7 @@ The site is designed for collectors, curators, galleries, and art advisors who w
 - React/Vite app structure for easier future editing
 - Admin-friendly JSON artwork catalogue in `public/data/artworks.json`
 - Browser admin screen at `/adesakin/admin/` for editing original and print prices before exporting JSON
+- Admin artwork form that prepares new catalogue entries and optimized WebP images
 - Responsive artist portfolio and artwork catalogue
 - Separate Original Works and Print catalogue browsing
 - Original artwork cards with status, dimensions, medium, year, and inquiry flow
@@ -100,8 +101,19 @@ Publishing files:
 
 - Keep artwork data inside `public/data/artworks.json`.
 - Use `/adesakin/admin/` to edit original and print prices, export the updated JSON, replace `public/data/artworks.json`, then commit and push.
+- When adding an artwork, copy the downloaded WebP image into `public/assets/artwork` before publishing the exported JSON.
+- Run `npm run optimize:images` after adding source JPG or PNG files to prepare fast catalogue images.
 - To accept payments, create live Paystack Product Links and paste them into the original, deposit, and print link fields in `/adesakin/admin/`.
 - Never add a Paystack secret key to this repository. Secure digital delivery requires server-side transaction verification and signed download links.
 - Keep image filenames stable once they are published, unless the corresponding artwork record is updated.
 - Update `sitemap.xml` when the canonical URL changes.
+
+## Vercel Environment Variables
+
+Configure these in Vercel for Production, Preview, and Development. Copy `.env.example` to `.env.local` for local development.
+
+- `ADMIN_TOKEN` + `VITE_ADMIN_TOKEN`: both set to the same secret value. Protects the catalogue publish and image upload API endpoints. The `VITE_` copy is bundled into the admin panel; the plain copy is checked server-side.
+- `BLOB_READ_WRITE_TOKEN`: Vercel Blob token used by the `api/` routes to read and write artwork images and the live catalogue.
+- `VITE_PAYSTACK_PUBLIC_KEY`: Paystack public key for browser-side Inline checkout. Safe to bundle.
+- `PAYSTACK_SECRET_KEY`: Paystack secret key for webhook signature verification. Server-side only — never prefix with `VITE_`.
 - Keep Formspree endpoints in `src/main.jsx` and analytics snippets in `index.html`.

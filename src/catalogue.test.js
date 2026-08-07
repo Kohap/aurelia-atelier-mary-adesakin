@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 
 const catalogue = JSON.parse(
   await readFile(new URL('../public/data/artworks.json', import.meta.url), 'utf8'),
@@ -32,5 +32,13 @@ test('collector catalogue contains the confirmed original and print prices', () 
       printOptions,
       `${slug} print prices`,
     );
+  }
+});
+
+test('catalogue artwork images use optimized WebP files', async () => {
+  for (const artwork of catalogue) {
+    assert.match(artwork.image, /\.webp$/, `${artwork.slug} should use WebP`);
+    const image = await stat(new URL(`../public/${artwork.image}`, import.meta.url));
+    assert.ok(image.size <= 450 * 1024, `${artwork.slug} image is larger than 450 KB`);
   }
 });

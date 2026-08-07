@@ -30,6 +30,32 @@ export const matchesCatalogueFilter = (artwork, filter) => (
   (filter === '2026' && artwork?.year === '2026')
 );
 
+export const slugifyArtworkTitle = (title) => (
+  typeof title === 'string'
+    ? title
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80)
+    : ''
+);
+
+export const uniqueArtworkSlug = (title, artworks) => {
+  const base = slugifyArtworkTitle(title) || 'untitled-artwork';
+  const existing = new Set(artworks.map((artwork) => artwork.slug));
+  if (!existing.has(base)) return base;
+
+  let suffix = 2;
+  while (existing.has(`${base}-${suffix}`)) suffix += 1;
+  return `${base}-${suffix}`;
+};
+
+export const nextArtworkId = (artworks) => (
+  artworks.reduce((highest, artwork) => Math.max(highest, Number(artwork.id) || 0), 0) + 1
+);
+
 export const parseArtworkHash = (hash) => {
   if (!hash.startsWith('#artwork/')) return null;
 
