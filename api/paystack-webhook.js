@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
 
+const esc = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
 const sendOrderEmail = async ({ to, buyerName, artwork, item, amount, reference }) => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return;
@@ -17,13 +19,13 @@ const sendOrderEmail = async ({ to, buyerName, artwork, item, amount, reference 
       subject: `Order confirmed — ${artwork}`,
       html: `
         <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a">
-          <p style="font-size:1.1rem">Dear ${buyerName},</p>
-          <p>Thank you for your purchase. Your payment of <strong>${formattedAmount}</strong> has been received.</p>
+          <p style="font-size:1.1rem">Dear ${esc(buyerName)},</p>
+          <p>Thank you for your purchase. Your payment of <strong>${esc(formattedAmount)}</strong> has been received.</p>
           <table style="width:100%;border-collapse:collapse;margin:24px 0">
-            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555">Artwork</td><td style="padding:8px 0;border-bottom:1px solid #eee;font-weight:600">${artwork}</td></tr>
-            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555">Item</td><td style="padding:8px 0;border-bottom:1px solid #eee">${item}</td></tr>
-            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555">Amount paid</td><td style="padding:8px 0;border-bottom:1px solid #eee">${formattedAmount}</td></tr>
-            <tr><td style="padding:8px 0;color:#555">Reference</td><td style="padding:8px 0;font-family:monospace;font-size:.9rem">${reference}</td></tr>
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555">Artwork</td><td style="padding:8px 0;border-bottom:1px solid #eee;font-weight:600">${esc(artwork)}</td></tr>
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555">Item</td><td style="padding:8px 0;border-bottom:1px solid #eee">${esc(item)}</td></tr>
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555">Amount paid</td><td style="padding:8px 0;border-bottom:1px solid #eee">${esc(formattedAmount)}</td></tr>
+            <tr><td style="padding:8px 0;color:#555">Reference</td><td style="padding:8px 0;font-family:monospace;font-size:.9rem">${esc(reference)}</td></tr>
           </table>
           <p>The studio will contact you shortly to confirm your shipping address and arrange delivery. If you have any questions, reply to this email or contact <a href="mailto:adesakinmary2020@gmail.com">adesakinmary2020@gmail.com</a>.</p>
           <p style="margin-top:32px">Warm regards,<br><strong>Mary Adesakin Studio</strong></p>

@@ -26,9 +26,21 @@ export default async function handler(req, res) {
     return res.status(415).json({ error: 'Only image/webp accepted' });
   }
 
+  const contentLength = Number(req.headers['content-length']);
+  if (contentLength && contentLength > 20 * 1024 * 1024) {
+    return res.status(413).json({ error: 'Image must be 20 MB or smaller' });
+  }
+
   try {
     const chunks = [];
-    for await (const chunk of req) chunks.push(chunk);
+    let received = 0;
+    for await (const chunk of req) {
+      received += chunk.length;
+      if (received > 20 * 1024 * 1024) {
+        return res.status(413).json({ error: 'Image must be 20 MB or smaller' });
+      }
+      chunks.push(chunk);
+    }
     const body = Buffer.concat(chunks);
 
     const blob = await put(`artwork/${filename}`, body, {

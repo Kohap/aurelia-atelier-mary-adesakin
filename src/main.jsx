@@ -60,7 +60,6 @@ const emptyArtworkDraft = () => ({
   printSize: '',
   printPrice: '',
   paystackPaymentUrl: '',
-  paystackDepositUrl: '',
   printPaystackUrl: '',
 });
 
@@ -1078,7 +1077,7 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
       setDraftError('Add both a print size and a print price, or leave both blank.');
       return;
     }
-    const paymentLinks = [draft.paystackPaymentUrl, draft.paystackDepositUrl, draft.printPaystackUrl];
+    const paymentLinks = [draft.paystackPaymentUrl, draft.printPaystackUrl];
     if (paymentLinks.some((link) => link.trim() && !isPaystackPaymentUrl(link.trim()))) {
       setDraftError('Use a valid secure Paystack payment or product link.');
       return;
@@ -1130,7 +1129,6 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
         edition: draft.edition.trim(),
         provenance: draft.provenance.trim(),
         image: imageUrl,
-        paystackDepositUrl: draft.paystackDepositUrl.trim(),
         paystackPaymentUrl: draft.paystackPaymentUrl.trim(),
         description: {
           en: draft.description.trim(),
@@ -1283,10 +1281,6 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
               <label className="admin-field">
                 <span>Original Paystack Product Link</span>
                 <input type="url" inputMode="url" value={draft.paystackPaymentUrl} onChange={(event) => updateDraft('paystackPaymentUrl', event.target.value)} placeholder="https://paystack.com/buy/..." />
-              </label>
-              <label className="admin-field">
-                <span>Deposit Paystack Link</span>
-                <input type="url" inputMode="url" value={draft.paystackDepositUrl} onChange={(event) => updateDraft('paystackDepositUrl', event.target.value)} placeholder="https://paystack.com/pay/..." />
               </label>
               <label className="admin-field">
                 <span>Print Paystack Product Link</span>
@@ -1457,16 +1451,6 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
                     value={art.paystackPaymentUrl ?? ''}
                     onChange={(event) => updateField(art.id, 'paystackPaymentUrl', event.target.value)}
                     placeholder="https://paystack.com/buy/..."
-                  />
-                </label>
-                <label className="admin-field">
-                  <span>Deposit Paystack Payment Link</span>
-                  <input
-                    type="url"
-                    inputMode="url"
-                    value={art.paystackDepositUrl ?? ''}
-                    onChange={(event) => updateField(art.id, 'paystackDepositUrl', event.target.value)}
-                    placeholder="https://paystack.com/pay/..."
                   />
                 </label>
                 {Array.isArray(art.printOptions) ? art.printOptions.map((option, index) => (
