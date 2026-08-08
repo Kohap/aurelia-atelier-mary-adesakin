@@ -527,6 +527,7 @@ footer small {
   border: 0;
 }
 .form-error { grid-column: 1 / -1; margin: 0; color: #9f2d20; font-size: .82rem; }
+.link-btn { background: none; border: none; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; font: inherit; }
 .policy-copy small { border-top: 1px solid var(--border); padding-top: 14px; color: var(--muted); }
 .modal :focus-visible, .topbar :focus-visible, footer :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .toast {

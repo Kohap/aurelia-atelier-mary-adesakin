@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowDown,
@@ -46,14 +46,26 @@ const PAYSTACK_CURRENCY = import.meta.env.VITE_PAYSTACK_CURRENCY ?? 'NGN';
 const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_TOKEN ?? '';
 const MAX_ARTWORK_IMAGE_BYTES = 15 * 1024 * 1024;
 
-let _fxCache = null;
-const fetchNgnPerUsd = async () => {
-  if (_fxCache !== null) return _fxCache;
-  const res = await fetch('https://open.er-api.com/v6/latest/USD');
-  if (!res.ok) throw new Error('Could not load today\'s exchange rate. Please try again.');
-  const { rates } = await res.json();
-  _fxCache = rates.NGN;
-  return _fxCache;
+let _fxPromise = null;
+const fetchNgnPerUsd = () => {
+  if (_fxPromise) return _fxPromise;
+  _fxPromise = fetch('https://open.er-api.com/v6/latest/USD')
+    .then((res) => {
+      if (!res.ok) throw new Error('Could not load today\'s exchange rate. Please try again.');
+      return res.json();
+    })
+    .then(({ rates }) => {
+      const rate = rates?.NGN;
+      if (typeof rate !== 'number' || !Number.isFinite(rate) || rate <= 0) {
+        throw new Error('Exchange rate data is unavailable. Please try again.');
+      }
+      return rate;
+    })
+    .catch((err) => {
+      _fxPromise = null;
+      throw err;
+    });
+  return _fxPromise;
 };
 const ALLOWED_ARTWORK_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
@@ -931,19 +943,23 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
   const [loading, setLoading] = useState(false);
   const [ngnAmount, setNgnAmount] = useState(null);
 
-  useEffect(() => {
+  const loadRate = useCallback(() => {
     if (PAYSTACK_CURRENCY !== 'NGN') return;
+    setError('');
+    setNgnAmount(null);
     fetchNgnPerUsd()
       .then((rate) => setNgnAmount(Math.round(amount * rate)))
       .catch((err) => setError(err.message));
   }, [amount]);
 
+  useEffect(() => { loadRate(); }, [loadRate]);
+
   const chargeAmount = PAYSTACK_CURRENCY === 'NGN' ? ngnAmount : amount;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (chargeAmount === null) {
-      setError('Exchange rate not loaded yet — please wait a moment and try again.');
+    if (!Number.isFinite(chargeAmount) || chargeAmount <= 0) {
+      setError('Exchange rate is not ready — please use the retry button below.');
       return;
     }
     setLoading(true);
@@ -989,7 +1005,7 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
     }
   };
 
-  const ngnDisplay = ngnAmount
+  const ngnDisplay = (Number.isFinite(ngnAmount) && ngnAmount > 0)
     ? `₦${ngnAmount.toLocaleString('en-NG')}`
     : PAYSTACK_CURRENCY === 'NGN' ? 'Loading rate…' : null;
 
@@ -1037,8 +1053,15 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
               />
             </label>
             <p className="checkout-note">After payment the studio will contact you to confirm your shipping address and arrange delivery.</p>
-            {error ? <p className="form-error" role="alert">{error}</p> : null}
-            <button type="submit" className="primary" disabled={loading || (PAYSTACK_CURRENCY === 'NGN' && ngnAmount === null && !error)}>
+            {error ? (
+              <p className="form-error" role="alert">
+                {error}
+                {PAYSTACK_CURRENCY === 'NGN' && !Number.isFinite(ngnAmount) ? (
+                  <> <button type="button" className="link-btn" onClick={loadRate}>Retry</button></>
+                ) : null}
+              </p>
+            ) : null}
+            <button type="submit" className="primary" disabled={loading || (PAYSTACK_CURRENCY === 'NGN' && !Number.isFinite(ngnAmount))}>
               {loading ? 'Loading…' : `Pay ${ngnDisplay ?? money(amount)}`}
             </button>
           </form>
