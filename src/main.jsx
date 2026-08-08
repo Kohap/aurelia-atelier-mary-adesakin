@@ -317,6 +317,7 @@ function App() {
   const [toast, setToast] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [checkoutTarget, setCheckoutTarget] = useState(null);
+  const [copiedArtworkId, setCopiedArtworkId] = useState(null);
   const adminMode = isAdminPath(window.location.pathname);
   const t = translations[lang];
   const featuredArt = artworks.find((art) => art.slug === 'the-weight-of-words');
@@ -386,7 +387,9 @@ function App() {
   const copyLink = async (art) => {
     try {
       await navigator.clipboard.writeText(artworkUrl(art));
+      setCopiedArtworkId(art.id);
       showToast(t.linkCopied);
+      window.setTimeout(() => setCopiedArtworkId((id) => (id === art.id ? null : id)), 1800);
     } catch {
       showToast(artworkUrl(art));
     }
@@ -531,8 +534,9 @@ function App() {
             <p><CheckCircle2 size={16} /> {availableCount} available, {soldCount} in private collections.</p>
             <p><ShieldCheck size={16} /> Terms, returns, privacy, and shipping timing are available before purchase.</p>
           </div>
-          <div className="grid">
-            {filtered.map((art) => (
+          {filtered.length ? (
+            <div className="grid">
+              {filtered.map((art) => (
               <article className="art-card" key={art.id}>
                 <img src={`${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" decoding="async" />
                 <div className="art-body">
@@ -573,13 +577,23 @@ function App() {
                   </dl>
                   <div className="card-actions">
                     <button type="button" onClick={() => openArtwork(art)}>{t.viewSelect}</button>
-                    <button type="button" aria-label={t.copyLink} onClick={() => copyLink(art)}><LinkIcon size={16} /></button>
+                    <button type="button" aria-label={copiedArtworkId === art.id ? t.linkCopied : t.copyLink} onClick={() => copyLink(art)}>
+                      {copiedArtworkId === art.id ? <CheckCircle2 size={16} /> : <LinkIcon size={16} />}
+                    </button>
                     {art.status === 'Available' ? <button type="button" aria-label={t.addShortlist} onClick={() => addToShortlist(art)}><BookmarkPlus size={16} /></button> : null}
                   </div>
                 </div>
               </article>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state" role="status">
+              <Search size={18} />
+              <h3>No artworks match this view</h3>
+              <p>Try another filter or search term to continue browsing the catalogue.</p>
+              <button type="button" onClick={() => { setQuery(''); setFilter('all'); }}>Reset Catalogue</button>
+            </div>
+          )}
         </section>
 
         <section id="newsletter" className="contact-band">
@@ -662,7 +676,9 @@ function App() {
                   hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null
                 )}
                 {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
-                <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
+                <button type="button" onClick={() => copyLink(selected)}>
+                  {copiedArtworkId === selected.id ? <CheckCircle2 size={16} /> : <LinkIcon size={16} />} {copiedArtworkId === selected.id ? t.linkCopied : t.copyLink}
+                </button>
               </div>
             </div>
           </div>
