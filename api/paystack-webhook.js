@@ -2,12 +2,12 @@ import crypto from 'node:crypto';
 
 const esc = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const sendOrderEmail = async ({ to, buyerName, artwork, item, amount, reference }) => {
+const sendOrderEmail = async ({ to, buyerName, artwork, item, amount, currency, reference }) => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return;
 
   const from = process.env.RESEND_FROM_EMAIL ?? 'Mary Adesakin Studio <onboarding@resend.dev>';
-  const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount / 100);
+  const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency ?? 'NGN' }).format(amount / 100);
 
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
   const event = JSON.parse(rawBody.toString('utf8'));
 
   if (event.event === 'charge.success') {
-    const { customer, amount, reference, metadata } = event.data;
+    const { customer, amount, currency, reference, metadata } = event.data;
     const fields = Array.isArray(metadata?.custom_fields) ? metadata.custom_fields : [];
     const field = (name) => fields.find((f) => f.variable_name === name)?.value ?? '';
 
@@ -79,6 +79,7 @@ export default async function handler(req, res) {
         artwork: field('artwork'),
         item: field('item'),
         amount,
+        currency: currency ?? 'NGN',
         reference,
       });
     } catch (err) {

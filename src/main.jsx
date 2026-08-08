@@ -42,8 +42,19 @@ import {
 const FORMSPREE_INQUIRY_ENDPOINT = 'https://formspree.io/f/mppaawgd';
 const FORMSPREE_STUDIO_CIRCLE_ENDPOINT = 'https://formspree.io/f/mwleepdn';
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ?? '';
+const PAYSTACK_CURRENCY = import.meta.env.VITE_PAYSTACK_CURRENCY ?? 'NGN';
 const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_TOKEN ?? '';
 const MAX_ARTWORK_IMAGE_BYTES = 15 * 1024 * 1024;
+
+let _fxCache = null;
+const fetchNgnPerUsd = async () => {
+  if (_fxCache !== null) return _fxCache;
+  const res = await fetch('https://open.er-api.com/v6/latest/USD');
+  if (!res.ok) throw new Error('Could not load today\'s exchange rate. Please try again.');
+  const { rates } = await res.json();
+  _fxCache = rates.NGN;
+  return _fxCache;
+};
 const ALLOWED_ARTWORK_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const emptyArtworkDraft = () => ({
@@ -918,9 +929,23 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [ngnAmount, setNgnAmount] = useState(null);
+
+  useEffect(() => {
+    if (PAYSTACK_CURRENCY !== 'NGN') return;
+    fetchNgnPerUsd()
+      .then((rate) => setNgnAmount(Math.round(amount * rate)))
+      .catch((err) => setError(err.message));
+  }, [amount]);
+
+  const chargeAmount = PAYSTACK_CURRENCY === 'NGN' ? ngnAmount : amount;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (chargeAmount === null) {
+      setError('Exchange rate not loaded yet — please wait a moment and try again.');
+      return;
+    }
     setLoading(true);
     setError('');
 
@@ -938,8 +963,8 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
       const handler = window.PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email,
-        amount: amount * 100,
-        currency: 'USD',
+        amount: chargeAmount * 100,
+        currency: PAYSTACK_CURRENCY,
         ref: `${artwork.slug}-${Date.now()}`,
         metadata: {
           custom_fields: [
@@ -964,6 +989,10 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
     }
   };
 
+  const ngnDisplay = ngnAmount
+    ? `₦${ngnAmount.toLocaleString('en-NG')}`
+    : PAYSTACK_CURRENCY === 'NGN' ? 'Loading rate…' : null;
+
   return (
     <Dialog labelledBy="checkout-title" onClose={onClose}>
       <div className="modal-panel compact-modal">
@@ -971,7 +1000,7 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
         <div className="modal-copy">
           <span className="kicker">{artwork.collection}</span>
           <h2 id="checkout-title">{artwork.title}</h2>
-          <p className="spec">{label} — {money(amount)}</p>
+          <p className="spec">{label} — {money(amount)}{ngnDisplay ? ` (${ngnDisplay})` : ''}</p>
           <form className="checkout-form" onSubmit={handleSubmit}>
             <label className="admin-field">
               <span>Full name</span>
@@ -1009,8 +1038,8 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
             </label>
             <p className="checkout-note">After payment the studio will contact you to confirm your shipping address and arrange delivery.</p>
             {error ? <p className="form-error" role="alert">{error}</p> : null}
-            <button type="submit" className="primary" disabled={loading}>
-              {loading ? 'Loading…' : `Pay ${money(amount)}`}
+            <button type="submit" className="primary" disabled={loading || (PAYSTACK_CURRENCY === 'NGN' && ngnAmount === null && !error)}>
+              {loading ? 'Loading…' : `Pay ${ngnDisplay ?? money(amount)}`}
             </button>
           </form>
         </div>
