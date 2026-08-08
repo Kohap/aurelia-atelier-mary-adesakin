@@ -46,27 +46,50 @@ const PAYSTACK_CURRENCY = import.meta.env.VITE_PAYSTACK_CURRENCY ?? 'NGN';
 const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_TOKEN ?? '';
 const MAX_ARTWORK_IMAGE_BYTES = 15 * 1024 * 1024;
 
-let _fxPromise = null;
-const fetchNgnPerUsd = () => {
-  if (_fxPromise) return _fxPromise;
-  _fxPromise = fetch('https://open.er-api.com/v6/latest/USD')
+let _ratesPromise = null;
+const fetchAllRates = () => {
+  if (_ratesPromise) return _ratesPromise;
+  _ratesPromise = fetch('https://open.er-api.com/v6/latest/USD')
     .then((res) => {
       if (!res.ok) throw new Error('Could not load today\'s exchange rate. Please try again.');
       return res.json();
     })
     .then(({ rates }) => {
-      const rate = rates?.NGN;
-      if (typeof rate !== 'number' || !Number.isFinite(rate) || rate <= 0) {
+      if (!rates || typeof rates !== 'object') {
         throw new Error('Exchange rate data is unavailable. Please try again.');
       }
-      return rate;
+      return rates;
     })
     .catch((err) => {
-      _fxPromise = null;
+      _ratesPromise = null;
       throw err;
     });
-  return _fxPromise;
+  return _ratesPromise;
 };
+
+const fetchNgnPerUsd = () =>
+  fetchAllRates().then((rates) => {
+    const rate = rates.NGN;
+    if (typeof rate !== 'number' || !Number.isFinite(rate) || rate <= 0) {
+      throw new Error('NGN exchange rate unavailable. Please try again.');
+    }
+    return rate;
+  });
+
+let _currencyPromise = null;
+const detectVisitorCurrency = () => {
+  if (_currencyPromise) return _currencyPromise;
+  _currencyPromise = fetch('https://ipapi.co/json/')
+    .then((res) => (res.ok ? res.json() : { currency: 'USD' }))
+    .then(({ currency }) => {
+      const c = typeof currency === 'string' ? currency.toUpperCase() : '';
+      return /^[A-Z]{3}$/.test(c) ? c : 'USD';
+    })
+    .catch(() => 'USD');
+  return _currencyPromise;
+};
+
+const CurrencyContext = React.createContext(money);
 const ALLOWED_ARTWORK_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const emptyArtworkDraft = () => ({
@@ -326,6 +349,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [checkoutTarget, setCheckoutTarget] = useState(null);
   const [copiedArtworkId, setCopiedArtworkId] = useState(null);
+  const [localMoney, setLocalMoney] = useState(() => money);
   const adminMode = isAdminPath(window.location.pathname);
   const t = translations[lang];
   const featuredArt = artworks.find((art) => art.slug === 'the-weight-of-words');
@@ -361,6 +385,24 @@ function App() {
     const timer = setTimeout(() => setToast(''), 2600);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    Promise.all([detectVisitorCurrency(), fetchAllRates()])
+      .then(([currency, rates]) => {
+        if (currency === 'USD') return;
+        const rate = rates[currency];
+        if (!Number.isFinite(rate) || rate <= 0) return;
+        setLocalMoney(() => (value) => {
+          if (!isPositivePrice(value)) return '';
+          return new Intl.NumberFormat('en', {
+            style: 'currency',
+            currency,
+            maximumFractionDigits: 0,
+          }).format(value * rate);
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -421,7 +463,7 @@ function App() {
   };
 
   return (
-    <>
+    <CurrencyContext.Provider value={localMoney}>
       <header className="topbar">
         <a href={adminMode ? import.meta.env.BASE_URL : '#main'} className="brand">
           <img src={`${import.meta.env.BASE_URL}assets/favicon.svg`} alt="Adesakin Mary Studio" />
@@ -495,7 +537,7 @@ function App() {
               <span>{featuredArt?.status === 'Sold' ? t.sold : t.available}</span>
               <h2>{featuredArt?.title || 'The Weight of Words'}</h2>
               <p>{featuredArt ? `${featuredArt.medium} / ${featuredArt.dimensions}` : 'Thread on Canvas / 30 x 32 inches'}</p>
-              <strong>{featuredArt ? (money(featuredArt.originalPrice) || t.priceOnRequest) : 'Loading catalogue…'}</strong>
+              <strong>{featuredArt ? (localMoney(featuredArt.originalPrice) || t.priceOnRequest) : 'Loading catalogue…'}</strong>
               {featuredArt ? <button type="button" onClick={() => openArtwork(featuredArt)}>View Featured Work</button> : null}
             </div>
           </article>
@@ -577,7 +619,7 @@ function App() {
                     ) : (
                       <>
                         <dt>{t.originalPainting}</dt>
-                        <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}</dd>
+                        <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? localMoney(art.originalPrice) : t.priceOnRequest}</dd>
                         <dt>{t.format}</dt>
                         <dd>{t.originalPainting}</dd>
                       </>
@@ -662,7 +704,7 @@ function App() {
               <p>{artworkDescription(selected, lang)}</p>
               <dl>
                 <dt>Year</dt><dd>{selected.year}</dd>
-                <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : isPositivePrice(selected.originalPrice) ? money(selected.originalPrice) : t.priceOnRequest}</dd>
+                <dt>{t.originalPainting}</dt><dd>{selected.status === 'Sold' ? t.sold : isPositivePrice(selected.originalPrice) ? localMoney(selected.originalPrice) : t.priceOnRequest}</dd>
                 <dt>{t.print}</dt><dd><PrintPricing artwork={selected} fallback={t.availableByInquiry} buyLabel={t.buyPrint} onBuy={PAYSTACK_PUBLIC_KEY ? (option) => openCheckout(selected, option.price, `Print ${option.size}`) : null} /></dd>
                 <dt>{t.edition}</dt><dd>{selected.edition}</dd>
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
@@ -735,7 +777,7 @@ function App() {
       ) : null}
 
       {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
-    </>
+    </CurrencyContext.Provider>
   );
 }
 
@@ -809,8 +851,9 @@ function Dialog({ labelledBy, onClose, children }) {
 }
 
 function ShortlistDialog({ items, onClose, onRemove, onOpenPrivacy }) {
+  const localMoney = React.useContext(CurrencyContext);
   const selectedWorks = items.map((art) => (
-    `${art.title} (${isPositivePrice(art.originalPrice) ? money(art.originalPrice) : 'Price on request'})`
+    `${art.title} (${isPositivePrice(art.originalPrice) ? localMoney(art.originalPrice) : 'Price on request'})`
   )).join('; ');
 
   return (
@@ -825,7 +868,7 @@ function ShortlistDialog({ items, onClose, onRemove, onOpenPrivacy }) {
               {items.map((art) => (
                 <li key={art.id}>
                   <img src={`${import.meta.env.BASE_URL}${art.image}`} alt="" loading="lazy" decoding="async" />
-                  <span><strong>{art.title}</strong><small>{money(art.originalPrice) || 'Price on request'}</small></span>
+                  <span><strong>{art.title}</strong><small>{localMoney(art.originalPrice) || 'Price on request'}</small></span>
                   <button type="button" onClick={() => onRemove(art.id)} aria-label={`Remove ${art.title} from shortlist`}><X size={16} /></button>
                 </li>
               ))}
@@ -946,6 +989,7 @@ function PolicyDialog({ policy, onClose }) {
 }
 
 function PrintPricing({ artwork, fallback, buyLabel, onBuy }) {
+  const localMoney = React.useContext(CurrencyContext);
   const options = printOptionsFor(artwork);
 
   if (options.length) {
@@ -954,7 +998,7 @@ function PrintPricing({ artwork, fallback, buyLabel, onBuy }) {
         {options.map((option) => (
           <span key={option.size}>
             <span>{option.size}</span>
-            <strong>{money(option.price)}</strong>
+            <strong>{localMoney(option.price)}</strong>
             {PAYSTACK_PUBLIC_KEY && isPositivePrice(option.price) && onBuy ? (
               <button type="button" className="print-buy-link" onClick={() => onBuy(option)}>
                 <CreditCard size={14} /> {buyLabel}
@@ -970,7 +1014,7 @@ function PrintPricing({ artwork, fallback, buyLabel, onBuy }) {
     );
   }
 
-  return money(artwork.printPrice) || fallback;
+  return localMoney(artwork.printPrice) || fallback;
 }
 
 function PrintBadge() {
@@ -978,6 +1022,7 @@ function PrintBadge() {
 }
 
 function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
+  const localMoney = React.useContext(CurrencyContext);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -1058,7 +1103,7 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
         <div className="modal-copy">
           <span className="kicker">{artwork.collection}</span>
           <h2 id="checkout-title">{artwork.title}</h2>
-          <p className="spec">{label} — {money(amount)}{ngnDisplay ? ` (${ngnDisplay})` : ''}</p>
+          <p className="spec">{label} — {localMoney(amount)}{ngnDisplay ? ` (${ngnDisplay})` : ''}</p>
           <form className="checkout-form" onSubmit={handleSubmit}>
             <label className="admin-field">
               <span>Full name</span>
