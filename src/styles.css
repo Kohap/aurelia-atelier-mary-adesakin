@@ -155,14 +155,26 @@ h1 em { display: block; font-style: italic; font-weight: 500; }
   padding: 16px;
 }
 .featured img { width: 100%; height: clamp(360px, 48vw, 580px); object-fit: cover; display: block; }
-.featured div { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px; }
+.featured div {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 14px;
+}
 .featured span, .available { color: var(--ok); }
-.featured strong { color: var(--accent); }
+.featured p { margin: 0; }
+.featured strong {
+  display: block;
+  color: var(--accent);
+}
 .featured button {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
-  min-height: 40px;
-  margin-top: 12px;
+  min-height: 44px;
+  margin-top: 4px;
   padding: 0 14px;
   border: 1px solid var(--border);
   background: #fafaf9;
