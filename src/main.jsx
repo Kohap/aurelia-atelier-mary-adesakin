@@ -466,6 +466,7 @@ function App() {
               <a href="#catalogue" className="primary">{t.explore}<ArrowDown size={16} /></a>
               <a href="#newsletter" className="secondary">{t.collectorList}</a>
             </div>
+            <p className="hero-trust"><ShieldCheck size={16} /> Original works, studio-confirmed availability, and print options handled by inquiry or secure checkout.</p>
             <div className="metrics">
               <strong>{artworks.length}</strong><span>{t.originalWorks}</span>
               <strong>4</strong><span>{t.exhibitions}</span>
@@ -484,6 +485,7 @@ function App() {
               <h2>{featuredArt?.title || 'The Weight of Words'}</h2>
               <p>{featuredArt ? `${featuredArt.medium} / ${featuredArt.dimensions}` : 'Thread on Canvas / 30 x 32 inches'}</p>
               <strong>{featuredArt ? (money(featuredArt.originalPrice) || t.priceOnRequest) : 'Loading catalogue…'}</strong>
+              {featuredArt ? <button type="button" onClick={() => openArtwork(featuredArt)}>View Featured Work</button> : null}
             </div>
           </article>
         </section>
@@ -527,6 +529,7 @@ function App() {
           <div className="trust-row">
             <p><ShieldCheck size={16} /> Studio-confirmed originals before payment.</p>
             <p><CheckCircle2 size={16} /> {availableCount} available, {soldCount} in private collections.</p>
+            <p><ShieldCheck size={16} /> Terms, returns, privacy, and shipping timing are available before purchase.</p>
           </div>
           <div className="grid">
             {filtered.map((art) => (
@@ -535,11 +538,22 @@ function App() {
                 <div className="art-body">
                   <div className="art-meta">
                     <span>{art.collection}</span>
-                    <span className={art.status === 'Sold' ? 'sold' : 'available'}>{art.status === 'Sold' ? t.sold : t.available}</span>
+                  </div>
+                  <div className="art-badges">
+                    <span className={art.status === 'Sold' ? 'sold badge' : 'available badge'}>{art.status === 'Sold' ? t.sold : t.available}</span>
+                    {hasPrintPricing(art) ? <PrintBadge /> : null}
                   </div>
                   <h3>{art.title}</h3>
                   <p className="spec">{art.medium} / {art.dimensions}</p>
-                  <p>{artworkDescription(art, lang)}</p>
+                  <p className="card-description">{artworkDescription(art, lang)}</p>
+                  <div className="price-line">
+                    <span>{filter === 'prints' ? t.print : t.originalPainting}</span>
+                    <strong>
+                      {filter === 'prints'
+                        ? printOptionsFor(art)[0] ? money(printOptionsFor(art)[0].price) : t.availableByInquiry
+                        : art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}
+                    </strong>
+                  </div>
                   <dl>
                     {filter === 'prints' ? (
                       <>
@@ -632,22 +646,23 @@ function App() {
                 <dt>Provenance</dt><dd>{selected.provenance}</dd>
               </dl>
               <div className="modal-actions">
-                <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
+                <button
+                  type="button"
+                  className="modal-primary-action"
+                  onClick={() => {
+                    setInquiryArtwork(selected);
+                    closeArtwork();
+                  }}
+                >
+                  <Mail size={16} /> Request Availability
+                </button>
                 {PAYSTACK_PUBLIC_KEY && selected.status === 'Available' && isPositivePrice(selected.originalPrice) ? (
                   <button type="button" onClick={() => openCheckout(selected, selected.originalPrice, 'Full price')}><CreditCard size={16} /> {t.payInFull}</button>
                 ) : (
                   hasPaymentLink(selected, 'full') ? <a href={paymentUrlFor(selected, 'full')} target="_blank" rel="noreferrer"><ExternalLink size={16} /> {t.payInFull}</a> : null
                 )}
                 {selected.status === 'Available' ? <button type="button" onClick={() => addToShortlist(selected)}><BookmarkPlus size={16} /> {t.addShortlist}</button> : null}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setInquiryArtwork(selected);
-                    closeArtwork();
-                  }}
-                >
-                  <Mail size={16} /> {t.requestDetails}
-                </button>
+                <button type="button" onClick={() => copyLink(selected)}><LinkIcon size={16} /> {t.copyLink}</button>
               </div>
             </div>
           </div>
@@ -935,6 +950,10 @@ function PrintPricing({ artwork, fallback, buyLabel, onBuy }) {
   return money(artwork.printPrice) || fallback;
 }
 
+function PrintBadge() {
+  return <span className="print-badge">Print Available</span>;
+}
+
 function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -1072,6 +1091,7 @@ function CheckoutDialog({ artwork, amount, label, onClose, showToast }) {
 }
 
 function AdminPanel({ artworks, setArtworks, showToast }) {
+  const initialCatalogueRef = useRef(null);
   const [addingArtwork, setAddingArtwork] = useState(false);
   const [draft, setDraft] = useState(emptyArtworkDraft);
   const [draftImage, setDraftImage] = useState(null);
@@ -1083,6 +1103,15 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
   const [paymentsPage, setPaymentsPage] = useState(1);
   const pricedOriginals = artworks.filter((art) => isPositivePrice(art.originalPrice)).length;
   const pricedPrints = artworks.filter(hasPrintPricing).length;
+  const publishableArtworks = artworks.map(({ _previewImage, ...artwork }) => artwork);
+  const currentCatalogueJson = JSON.stringify(publishableArtworks);
+  const hasUnsavedChanges = Boolean(initialCatalogueRef.current && currentCatalogueJson !== initialCatalogueRef.current);
+
+  useEffect(() => {
+    if (artworks.length && initialCatalogueRef.current === null) {
+      initialCatalogueRef.current = currentCatalogueJson;
+    }
+  }, [artworks.length, currentCatalogueJson]);
 
   const updatePrice = (id, field, value) => {
     setArtworks((items) => items.map((art) => (
@@ -1224,7 +1253,6 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
   };
 
   const exportJson = () => {
-    const publishableArtworks = artworks.map(({ _previewImage, ...artwork }) => artwork);
     const json = JSON.stringify(publishableArtworks, null, 2);
     const blob = new Blob([`${json}\n`], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1235,11 +1263,11 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    showToast('Updated artworks.json downloaded.');
+    initialCatalogueRef.current = currentCatalogueJson;
+    showToast('Download complete. Replace public/data/artworks.json, then commit and push.');
   };
 
   const publishCatalogue = async () => {
-    const publishableArtworks = artworks.map(({ _previewImage, ...artwork }) => artwork);
     const json = JSON.stringify(publishableArtworks, null, 2);
     try {
       const res = await fetch('/api/publish-catalogue', {
@@ -1248,10 +1276,17 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
         headers: { 'content-type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
       });
       if (!res.ok) throw new Error();
+      initialCatalogueRef.current = currentCatalogueJson;
       showToast('Catalogue published to storage.');
     } catch {
       showToast('Publish failed — use Export JSON as a backup.');
     }
+  };
+
+  const resetCatalogue = () => {
+    if (!initialCatalogueRef.current) return;
+    setArtworks(JSON.parse(initialCatalogueRef.current));
+    showToast('Catalogue edits reset.');
   };
 
   return (
@@ -1263,6 +1298,12 @@ function AdminPanel({ artworks, setArtworks, showToast }) {
           <p>Add artworks, edit prices, and add verified Paystack Product Links, then export the updated catalogue.</p>
         </div>
         <div className="admin-head-actions">
+          <span className={hasUnsavedChanges ? 'save-state dirty' : 'save-state'}>
+            {hasUnsavedChanges ? 'Unsaved changes' : 'No unsaved changes'}
+          </span>
+          <button type="button" className="admin-download" onClick={resetCatalogue} disabled={!hasUnsavedChanges}>
+            Reset
+          </button>
           <button type="button" className="primary" onClick={publishCatalogue}>
             <Send size={16} /> Publish
           </button>
