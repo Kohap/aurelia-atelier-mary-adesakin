@@ -151,26 +151,34 @@ const policies = {
   terms: {
     title: 'Studio Terms',
     content: [
-      'Artwork, prices, and availability shown on this website are for general information. A shortlist or inquiry does not reserve an artwork or create a sale.',
-      'Before payment, the studio confirms the work, final price, availability, shipping destination, delivery timing, and payment instructions in writing. Prices exclude shipping, customs duties, and import taxes unless confirmed otherwise.',
-      'Shipping arrangements will begin seven days after payment has been completed. A certificate of authenticity will be issued and shipped with the artwork.',
-      'Artwork images aim to represent each piece faithfully, but colour, texture, and scale can differ across screens. Copyright in the artwork, images, and text remains with Mary Adesakin unless agreed otherwise in writing.',
+      'All artworks, prices, dimensions, images, and availability shown on this website are provided for studio and collector reference. Availability is not guaranteed until the studio confirms the work in writing.',
+      'Submitting an inquiry, joining the collector list, copying a link, or adding a work to a shortlist does not reserve an artwork or create a purchase agreement. A sale is confirmed only after the studio has agreed the final details and payment has cleared.',
+      'Before any acquisition is completed, the studio will confirm the artwork title, condition, price, payment method, collector details, shipping destination, delivery timeline, and any framing, installation, or export requirements.',
+      'Prices do not include packing, insurance, shipping, customs duties, import taxes, installation, or local charges unless the studio states this in writing. Collectors are responsible for any taxes, customs fees, or import requirements in their location.',
+      'Original artworks are accompanied by studio documentation or a certificate of authenticity where applicable. Copyright, reproduction rights, exhibition rights, image rights, and all intellectual property remain with Mary Adesakin Damilola unless a separate written agreement states otherwise.',
+      'The studio makes every effort to represent artworks accurately, but colour, surface, thread texture, scale, and framing may appear differently across screens. Collectors are encouraged to request additional images, videos, or details before purchasing.',
     ],
   },
   returns: {
     title: 'Return & Refund Policy',
     content: [
-      'Original artworks and made-to-order commissions are final sale after payment is confirmed because each work is unique or made specifically for its collector.',
-      'If a work arrives damaged, contact the studio within 48 hours with order details and photographs of the packaging and damage. Keep all packaging until the studio responds.',
-      'The studio will review delivery damage and agree an appropriate remedy. Commission cancellations and deposit terms are governed by the written commission agreement.',
+      'Original artworks, commissioned works, reserved works, and made-to-order pieces are final sale once payment is confirmed because each work is unique, studio-handled, or prepared specifically for the collector.',
+      'Print orders may be reviewed on a case-by-case basis if there is a production fault, fulfilment error, or damage in transit. Returns are not accepted for change of mind, colour differences caused by screen display, or incorrect details supplied by the collector.',
+      'If an artwork or print arrives damaged, contact the studio within 48 hours of delivery with the collector name, artwork title, order or payment reference, clear photographs of the packaging, and clear photographs of the damage.',
+      'Please keep all original packaging until the studio or shipping provider confirms the next step. Damage claims may be refused if packaging is discarded before review.',
+      'Where a valid damage or fulfilment issue is confirmed, the studio may arrange repair, replacement, store credit, partial refund, or another fair remedy depending on the artwork, edition, location, and shipping circumstances.',
+      'Commission deposits, staged payments, cancellation terms, approval stages, and delivery expectations are governed by the written commission agreement shared with the collector before work begins.',
     ],
   },
   privacy: {
     title: 'Privacy Policy',
     content: [
-      'The studio uses the contact details and messages you submit only to answer inquiries, prepare acquisition or shipping information, fulfil agreed work, and maintain studio records.',
-      'Forms are processed by Formspree. The website uses Plausible Analytics for aggregate traffic measurement and does not process or store payment-card details. Do not send financial credentials through an inquiry form.',
-      'The studio does not sell personal information. To request access, correction, or deletion, email adesakinmary2020@gmail.com. External social and payment services apply their own privacy policies.',
+      'Mary Adesakin Studio collects only the information needed to respond to inquiries, manage collector communication, prepare acquisitions, arrange commissions, process orders, coordinate shipping, and maintain studio records.',
+      'Information submitted through forms may include your name, email address, location, message, shortlisted artworks, and artwork inquiry details. Please do not send payment-card details, passwords, private identification documents, or sensitive financial information through any inquiry form.',
+      'Website forms are processed by Formspree. Payments, where available, are handled by secure third-party payment services, and the studio does not receive or store full card details.',
+      'This website uses privacy-friendly analytics through Plausible to understand aggregate site traffic and improve the collector experience. Analytics data is used in summary form and is not sold.',
+      'The studio may share necessary information with trusted service providers such as form processors, payment providers, printers, framers, shippers, insurers, or customs handlers only when needed to complete a collector request or agreed transaction.',
+      'The studio does not sell personal information. To request access, correction, or deletion of your contact details, email adesakinmary2020@gmail.com. External platforms such as Instagram, TikTok, Facebook, Formspree, Plausible, and payment providers apply their own privacy policies.',
     ],
   },
 };
@@ -931,7 +939,6 @@ function PolicyDialog({ policy, onClose }) {
           <span className="kicker">Mary Adesakin Studio</span>
           <h2 id="policy-title">{policy.title}</h2>
           {policy.content.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          <small>Effective 4 August 2026.</small>
         </div>
       </div>
     </Dialog>
