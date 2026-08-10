@@ -43,22 +43,25 @@ The site is designed for collectors, curators, galleries, and art advisors who w
 │   ├── assets/
 │   │   ├── favicon.svg
 │   │   └── artwork/
-│   │       ├── beauty-in-becoming.jpg
-│   │       ├── hands-that-wont-let-go.png
-│   │       ├── in-her-prime-green.jpg
-│   │       ├── in-her-prime.jpg
-│   │       ├── loud-silence.png
-│   │       ├── mary-studio-social-preview.png
-│   │       ├── maze-of-uncertainty-sold-2025.jpg
-│   │       ├── maze-of-uncertainty-sold.jpg
-│   │       ├── rare-like-a-blue-rose.jpg
-│   │       ├── stitched-in-time.jpg
-│   │       ├── the-calm-before-clarity.png
-│   │       ├── the-ife-muse.jpg
-│   │       ├── the-weight-of-words.png
-│   │       └── visible-within.png
+│   │       ├── beauty-in-becoming.webp
+│   │       ├── hands-that-wont-let-go.webp
+│   │       ├── in-her-prime-green.webp
+│   │       ├── in-her-prime.webp
+│   │       ├── loud-silence.webp
+│   │       ├── mary-studio-social-preview.jpg
+│   │       ├── maze-of-uncertainty-sold-2025.webp
+│   │       ├── rare-like-a-blue-rose.webp
+│   │       ├── stitched-in-time.webp
+│   │       ├── the-calm-before-clarity.webp
+│   │       ├── the-ife-muse.webp
+│   │       ├── the-weight-of-words.webp
+│   │       └── visible-within.webp
 │   └── data/
 │       └── artworks.json
+├── sources/
+│   └── artwork/          (original JPG/PNG sources, not deployed)
+├── scripts/
+│   └── optimize-images.mjs
 ├── src/
 │   ├── main.jsx
 │   └── styles.css
@@ -102,7 +105,7 @@ Publishing files:
 - Keep artwork data inside `public/data/artworks.json`.
 - Use `/adesakin/admin/` to edit original and print prices, export the updated JSON, replace `public/data/artworks.json`, then commit and push.
 - When adding an artwork, copy the downloaded WebP image into `public/assets/artwork` before publishing the exported JSON.
-- Run `npm run optimize:images` after adding source JPG or PNG files to prepare fast catalogue images.
+- Run `npm run optimize:images` after adding source JPG or PNG files to `sources/artwork/` to prepare fast catalogue images (900 px max, WebP).
 - To accept payments, create live Paystack Product Links and paste them into the original, deposit, and print link fields in `/adesakin/admin/`.
 - Never add a Paystack secret key to this repository. Secure digital delivery requires server-side transaction verification and signed download links.
 - Keep image filenames stable once they are published, unless the corresponding artwork record is updated.
