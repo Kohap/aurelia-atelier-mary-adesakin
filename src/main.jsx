@@ -669,8 +669,6 @@ function App() {
                 featuredArt={featuredArt}
                 artworks={artworks}
                 loading={!artworks.length}
-                availableCount={availableCount}
-                soldCount={soldCount}
                 copiedArtworkId={copiedArtworkId}
                 onOpen={openArtwork}
                 onCopy={copyLink}
@@ -892,7 +890,7 @@ function SkeletonCard() {
   );
 }
 
-function HomePage({ t, lang, featuredArt, artworks, loading, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
+function HomePage({ t, lang, featuredArt, artworks, loading, copiedArtworkId, onOpen, onCopy, onShortlist }) {
   const localMoney = React.useContext(CurrencyContext);
   const available = artworks.filter((art) => art.status === 'Available');
   const picks = available.length >= 3 ? available.slice(0, 3) : artworks.slice(0, 3);

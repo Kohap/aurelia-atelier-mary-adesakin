@@ -1021,6 +1021,7 @@ footer small {
   .language select { max-width: 60px; }
   .shortlist, .menu { width: 40px; height: 40px; flex: 0 0 40px; }
   .topbar { padding-inline: 12px; }
+  .preloader-mark { font-size: clamp(.95rem, 4.2vw, 1.15rem); letter-spacing: .16em; }
 }
 
 @media (prefers-reduced-motion: reduce) {
