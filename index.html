@@ -28,7 +28,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://open.er-api.com">
     <link rel="preconnect" href="https://ipapi.co">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"></noscript>
     <script async src="https://plausible.io/js/pa-I26Cc2czhAcno1ifSU3FJ.js"></script>
     <script>
       window.plausible = window.plausible || function() { (plausible.q = plausible.q || []).push(arguments); };
@@ -37,7 +38,24 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot-preloader">
+        <div class="boot-preloader-inner">
+          <span class="boot-preloader-mark">Adesakin Mary</span>
+          <span class="boot-preloader-line"></span>
+        </div>
+      </div>
+      <style>
+        .boot-preloader { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; background: #fdfbf7; }
+        .boot-preloader-inner { display: grid; justify-items: center; gap: 18px; padding-left: 12px; }
+        .boot-preloader-mark { font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; letter-spacing: .26em; text-transform: uppercase; color: #1c1917; white-space: nowrap; animation: boot-in .5s cubic-bezier(0.23, 1, 0.32, 1) both; }
+        .boot-preloader-line { width: min(220px, 58vw); height: 2px; background: #a85536; transform: scaleX(0); transform-origin: left center; animation: boot-line .55s cubic-bezier(0.23, 1, 0.32, 1) .22s both; }
+        @keyframes boot-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        @keyframes boot-line { to { transform: scaleX(1); } }
+        @media (max-width: 400px) { .boot-preloader-mark { font-size: clamp(.95rem, 4.2vw, 1.15rem); letter-spacing: .16em; } }
+        @media (prefers-reduced-motion: reduce) { .boot-preloader-mark, .boot-preloader-line { animation: none; transform: none; } }
+      </style>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

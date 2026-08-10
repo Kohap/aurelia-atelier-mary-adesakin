@@ -855,6 +855,8 @@ function ArtworkCard({ art, t, lang, filter, copiedArtworkId, onOpen, onCopy, on
   );
 }
 
+const BOOT_STARTED_AT = performance.now();
+
 function Preloader({ onDone }) {
   const [leaving, setLeaving] = useState(false);
   useEffect(() => {
@@ -862,9 +864,12 @@ function Preloader({ onDone }) {
       onDone();
       return undefined;
     }
-    const hold = setTimeout(() => setLeaving(true), 650);
-    const finish = setTimeout(onDone, 1050);
-    return () => { clearTimeout(hold); clearTimeout(finish); };
+    const elapsed = performance.now() - BOOT_STARTED_AT;
+    const hold = Math.max(250, 650 - elapsed);
+    const finish = hold + 400;
+    const holdTimer = setTimeout(() => setLeaving(true), hold);
+    const finishTimer = setTimeout(onDone, finish);
+    return () => { clearTimeout(holdTimer); clearTimeout(finishTimer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
