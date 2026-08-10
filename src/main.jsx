@@ -632,42 +632,50 @@ function App() {
 
       <main id="main">
         {adminMode ? (
-          <AdminPanel artworks={artworks} setArtworks={setArtworks} showToast={showToast} />
-        ) : page === 'artist' ? (
-          <ArtistPage t={t} />
-        ) : page === 'catalogue' ? (
-          <CataloguePage
-            t={t}
-            lang={lang}
-            query={query}
-            setQuery={setQuery}
-            filter={filter}
-            setFilter={setFilter}
-            filtered={filtered}
-            availableCount={availableCount}
-            soldCount={soldCount}
-            copiedArtworkId={copiedArtworkId}
-            onOpen={openArtwork}
-            onCopy={copyLink}
-            onShortlist={addToShortlist}
-          />
-        ) : page === 'exhibitions' ? (
-          <ExhibitionsPage t={t} />
-        ) : page === 'contact' ? (
-          <ContactPage t={t} />
+          <div className="page" key="admin">
+            <AdminPanel artworks={artworks} setArtworks={setArtworks} showToast={showToast} />
+          </div>
         ) : (
-          <HomePage
-            t={t}
-            lang={lang}
-            featuredArt={featuredArt}
-            artworks={artworks}
-            availableCount={availableCount}
-            soldCount={soldCount}
-            copiedArtworkId={copiedArtworkId}
-            onOpen={openArtwork}
-            onCopy={copyLink}
-            onShortlist={addToShortlist}
-          />
+          <div className="page" key={page}>
+            {page === 'artist' ? (
+              <ArtistPage t={t} />
+            ) : page === 'catalogue' ? (
+              <CataloguePage
+                t={t}
+                lang={lang}
+                query={query}
+                setQuery={setQuery}
+                filter={filter}
+                setFilter={setFilter}
+                filtered={filtered}
+                loading={!artworks.length}
+                availableCount={availableCount}
+                soldCount={soldCount}
+                copiedArtworkId={copiedArtworkId}
+                onOpen={openArtwork}
+                onCopy={copyLink}
+                onShortlist={addToShortlist}
+              />
+            ) : page === 'exhibitions' ? (
+              <ExhibitionsPage t={t} />
+            ) : page === 'contact' ? (
+              <ContactPage t={t} />
+            ) : (
+              <HomePage
+                t={t}
+                lang={lang}
+                featuredArt={featuredArt}
+                artworks={artworks}
+                loading={!artworks.length}
+                availableCount={availableCount}
+                soldCount={soldCount}
+                copiedArtworkId={copiedArtworkId}
+                onOpen={openArtwork}
+                onCopy={copyLink}
+                onShortlist={addToShortlist}
+              />
+            )}
+          </div>
         )}
       </main>
 
@@ -847,7 +855,20 @@ function ArtworkCard({ art, t, lang, filter, copiedArtworkId, onOpen, onCopy, on
   );
 }
 
-function HomePage({ t, lang, featuredArt, artworks, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
+function SkeletonCard() {
+  return (
+    <div className="art-card skeleton-card" aria-hidden="true">
+      <div className="skeleton skeleton-img" />
+      <div className="art-body">
+        <div className="skeleton skeleton-line" style={{ width: '45%' }} />
+        <div className="skeleton skeleton-line" style={{ width: '70%' }} />
+        <div className="skeleton skeleton-line" style={{ width: '90%' }} />
+      </div>
+    </div>
+  );
+}
+
+function HomePage({ t, lang, featuredArt, artworks, loading, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
   const localMoney = React.useContext(CurrencyContext);
   const available = artworks.filter((art) => art.status === 'Available');
   const picks = available.length >= 3 ? available.slice(0, 3) : artworks.slice(0, 3);
@@ -906,7 +927,7 @@ function HomePage({ t, lang, featuredArt, artworks, availableCount, soldCount, c
         </div>
       </section>
 
-      {picks.length ? (
+      {loading || picks.length ? (
         <section className="catalogue">
           <div className="section-head">
             <div>
@@ -916,19 +937,25 @@ function HomePage({ t, lang, featuredArt, artworks, availableCount, soldCount, c
             <a href="#/catalogue" className="filters-link"><span>{t.viewFullCatalogue}</span><ArrowRight size={16} /></a>
           </div>
           <div className="grid">
-            {picks.map((art) => (
-              <ArtworkCard
-                key={art.id}
-                art={art}
-                t={t}
-                lang={lang}
-                filter="all"
-                copiedArtworkId={copiedArtworkId}
-                onOpen={onOpen}
-                onCopy={onCopy}
-                onShortlist={onShortlist}
-              />
-            ))}
+            {loading ? (
+              <>
+                <SkeletonCard /><SkeletonCard /><SkeletonCard />
+              </>
+            ) : (
+              picks.map((art) => (
+                <ArtworkCard
+                  key={art.id}
+                  art={art}
+                  t={t}
+                  lang={lang}
+                  filter="all"
+                  copiedArtworkId={copiedArtworkId}
+                  onOpen={onOpen}
+                  onCopy={onCopy}
+                  onShortlist={onShortlist}
+                />
+              ))
+            )}
           </div>
         </section>
       ) : null}
@@ -962,7 +989,7 @@ function ArtistPage({ t }) {
   );
 }
 
-function CataloguePage({ t, lang, query, setQuery, filter, setFilter, filtered, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
+function CataloguePage({ t, lang, query, setQuery, filter, setFilter, filtered, loading, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
   return (
     <section className="catalogue">
       <div className="section-head">
@@ -991,7 +1018,11 @@ function CataloguePage({ t, lang, query, setQuery, filter, setFilter, filtered, 
         <p><CheckCircle2 size={16} /> {availableCount} available, {soldCount} in private collections.</p>
         <p><ScrollText size={16} /> Terms, returns, privacy, and shipping timing are available before purchase.</p>
       </div>
-      {filtered.length ? (
+      {loading ? (
+        <div className="grid">
+          <SkeletonCard /><SkeletonCard /><SkeletonCard />
+        </div>
+      ) : filtered.length ? (
         <div className="grid">
           {filtered.map((art) => (
             <ArtworkCard

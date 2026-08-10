@@ -13,6 +13,8 @@
   --shadow-sm: 0 1px 2px rgba(28, 25, 23, .05);
   --shadow-md: 0 12px 30px rgba(28, 25, 23, .08);
   --shadow-lg: 0 24px 70px rgba(28, 25, 23, .09);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 * { box-sizing: border-box; }
@@ -66,8 +68,7 @@ summary:focus-visible {
 .brand img { width: 36px; height: 36px; }
 .nav { gap: 26px; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; }
 .nav a { position: relative; padding-block: 4px; transition: color .16s ease; }
-.nav a.active { color: var(--primary); }
-.nav a.active::after {
+.nav a::after {
   content: "";
   position: absolute;
   left: 0;
@@ -75,7 +76,12 @@ summary:focus-visible {
   bottom: -2px;
   height: 2px;
   background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .2s var(--ease-out);
 }
+.nav a:hover::after, .nav a.active::after { transform: scaleX(1); }
+.nav a.active { color: var(--primary); }
 .tools { gap: 10px; }
 .language, .shortlist {
   height: 42px;
@@ -90,6 +96,16 @@ summary:focus-visible {
 .language select { border: 0; background: transparent; color: var(--primary); outline: 0; }
 .shortlist, .menu, .card-actions button, .modal-actions button, .contact-band button, .admin-download { cursor: pointer; }
 .menu { display: none; width: 42px; height: 42px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); }
+.menu svg { animation: icon-swap .16s ease-out both; }
+@keyframes icon-swap {
+  from { opacity: 0; transform: scale(.85) rotate(-6deg); }
+  to { opacity: 1; transform: none; }
+}
+.page { animation: page-in .3s var(--ease-out) both; }
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 
 .hero, .artist, .catalogue, .exhibitions {
   max-width: 1220px;
@@ -227,6 +243,10 @@ h1 em { display: block; font-style: italic; font-weight: 500; }
 .catalogue { background: white; max-width: none; border-block: 1px solid var(--border); }
 main > .catalogue:first-child, main > .artist:first-child { border-top: 0; }
 .catalogue > * { max-width: 1220px; margin-inline: auto; }
+.artist, .catalogue, .contact-band, .exhibitions, .contact-page, .admin-panel {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
 .section-head {
   display: flex;
   align-items: end;
@@ -333,6 +353,24 @@ main > .catalogue:first-child, main > .artist:first-child { border-top: 0; }
   overflow: hidden;
   transition: transform .3s ease, box-shadow .3s ease;
 }
+.art-card.skeleton-card { position: relative; }
+.art-card.skeleton-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .65), transparent);
+  animation: shimmer 1.5s linear infinite;
+}
+@keyframes shimmer {
+  to { transform: translateX(100%); }
+}
+.skeleton { background: #ece8e3; }
+.skeleton-img { height: 320px; }
+.skeleton-line { height: 13px; border-radius: 2px; }
+.skeleton-line + .skeleton-line { margin-top: 11px; }
 .art-card > img {
   width: 100%;
   height: 320px;
@@ -877,8 +915,12 @@ footer small {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
   }
-  .nav.open { display: grid; gap: 14px; }
+  .nav.open { display: grid; gap: 14px; animation: menu-in .24s var(--ease-out) both; transform-origin: top center; }
   .nav.open a { display: flex; align-items: center; min-height: 44px; }
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+  }
   .hero, .artist, .section-head, footer, .modal-panel, .admin-head { grid-template-columns: 1fr; }
   .hero, .artist { display: grid; }
   .section-head { display: grid; align-items: start; }
