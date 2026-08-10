@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client';
 import {
   ArrowDown,
+  ArrowRight,
   Bookmark,
   BookmarkPlus,
   CheckCircle2,
@@ -15,6 +16,7 @@ import {
   Link as LinkIcon,
   Mail,
   Menu,
+  ScrollText,
   Search,
   Send,
   Settings,
@@ -211,6 +213,8 @@ const policies = {
 const translations = {
   en: {
     language: 'English',
+    home: 'Home',
+    contact: 'Contact',
     heroKicker: 'Adesakin Mary Damilola Studio',
     heroTitle: 'Thread Paintings',
     heroTitleAccent: 'for Reflective Collectors',
@@ -221,6 +225,7 @@ const translations = {
     printWorks: 'Print',
     exhibitions: 'Exhibitions',
     threadWorks: 'Thread Works',
+    metricsPrints: 'Prints',
     catalogue: 'Collector Catalogue',
     catalogueTitle: 'Original Works & Studio Inquiries',
     searchPlaceholder: 'Search by title, series, material, or year',
@@ -245,15 +250,36 @@ const translations = {
     inquirySent: 'Inquiry sent to Mary Adesakin Studio.',
     linkCopied: 'Artwork link copied.',
     artist: 'The Artist Bio',
+    artistPageTitle: 'The Artist',
+    aboutArtist: 'About the Artist',
     statementTitle: 'Artist Statement',
     statement: 'My practice explores themes of vulnerability, struggle, culture, and resilience through textile based portraiture using thread and acrylic. I use thread as both a material and a language to connect fragments of memory, identity, and lived experience while exploring personal narratives and broader societal issues.',
     about: [
       'Adesakin Mary Damilola is a Nigerian visual artist from Ile-Ife, whose practice focuses on thread painting and acrylic. Born in the early 2000s, she explores themes of vulnerability, struggle, culture, and resilience through layered compositions, using thread as both a material and a language to connect memory, identity, and lived experience.',
       'She studied Fine and Applied Arts at Adeyemi College of Education (affiliated to Obafemi Awolowo University) and graduated in 2024. Currently working as a full time artist, her work has been exhibited in Nigeria and internationally, including Deep in Thought Art Exhibition, La Beauté Vue par les Artistes in Paris, and the SWANS Female Exhibition. She has also exhibited with Tola Wewe Art Gallery, and her works are held by private collectors.',
     ],
+    selectedWorks: 'Selected Works',
+    viewFullCatalogue: 'View Full Catalogue',
+    exhibitionsTitle: 'Exhibitions & Press',
+    exhibitionsIntro: 'Selected exhibitions and showcases of the studio\'s work.',
+    exhibitionsList: [
+      'SWANS Female Exhibition, Signature Beyond Art Gallery, Lagos, 2026',
+      'La Beauté Vue par les Artistes, Paris, 2025',
+      'Tola Wewe Art Gallery, Ondo, 2025',
+      'House of George Art and Craft Gallery, 2025',
+      'Deep in Thought, Annual Contemporary Art Showcase, 2024',
+      'Life In My City Art Festival, 2024',
+    ],
+    contactCopy: 'Send your details to join the collector list, request artwork details, or start a conversation about commissions and acquisitions.',
+    emailLabel: 'Email',
+    phoneLabel: 'Phone',
+    studioLabel: 'Studio',
+    emailPlaceholder: 'Email Address',
   },
   yo: {
     language: 'Yoruba',
+    home: 'Ile',
+    contact: 'Ibara',
     heroKicker: 'Studio Adesakin Mary Damilola',
     heroTitle: 'Awon Ise Okun',
     heroTitleAccent: 'fun awon akojopo aworan',
@@ -264,6 +290,7 @@ const translations = {
     printWorks: 'Print',
     exhibitions: 'Ifihan',
     threadWorks: 'Ise Okun',
+    metricsPrints: 'Print',
     catalogue: 'Katalogi Akojopo',
     catalogueTitle: 'Awon Ise Atilẹba ati Ibeere Studio',
     searchPlaceholder: 'Wa nipa akole, jara, ohun elo, tabi odun',
@@ -288,12 +315,33 @@ const translations = {
     inquirySent: 'Ibeere ti lo si Mary Adesakin Studio.',
     linkCopied: 'Link ise ti da ko.',
     artist: 'Olorin',
+    artistPageTitle: 'Olorin',
+    aboutArtist: 'Nipa Olorin',
     statementTitle: 'Oro Olorin',
     statement: 'Mo n lo okun gege bi ohun elo ati afiwe: ila ti o tunse, ranti, fi pamọ, fi han, ati so ohun ti oro le ma gbe.',
     about: 'Emi ni olorin okun ati textile lati Ile-Ife, Osun State. Ise mi so okun, canvas, fabric, ati pigment po lati gbe imolara, iranti, asa Yoruba, ati igbesi aye ode oni.',
+    selectedWorks: 'Awon Ise Ayanfe',
+    viewFullCatalogue: 'Wo Gbogbo Katalogi',
+    exhibitionsTitle: 'Ifihan & Irohin',
+    exhibitionsIntro: 'Awon ifihan ti o ya soto ti ise ile-ise naa.',
+    exhibitionsList: [
+      'Ifihan Obinrin SWANS, Signature Beyond Art Gallery, Lagos, 2026',
+      'La Beauté Vue par les Artistes, Paris, 2025',
+      'Tola Wewe Art Gallery, Ondo, 2025',
+      'House of George Art and Craft Gallery, 2025',
+      'Deep in Thought, Ifihan aworan ododun, 2024',
+      'Life In My City Art Festival, 2024',
+    ],
+    contactCopy: 'Fi adirẹsi imeeli re ranse lati darapo mo akojopo awon olura, beere alaye ise, tabi bere ibara nipa ise pataki.',
+    emailLabel: 'Imeeli',
+    phoneLabel: 'Foonu',
+    studioLabel: 'Ile-ise',
+    emailPlaceholder: 'Adirẹsi Imeeli',
   },
   fr: {
-    language: 'Francais',
+    language: 'Français',
+    home: 'Accueil',
+    contact: 'Contact',
     heroKicker: 'Studio Adesakin Mary Damilola',
     heroTitle: 'Peintures au fil',
     heroTitleAccent: 'pour collectionneurs attentifs',
@@ -304,6 +352,7 @@ const translations = {
     printWorks: 'Tirage',
     exhibitions: 'Expositions',
     threadWorks: 'Oeuvres au fil',
+    metricsPrints: 'Tirages',
     catalogue: 'Catalogue collectionneur',
     catalogueTitle: 'Oeuvres originales & demandes au studio',
     searchPlaceholder: 'Rechercher par titre, serie, materiau ou annee',
@@ -328,14 +377,56 @@ const translations = {
     inquirySent: 'Demande envoyee au studio Mary Adesakin.',
     linkCopied: 'Lien de l oeuvre copie.',
     artist: "L'artiste",
+    artistPageTitle: "L'artiste",
+    aboutArtist: "A propos de l'artiste",
     statementTitle: "Declaration d'artiste",
     statement: "J'utilise le fil comme matiere et metaphore: une ligne qui repare, se souvient, cache, revele et relie ce que les mots ne portent pas toujours.",
     about: "Je suis artiste textile et peintre au fil originaire d'Ile-Ife, Osun State. Mon travail unit fil, toile, tissu et pigment pour porter emotion, memoire, heritage yoruba et vie contemporaine.",
+    selectedWorks: 'Oeuvres choisies',
+    viewFullCatalogue: 'Voir tout le catalogue',
+    exhibitionsTitle: 'Expositions & presse',
+    exhibitionsIntro: 'Expositions et presentations selectionnees du travail du studio.',
+    exhibitionsList: [
+      'Exposition feminine SWANS, Signature Beyond Art Gallery, Lagos, 2026',
+      'La Beauté Vue par les Artistes, Paris, 2025',
+      'Tola Wewe Art Gallery, Ondo, 2025',
+      'House of George Art and Craft Gallery, 2025',
+      'Deep in Thought, vitrine annuelle d art contemporain, 2024',
+      'Life In My City Art Festival, 2024',
+    ],
+    contactCopy: 'Envoyez vos coordonnees pour rejoindre la liste des collectionneurs, demander des details sur une oeuvre ou engager une conversation sur les commandes et acquisitions.',
+    emailLabel: 'E-mail',
+    phoneLabel: 'Telephone',
+    studioLabel: 'Studio',
+    emailPlaceholder: 'Adresse e-mail',
   },
 };
 
 const artworkDescription = (art, lang) => art.description?.[lang] || art.description?.en || '';
 const artworkUrl = (art) => `${window.location.origin}${window.location.pathname}#artwork/${art.slug}`;
+
+const PUBLIC_PAGES = ['artist', 'catalogue', 'exhibitions', 'contact'];
+const LEGACY_ANCHORS = { '#artist': 'artist', '#catalogue': 'catalogue', '#exhibitions': 'exhibitions', '#newsletter': 'home', '#main': 'home' };
+
+const routeFromHash = () => {
+  const hash = window.location.hash;
+  if (hash.startsWith('#artwork/')) return { page: null, artworkSlug: hash.slice('#artwork/'.length) };
+  if (LEGACY_ANCHORS[hash]) return { page: LEGACY_ANCHORS[hash], artworkSlug: null };
+  const raw = hash.replace(/^#\/?/, '').toLowerCase();
+  return { page: PUBLIC_PAGES.includes(raw) ? raw : 'home', artworkSlug: null };
+};
+
+const artImageSrcSet = (image) => {
+  if (!image || !image.startsWith('assets/artwork/') || !image.endsWith('.webp')) return undefined;
+  const base = image.slice(0, -5);
+  return `${import.meta.env.BASE_URL}${base}-480.webp 480w, ${import.meta.env.BASE_URL}${image} 900w`;
+};
+
+const ART_IMAGE_SIZES = {
+  card: '(min-width: 900px) 33vw, 100vw',
+  hero: '(min-width: 900px) 40vw, 100vw',
+  modal: '(min-width: 900px) 45vw, 100vw',
+};
 
 const TikTokIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
@@ -358,16 +449,22 @@ function App() {
   const [checkoutTarget, setCheckoutTarget] = useState(null);
   const [copiedArtworkId, setCopiedArtworkId] = useState(null);
   const [localMoney, setLocalMoney] = useState(() => money);
+  const [page, setPage] = useState(() => routeFromHash().page || 'home');
+  const pageRef = useRef('home');
   const adminMode = isAdminPath(window.location.pathname);
   const t = translations[lang];
   const featuredArt = artworks.find((art) => art.slug === 'the-weight-of-words');
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const blobRes = await fetch('/api/catalogue');
-        if (blobRes.ok) return blobRes.json();
-      } catch { /* fall through to bundled static file */ }
+      const hostname = window.location.hostname;
+      const canUseApi = !/github\.io$/.test(hostname) && hostname !== '127.0.0.1' && hostname !== 'localhost';
+      if (canUseApi) {
+        try {
+          const blobRes = await fetch('/api/catalogue');
+          if (blobRes.ok) return blobRes.json();
+        } catch { /* fall through to bundled static file */ }
+      }
       const staticRes = await fetch(`${import.meta.env.BASE_URL}data/artworks.json`);
       return staticRes.json();
     };
@@ -376,17 +473,35 @@ function App() {
 
   useEffect(() => {
     if (!artworks.length) return;
-    const openFromHash = () => {
-      setSelected(artworkForHash(artworks, window.location.hash || ''));
+    const handleHash = () => {
+      const parsed = routeFromHash();
+      if (parsed.artworkSlug) {
+        setSelected(artworkForHash(artworks, `#artwork/${parsed.artworkSlug}`));
+        return;
+      }
+      setSelected(null);
+      setMenuOpen(false);
+      const next = parsed.page || 'home';
+      if (next !== pageRef.current) {
+        pageRef.current = next;
+        setPage(next);
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
     };
-    openFromHash();
-    window.addEventListener('hashchange', openFromHash);
-    return () => window.removeEventListener('hashchange', openFromHash);
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
   }, [artworks]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  useEffect(() => {
+    const base = 'Adesakin Mary Damilola';
+    const labels = { home: '', artist: ` — ${t.artistPageTitle}`, catalogue: ` — ${t.catalogueTitle}`, exhibitions: ` — ${t.exhibitionsTitle}`, contact: ` — ${t.contact}` };
+    document.title = `${base}${labels[page] ?? ''}${page === 'home' ? ' — Thread Painting Portfolio' : ''}`;
+  }, [page, lang, t]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -433,7 +548,8 @@ function App() {
   const closeArtwork = () => {
     setSelected(null);
     if (window.location.hash.startsWith('#artwork/')) {
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      const pageHash = page === 'home' ? '#/' : `#/${page}`;
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${pageHash}`);
     }
   };
 
@@ -473,7 +589,7 @@ function App() {
   return (
     <CurrencyContext.Provider value={localMoney}>
       <header className="topbar">
-        <a href={adminMode ? import.meta.env.BASE_URL : '#main'} className="brand">
+        <a href={adminMode ? import.meta.env.BASE_URL : '#/'} className="brand">
           <img src={`${import.meta.env.BASE_URL}assets/favicon.svg`} alt="Adesakin Mary Studio" />
           <span>Adesakin Mary</span>
         </a>
@@ -482,10 +598,11 @@ function App() {
             <a href={import.meta.env.BASE_URL}>View public site</a>
           ) : (
             <>
-              <a href="#artist" onClick={() => setMenuOpen(false)}>{t.artist}</a>
-              <a href="#catalogue" onClick={() => { setFilter('all'); setMenuOpen(false); }}>{t.originalWorks}</a>
-              <a href="#catalogue" onClick={() => { setFilter('prints'); setMenuOpen(false); }}>{t.printWorks}</a>
-              <a href="#exhibitions" onClick={() => setMenuOpen(false)}>{t.exhibitions}</a>
+              <a href="#/" className={page === 'home' ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t.home}</a>
+              <a href="#/artist" className={page === 'artist' ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t.artistPageTitle}</a>
+              <a href="#/catalogue" className={page === 'catalogue' ? 'active' : ''} onClick={() => { setFilter('all'); setMenuOpen(false); }}>{t.originalWorks}</a>
+              <a href="#/exhibitions" className={page === 'exhibitions' ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t.exhibitions}</a>
+              <a href="#/contact" className={page === 'contact' ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t.contact}</a>
             </>
           )}
         </nav>
@@ -516,165 +633,41 @@ function App() {
       <main id="main">
         {adminMode ? (
           <AdminPanel artworks={artworks} setArtworks={setArtworks} showToast={showToast} />
+        ) : page === 'artist' ? (
+          <ArtistPage t={t} />
+        ) : page === 'catalogue' ? (
+          <CataloguePage
+            t={t}
+            lang={lang}
+            query={query}
+            setQuery={setQuery}
+            filter={filter}
+            setFilter={setFilter}
+            filtered={filtered}
+            availableCount={availableCount}
+            soldCount={soldCount}
+            copiedArtworkId={copiedArtworkId}
+            onOpen={openArtwork}
+            onCopy={copyLink}
+            onShortlist={addToShortlist}
+          />
+        ) : page === 'exhibitions' ? (
+          <ExhibitionsPage t={t} />
+        ) : page === 'contact' ? (
+          <ContactPage t={t} />
         ) : (
-          <>
-        <section className="hero">
-          <div className="hero-copy">
-            <span className="kicker"><Sparkles size={16} /> {t.heroKicker}</span>
-            <h1>{t.heroTitle} <em>{t.heroTitleAccent}</em></h1>
-            <p>{t.heroCopy}</p>
-            <div className="actions">
-              <a href="#catalogue" className="primary">{t.explore}<ArrowDown size={16} /></a>
-              <a href="#newsletter" className="secondary">{t.collectorList}</a>
-            </div>
-            <p className="hero-trust"><ShieldCheck size={16} /> Original works, studio-confirmed availability, and print options handled by inquiry or secure checkout.</p>
-            <div className="metrics">
-              <strong>{artworks.length}</strong><span>{t.originalWorks}</span>
-              <strong>4</strong><span>{t.exhibitions}</span>
-              <strong>{artworks.length}</strong><span>{t.threadWorks}</span>
-            </div>
-          </div>
-          <article className="featured">
-            <img
-              src={`${import.meta.env.BASE_URL}${featuredArt?.image || 'assets/artwork/the-weight-of-words.webp'}`}
-              alt={featuredArt?.title || 'The Weight of Words'}
-              fetchpriority="high"
-              decoding="async"
-            />
-            <div>
-              <span>{featuredArt?.status === 'Sold' ? t.sold : t.available}</span>
-              <h2>{featuredArt?.title || 'The Weight of Words'}</h2>
-              <p>{featuredArt ? `${featuredArt.medium} / ${featuredArt.dimensions}` : 'Thread on Canvas / 30 x 32 inches'}</p>
-              <strong>{featuredArt ? (localMoney(featuredArt.originalPrice) || t.priceOnRequest) : 'Loading catalogue…'}</strong>
-              {featuredArt ? <button type="button" onClick={() => openArtwork(featuredArt)}>View Featured Work</button> : null}
-            </div>
-          </article>
-        </section>
-
-        <section id="artist" className="artist">
-          <div>
-            <span className="kicker">{t.artist}</span>
-            <h2>Adesakin Mary Damilola</h2>
-            {Array.isArray(t.about)
-              ? t.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
-              : <p>{t.about}</p>}
-          </div>
-          <div className="statement">
-            <span className="kicker">{t.statementTitle}</span>
-            <p>{t.statement}</p>
-          </div>
-        </section>
-
-        <section id="catalogue" className="catalogue">
-          <div className="section-head">
-            <div>
-              <span className="kicker">{t.catalogue}</span>
-              <h2>{t.catalogueTitle}</h2>
-            </div>
-            <div className="filters">
-              {[
-                ['all', t.allWorks],
-                ['prints', t.printWorks],
-                ['priced', t.pricedWorks],
-                ['request', t.priceOnRequest],
-                ['2026', t.works2026],
-              ].map(([value, label]) => (
-                <button className={filter === value ? 'active' : ''} type="button" onClick={() => setFilter(value)} key={value}>{label}</button>
-              ))}
-            </div>
-          </div>
-          <label className="search">
-            <Search size={16} />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t.searchPlaceholder} />
-          </label>
-          <div className="trust-row">
-            <p><ShieldCheck size={16} /> Studio-confirmed originals before payment.</p>
-            <p><CheckCircle2 size={16} /> {availableCount} available, {soldCount} in private collections.</p>
-            <p><ShieldCheck size={16} /> Terms, returns, privacy, and shipping timing are available before purchase.</p>
-          </div>
-          {filtered.length ? (
-            <div className="grid">
-              {filtered.map((art) => (
-              <article className="art-card" key={art.id}>
-                <img src={`${import.meta.env.BASE_URL}${art.image}`} alt={art.title} loading="lazy" decoding="async" />
-                <div className="art-body">
-                  <div className="art-meta">
-                    <span>{art.collection}</span>
-                  </div>
-                  <div className="art-badges">
-                    <span className={art.status === 'Sold' ? 'sold badge' : 'available badge'}>{art.status === 'Sold' ? t.sold : t.available}</span>
-                    {hasPrintPricing(art) ? <PrintBadge /> : null}
-                  </div>
-                  <h3>{art.title}</h3>
-                  <p className="spec">{art.medium} / {art.dimensions}</p>
-                  <p className="card-description">{artworkDescription(art, lang)}</p>
-                  <div className="price-line">
-                    <span>{filter === 'prints' ? t.print : t.originalPainting}</span>
-                    <strong>
-                      {filter === 'prints'
-                        ? printOptionsFor(art)[0] ? money(printOptionsFor(art)[0].price) : t.availableByInquiry
-                        : art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}
-                    </strong>
-                  </div>
-                  <dl>
-                    {filter === 'prints' ? (
-                      <>
-                        <dt>{t.print}</dt>
-                        <dd><PrintPricing artwork={art} fallback={t.availableByInquiry} /></dd>
-                        <dt>{t.format}</dt>
-                        <dd>{t.printWorks}</dd>
-                      </>
-                    ) : (
-                      <>
-                        <dt>{t.originalPainting}</dt>
-                        <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? localMoney(art.originalPrice) : t.priceOnRequest}</dd>
-                        <dt>{t.format}</dt>
-                        <dd>{t.originalPainting}</dd>
-                      </>
-                    )}
-                  </dl>
-                  <div className="card-actions">
-                    <button type="button" onClick={() => openArtwork(art)}>{t.viewSelect}</button>
-                    <button type="button" aria-label={copiedArtworkId === art.id ? t.linkCopied : t.copyLink} onClick={() => copyLink(art)}>
-                      {copiedArtworkId === art.id ? <CheckCircle2 size={16} /> : <LinkIcon size={16} />}
-                    </button>
-                    {art.status === 'Available' ? <button type="button" aria-label={t.addShortlist} onClick={() => addToShortlist(art)}><BookmarkPlus size={16} /></button> : null}
-                  </div>
-                </div>
-              </article>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state" role="status">
-              <Search size={18} />
-              <h3>No artworks match this view</h3>
-              <p>Try another filter or search term to continue browsing the catalogue.</p>
-              <button type="button" onClick={() => { setQuery(''); setFilter('all'); }}>Reset Catalogue</button>
-            </div>
-          )}
-        </section>
-
-        <section id="newsletter" className="contact-band">
-          <h2>{t.collectorList}</h2>
-          <form action={FORMSPREE_STUDIO_CIRCLE_ENDPOINT} method="POST">
-            <input type="email" name="email" placeholder="Email Address" required />
-            <button type="submit"><Send size={16} /> {t.collectorList}</button>
-          </form>
-        </section>
-
-        <section id="exhibitions" className="exhibitions">
-          <span className="kicker">{t.exhibitions}</span>
-          <h2>Exhibitions & Press</h2>
-          <ul>
-            <li>SWANS Female Exhibition, Signature Beyond Art Gallery, Lagos, 2026</li>
-            <li>La Beaute Vue par les Artistes, Paris, 2025</li>
-            <li>Tola Wewe Art Gallery, Ondo, 2025</li>
-            <li>House of George Art and Craft Gallery, 2025</li>
-            <li>Deep in Thought, Annual Contemporary Art Showcase, 2024</li>
-            <li>Life In My City Art Festival, 2024</li>
-          </ul>
-        </section>
-          </>
+          <HomePage
+            t={t}
+            lang={lang}
+            featuredArt={featuredArt}
+            artworks={artworks}
+            availableCount={availableCount}
+            soldCount={soldCount}
+            copiedArtworkId={copiedArtworkId}
+            onOpen={openArtwork}
+            onCopy={copyLink}
+            onShortlist={addToShortlist}
+          />
         )}
       </main>
 
@@ -704,7 +697,13 @@ function App() {
         <Dialog labelledBy="artwork-title" onClose={closeArtwork}>
           <div className="modal-panel artwork-modal-panel">
             <button type="button" className="close" onClick={closeArtwork} aria-label="Close artwork details"><X /></button>
-            <img src={`${import.meta.env.BASE_URL}${selected.image}`} alt={selected.title} decoding="async" />
+            <img
+              src={`${import.meta.env.BASE_URL}${selected.image}`}
+              srcSet={artImageSrcSet(selected.image)}
+              sizes={ART_IMAGE_SIZES.modal}
+              alt={selected.title}
+              decoding="async"
+            />
             <div className="modal-copy">
               <span className={selected.status === 'Sold' ? 'sold badge' : 'available badge'}>{selected.status === 'Sold' ? t.sold : t.available}</span>
               <h2 id="artwork-title">{selected.title}</h2>
@@ -786,6 +785,284 @@ function App() {
 
       {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
     </CurrencyContext.Provider>
+  );
+}
+
+function ArtworkCard({ art, t, lang, filter, copiedArtworkId, onOpen, onCopy, onShortlist }) {
+  return (
+    <article className="art-card">
+      <img
+        src={`${import.meta.env.BASE_URL}${art.image}`}
+        srcSet={artImageSrcSet(art.image)}
+        sizes={ART_IMAGE_SIZES.card}
+        alt={art.title}
+        loading="lazy"
+        decoding="async"
+      />
+      <div className="art-body">
+        <div className="art-meta">
+          <span>{art.collection}</span>
+        </div>
+        <div className="art-badges">
+          <span className={art.status === 'Sold' ? 'sold badge' : 'available badge'}>{art.status === 'Sold' ? t.sold : t.available}</span>
+          {hasPrintPricing(art) ? <PrintBadge /> : null}
+        </div>
+        <h3>{art.title}</h3>
+        <p className="spec">{art.medium} / {art.dimensions}</p>
+        <p className="card-description">{artworkDescription(art, lang)}</p>
+        <div className="price-line">
+          <span>{filter === 'prints' ? t.print : t.originalPainting}</span>
+          <strong>
+            {filter === 'prints'
+              ? printOptionsFor(art)[0] ? money(printOptionsFor(art)[0].price) : t.availableByInquiry
+              : art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}
+          </strong>
+        </div>
+        <dl>
+          {filter === 'prints' ? (
+            <>
+              <dt>{t.print}</dt>
+              <dd><PrintPricing artwork={art} fallback={t.availableByInquiry} /></dd>
+              <dt>{t.format}</dt>
+              <dd>{t.printWorks}</dd>
+            </>
+          ) : (
+            <>
+              <dt>{t.originalPainting}</dt>
+              <dd>{art.status === 'Sold' ? t.sold : isPositivePrice(art.originalPrice) ? money(art.originalPrice) : t.priceOnRequest}</dd>
+              <dt>{t.format}</dt>
+              <dd>{t.originalPainting}</dd>
+            </>
+          )}
+        </dl>
+        <div className="card-actions">
+          <button type="button" onClick={() => onOpen(art)}>{t.viewSelect}</button>
+          <button type="button" aria-label={copiedArtworkId === art.id ? t.linkCopied : t.copyLink} onClick={() => onCopy(art)}>
+            {copiedArtworkId === art.id ? <CheckCircle2 size={16} /> : <LinkIcon size={16} />}
+          </button>
+          {art.status === 'Available' ? <button type="button" aria-label={t.addShortlist} onClick={() => onShortlist(art)}><BookmarkPlus size={16} /></button> : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function HomePage({ t, lang, featuredArt, artworks, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
+  const localMoney = React.useContext(CurrencyContext);
+  const available = artworks.filter((art) => art.status === 'Available');
+  const picks = available.length >= 3 ? available.slice(0, 3) : artworks.slice(0, 3);
+  const printsCount = artworks.filter(hasPrintPricing).length;
+  const exhibitionsCount = Array.isArray(t.exhibitionsList) ? t.exhibitionsList.length : 0;
+
+  return (
+    <>
+      <section className="hero">
+        <div className="hero-copy">
+          <span className="kicker"><Sparkles size={16} /> {t.heroKicker}</span>
+          <h1>{t.heroTitle} <em>{t.heroTitleAccent}</em></h1>
+          <p>{t.heroCopy}</p>
+          <div className="actions">
+            <a href="#/catalogue" className="primary">{t.explore}<ArrowDown size={16} /></a>
+            <a href="#/contact" className="secondary">{t.collectorList}</a>
+          </div>
+          <p className="hero-trust"><ShieldCheck size={16} /> Original works, studio-confirmed availability, and print options handled by inquiry or secure checkout.</p>
+          <div className="metrics">
+            <strong>{artworks.length}</strong><span>{t.originalWorks}</span>
+            <strong>{exhibitionsCount}</strong><span>{t.exhibitions}</span>
+            <strong>{printsCount}</strong><span>{t.metricsPrints}</span>
+          </div>
+        </div>
+        <article className="featured">
+          <img
+            src={`${import.meta.env.BASE_URL}${featuredArt?.image || 'assets/artwork/the-weight-of-words.webp'}`}
+            srcSet={artImageSrcSet(featuredArt?.image || 'assets/artwork/the-weight-of-words.webp')}
+            sizes={ART_IMAGE_SIZES.hero}
+            alt={featuredArt?.title || 'The Weight of Words'}
+            fetchpriority="high"
+            decoding="async"
+          />
+          <div>
+            <span>{featuredArt?.status === 'Sold' ? t.sold : t.available}</span>
+            <h2>{featuredArt?.title || 'The Weight of Words'}</h2>
+            <p>{featuredArt ? `${featuredArt.medium} / ${featuredArt.dimensions}` : 'Thread on Canvas / 30 x 32 inches'}</p>
+            <strong>{featuredArt ? (localMoney(featuredArt.originalPrice) || t.priceOnRequest) : 'Loading catalogue…'}</strong>
+            {featuredArt ? <button type="button" onClick={() => onOpen(featuredArt)}>View Featured Work</button> : null}
+          </div>
+        </article>
+      </section>
+
+      <section className="artist">
+        <div>
+          <span className="kicker">{t.artist}</span>
+          <h2>Adesakin Mary Damilola</h2>
+          {Array.isArray(t.about)
+            ? t.about.slice(0, 1).map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+            : <p>{t.about}</p>}
+          <a href="#/artist" className="featured-link"><span>{t.aboutArtist}</span><ArrowRight size={16} /></a>
+        </div>
+        <div className="statement">
+          <span className="kicker">{t.statementTitle}</span>
+          <p>{t.statement}</p>
+        </div>
+      </section>
+
+      {picks.length ? (
+        <section className="catalogue">
+          <div className="section-head">
+            <div>
+              <span className="kicker">{t.catalogue}</span>
+              <h2>{t.selectedWorks}</h2>
+            </div>
+            <a href="#/catalogue" className="filters-link"><span>{t.viewFullCatalogue}</span><ArrowRight size={16} /></a>
+          </div>
+          <div className="grid">
+            {picks.map((art) => (
+              <ArtworkCard
+                key={art.id}
+                art={art}
+                t={t}
+                lang={lang}
+                filter="all"
+                copiedArtworkId={copiedArtworkId}
+                onOpen={onOpen}
+                onCopy={onCopy}
+                onShortlist={onShortlist}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section id="newsletter" className="contact-band">
+        <h2>{t.collectorList}</h2>
+        <form action={FORMSPREE_STUDIO_CIRCLE_ENDPOINT} method="POST">
+          <input type="email" name="email" placeholder={t.emailPlaceholder} required />
+          <button type="submit"><Send size={16} /> {t.collectorList}</button>
+        </form>
+      </section>
+    </>
+  );
+}
+
+function ArtistPage({ t }) {
+  return (
+    <section className="artist">
+      <div>
+        <span className="kicker">{t.artist}</span>
+        <h2>Adesakin Mary Damilola</h2>
+        {Array.isArray(t.about)
+          ? t.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+          : <p>{t.about}</p>}
+      </div>
+      <div className="statement">
+        <span className="kicker">{t.statementTitle}</span>
+        <p>{t.statement}</p>
+      </div>
+    </section>
+  );
+}
+
+function CataloguePage({ t, lang, query, setQuery, filter, setFilter, filtered, availableCount, soldCount, copiedArtworkId, onOpen, onCopy, onShortlist }) {
+  return (
+    <section className="catalogue">
+      <div className="section-head">
+        <div>
+          <span className="kicker">{t.catalogue}</span>
+          <h2>{t.catalogueTitle}</h2>
+        </div>
+        <div className="filters">
+          {[
+            ['all', t.allWorks],
+            ['prints', t.printWorks],
+            ['priced', t.pricedWorks],
+            ['request', t.priceOnRequest],
+            ['2026', t.works2026],
+          ].map(([value, label]) => (
+            <button className={filter === value ? 'active' : ''} type="button" onClick={() => setFilter(value)} key={value}>{label}</button>
+          ))}
+        </div>
+      </div>
+      <label className="search">
+        <Search size={16} />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t.searchPlaceholder} />
+      </label>
+      <div className="trust-row">
+        <p><ShieldCheck size={16} /> Studio-confirmed originals before payment.</p>
+        <p><CheckCircle2 size={16} /> {availableCount} available, {soldCount} in private collections.</p>
+        <p><ScrollText size={16} /> Terms, returns, privacy, and shipping timing are available before purchase.</p>
+      </div>
+      {filtered.length ? (
+        <div className="grid">
+          {filtered.map((art) => (
+            <ArtworkCard
+              key={art.id}
+              art={art}
+              t={t}
+              lang={lang}
+              filter={filter}
+              copiedArtworkId={copiedArtworkId}
+              onOpen={onOpen}
+              onCopy={onCopy}
+              onShortlist={onShortlist}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state" role="status">
+          <Search size={18} />
+          <h3>No artworks match this view</h3>
+          <p>Try another filter or search term to continue browsing the catalogue.</p>
+          <button type="button" onClick={() => { setQuery(''); setFilter('all'); }}>Reset Catalogue</button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ExhibitionsPage({ t }) {
+  return (
+    <section className="exhibitions">
+      <span className="kicker">{t.exhibitions}</span>
+      <h2>{t.exhibitionsTitle}</h2>
+      <p className="exhibitions-intro">{t.exhibitionsIntro}</p>
+      <ul>
+        {t.exhibitionsList.map((entry) => <li key={entry}>{entry}</li>)}
+      </ul>
+      <a href="#/contact" className="featured-link exhibitions-cta"><span>{t.contact}</span><ArrowRight size={16} /></a>
+    </section>
+  );
+}
+
+function ContactPage({ t }) {
+  return (
+    <section className="contact-page">
+      <div className="contact-grid">
+        <div>
+          <span className="kicker">{t.contact}</span>
+          <h2>{t.collectorList}</h2>
+          <p>{t.contactCopy}</p>
+          <dl className="contact-details">
+            <dt>{t.emailLabel}</dt><dd><a href="mailto:adesakinmary2020@gmail.com">adesakinmary2020@gmail.com</a></dd>
+            <dt>{t.phoneLabel}</dt><dd>+234 906 700 2871</dd>
+            <dt>{t.studioLabel}</dt><dd>Ile-Ife, Osun State, Nigeria</dd>
+          </dl>
+          <div className="socials">
+            <a href="mailto:adesakinmary2020@gmail.com" aria-label="Email Mary"><Mail size={18} /></a>
+            <a href="https://www.instagram.com/adesakinmarydamilola?igsh=anRnODJ6bTRod21h&utm_source=qr" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={18} /></a>
+            <a href="https://www.tiktok.com/@dammy017?_r=1&_t=ZS-98aw9mfksiq" target="_blank" rel="noreferrer" aria-label="TikTok"><TikTokIcon size={17} /></a>
+            <a href="https://www.facebook.com/share/1DzBXHzfPN/?mibextid=wwXIfr" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook size={18} /></a>
+          </div>
+        </div>
+        <form className="collector-form" action={FORMSPREE_STUDIO_CIRCLE_ENDPOINT} method="POST">
+          <span className="kicker">{t.contact}</span>
+          <label className="admin-field">
+            <span>{t.emailLabel}</span>
+            <input type="email" name="email" placeholder={t.emailPlaceholder} autoComplete="email" required />
+          </label>
+          <button className="primary" type="submit"><Send size={16} /> {t.collectorList}</button>
+        </form>
+      </div>
+    </section>
   );
 }
 

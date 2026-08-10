@@ -10,9 +10,24 @@ This Vite/React GitHub Pages site presents Mary Adesakin's thread painting pract
 
 The site is designed for collectors, curators, galleries, and art advisors who want to review original works, request print details, join the studio list, or contact the studio about commissions and acquisitions.
 
+## Pages
+
+The site is split into five pages using lightweight hash routing (no router dependency, works on GitHub Pages and Vercel):
+
+| Page | Route |
+|---|---|
+| Home (hero, featured work, artist teaser, selected works, collector list) | `/` |
+| The Artist (bio + statement) | `#/artist` |
+| Catalogue (search, filters, full grid) | `#/catalogue` |
+| Exhibitions | `#/exhibitions` |
+| Contact (collector form + studio details) | `#/contact` |
+
+Artwork detail modals deep-link as `#artwork/<slug>` and work from any page. Legacy `#catalogue`, `#artist`, `#exhibitions`, and `#newsletter` anchors still route to the matching page.
+
 ## Current Features
 
 - React/Vite app structure for easier future editing
+- Multi-page layout: Home, The Artist, Catalogue, Exhibitions, and Contact
 - Admin-friendly JSON artwork catalogue in `public/data/artworks.json`
 - Browser admin screen at `/adesakin/admin/` for editing original and print prices before exporting JSON
 - Admin artwork form that prepares new catalogue entries and optimized WebP images
@@ -105,7 +120,7 @@ Publishing files:
 - Keep artwork data inside `public/data/artworks.json`.
 - Use `/adesakin/admin/` to edit original and print prices, export the updated JSON, replace `public/data/artworks.json`, then commit and push.
 - When adding an artwork, copy the downloaded WebP image into `public/assets/artwork` before publishing the exported JSON.
-- Run `npm run optimize:images` after adding source JPG or PNG files to `sources/artwork/` to prepare fast catalogue images (900 px max, WebP).
+- Run `npm run optimize:images` after adding source JPG or PNG files to `sources/artwork/` to prepare fast catalogue images (900 px and 480 px WebP variants, referenced via `srcset`).
 - To accept payments, create live Paystack Product Links and paste them into the original, deposit, and print link fields in `/adesakin/admin/`.
 - Never add a Paystack secret key to this repository. Secure digital delivery requires server-side transaction verification and signed download links.
 - Keep image filenames stable once they are published, unless the corresponding artwork record is updated.
