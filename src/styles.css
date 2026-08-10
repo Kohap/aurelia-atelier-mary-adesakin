@@ -101,10 +101,50 @@ summary:focus-visible {
   from { opacity: 0; transform: scale(.85) rotate(-6deg); }
   to { opacity: 1; transform: none; }
 }
-.page { animation: page-in .3s var(--ease-out) both; }
+.page.entered { animation: page-in .38s var(--ease-out) both; }
 @keyframes page-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
+}
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  transition: opacity .35s var(--ease-out), visibility .35s;
+}
+.preloader.leaving { opacity: 0; visibility: hidden; }
+.preloader-inner {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding-left: 12px;
+}
+.preloader-mark {
+  font-family: Cinzel, serif;
+  font-size: clamp(1.3rem, 4.5vw, 2rem);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--primary);
+  white-space: nowrap;
+  animation: preloader-in .5s var(--ease-out) both;
+}
+.preloader-line {
+  width: min(220px, 58vw);
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: line-draw .55s var(--ease-out) .22s both;
+}
+@keyframes preloader-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes line-draw {
+  to { transform: scaleX(1); }
 }
 
 .hero, .artist, .catalogue, .exhibitions {

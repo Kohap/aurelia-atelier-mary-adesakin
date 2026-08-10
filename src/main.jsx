@@ -450,6 +450,7 @@ function App() {
   const [copiedArtworkId, setCopiedArtworkId] = useState(null);
   const [localMoney, setLocalMoney] = useState(() => money);
   const [page, setPage] = useState(() => routeFromHash().page || 'home');
+  const [entered, setEntered] = useState(() => isAdminPath(window.location.pathname));
   const pageRef = useRef('home');
   const adminMode = isAdminPath(window.location.pathname);
   const t = translations[lang];
@@ -631,12 +632,13 @@ function App() {
       </header>
 
       <main id="main">
+        {!entered ? <Preloader onDone={() => setEntered(true)} /> : null}
         {adminMode ? (
-          <div className="page" key="admin">
+          <div className={entered ? 'page entered' : 'page'} key="admin">
             <AdminPanel artworks={artworks} setArtworks={setArtworks} showToast={showToast} />
           </div>
         ) : (
-          <div className="page" key={page}>
+          <div className={entered ? 'page entered' : 'page'} key={page}>
             {page === 'artist' ? (
               <ArtistPage t={t} />
             ) : page === 'catalogue' ? (
@@ -852,6 +854,28 @@ function ArtworkCard({ art, t, lang, filter, copiedArtworkId, onOpen, onCopy, on
         </div>
       </div>
     </article>
+  );
+}
+
+function Preloader({ onDone }) {
+  const [leaving, setLeaving] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      onDone();
+      return undefined;
+    }
+    const hold = setTimeout(() => setLeaving(true), 650);
+    const finish = setTimeout(onDone, 1050);
+    return () => { clearTimeout(hold); clearTimeout(finish); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <div className={leaving ? 'preloader leaving' : 'preloader'} aria-hidden="true">
+      <div className="preloader-inner">
+        <span className="preloader-mark">Adesakin Mary</span>
+        <span className="preloader-line" />
+      </div>
+    </div>
   );
 }
 
