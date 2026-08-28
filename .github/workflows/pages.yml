@@ -1,9 +1,9 @@
-name: Deploy Vite site to GitHub Pages
+name: GitHub Pages (disabled)
 
+# arteli.site is served by Vercel from this branch. GitHub Pages cannot host
+# the TanStack Start SSR output (no `dist/` folder). Keep the workflow for a
+# manual static experiment only — do not run on every push.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -16,38 +16,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  skip:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Pages is not the live host
+        run: echo "Live site is https://www.arteli.site/ on Vercel. Skipping Pages."

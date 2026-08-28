@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Arteli">
+  <rect width="32" height="32" rx="7" fill="#f4eee6"/>
+  <path d="M16 5.4 L25.6 26.6 H21.7 L19.55 21.1 H12.45 L10.3 26.6 H6.4 L16 5.4Z" fill="#1c1511"/>
+  <path d="M12.7 18.2 H19.3" fill="none" stroke="#b44a28" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

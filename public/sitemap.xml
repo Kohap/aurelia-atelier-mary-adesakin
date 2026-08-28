@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kohap.github.io/aurelia-atelier-mary-adesakin/</loc>
-    <lastmod>2026-08-04</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://www.arteli.site/</loc></url>
+  <url><loc>https://www.arteli.site/catalogue</loc></url>
+  <url><loc>https://www.arteli.site/artist</loc></url>
+  <url><loc>https://www.arteli.site/studio</loc></url>
+  <url><loc>https://www.arteli.site/journal</loc></url>
+  <url><loc>https://www.arteli.site/exhibitions</loc></url>
+  <url><loc>https://www.arteli.site/contact</loc></url>
+  <url><loc>https://www.arteli.site/work/the-weight-of-words</loc></url>
+  <url><loc>https://www.arteli.site/work/maze-of-uncertainty</loc></url>
+  <url><loc>https://www.arteli.site/work/loud-silence</loc></url>
+  <url><loc>https://www.arteli.site/work/visible-within</loc></url>
+  <url><loc>https://www.arteli.site/work/hands-that-wont-let-go</loc></url>
+  <url><loc>https://www.arteli.site/work/the-ife-muse</loc></url>
+  <url><loc>https://www.arteli.site/work/beauty-in-becoming</loc></url>
+  <url><loc>https://www.arteli.site/work/the-calm-before-clarity</loc></url>
+  <url><loc>https://www.arteli.site/work/rare-like-a-blue-rose</loc></url>
+  <url><loc>https://www.arteli.site/work/the-weight</loc></url>
+  <url><loc>https://www.arteli.site/work/in-her-prime</loc></url>
+  <url><loc>https://www.arteli.site/work/stitched-in-time</loc></url>
 </urlset>

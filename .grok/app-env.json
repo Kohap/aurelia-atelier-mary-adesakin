@@ -1,0 +1,8 @@
+{
+  "VITE_AUTH_ENABLED": "false",
+  "VITE_PAYSTACK_PUBLIC_KEY": "pk_live_302f72919d4fb3a70e2a64fee603a52a077da7a5",
+  "VITE_PAYSTACK_CURRENCY": "NGN",
+  "deploy": {
+    "database": false
+  }
+}
