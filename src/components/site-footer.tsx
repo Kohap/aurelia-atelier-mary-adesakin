@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { BrandMark } from "@/components/brand-mark";
 import { artist } from "@/data/studio";
 import { navPaths } from "@/data/i18n";
 import { useStudio, type PolicyId } from "@/lib/store";
@@ -14,19 +15,21 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="relative overflow-hidden border-t border-line bg-ink text-paper">
+    <footer className="relative overflow-hidden border-t border-line bg-void text-foam">
       <div className="mx-auto grid max-w-[1440px] gap-12 px-4 py-16 sm:px-8 lg:grid-cols-12 lg:py-24">
         <div className="lg:col-span-6">
           <p className="kicker text-bronze">{t.atelier}</p>
-          <p className="display mt-4 text-paper">ARTELI</p>
-          <p className="mt-6 max-w-md text-paper/70">{t.footerBlurb}</p>
+          <div className="mt-5 text-foam">
+            <BrandMark onDark />
+          </div>
+          <p className="mt-6 max-w-md text-foam/70">{t.footerBlurb}</p>
         </div>
         <div className="lg:col-span-3">
           <p className="kicker text-bronze">{t.visit}</p>
-          <ul className="mt-5 space-y-3 text-sm text-paper/80">
+          <ul className="mt-5 space-y-3 text-sm text-foam/80">
             {navPaths.map((item) => (
               <li key={item.to}>
-                <Link to={item.to} className="hover:text-paper">
+                <Link to={item.to} className="hover:text-foam">
                   {t[item.key]}
                 </Link>
               </li>
@@ -35,7 +38,7 @@ export function SiteFooter() {
         </div>
         <div className="lg:col-span-3">
           <p className="kicker text-bronze">{t.studio}</p>
-          <ul className="mt-5 space-y-3 text-sm text-paper/80">
+          <ul className="mt-5 space-y-3 text-sm text-foam/80">
             <li>
               <a href={`mailto:${artist.email}`}>{artist.email}</a>
             </li>
@@ -62,15 +65,15 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-paper/10 px-4 py-6 sm:px-8">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 text-xs tracking-[0.16em] text-paper/70 uppercase">
+      <div className="border-t border-foam/10 px-4 py-6 sm:px-8">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 text-xs tracking-[0.16em] text-foam/70 uppercase">
           <span>© {new Date().getFullYear()} Arteli · Adesakin Mary Damilola</span>
           <div className="flex flex-wrap gap-4">
             {policies.map((item) => (
               <button
                 key={item.id}
                 type="button"
-                className="hover:text-paper"
+                className="hover:text-foam"
                 onClick={() => setPolicy(item.id)}
               >
                 {item.label}

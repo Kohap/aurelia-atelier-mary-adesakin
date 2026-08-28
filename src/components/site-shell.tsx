@@ -16,6 +16,7 @@ import { useT } from "@/lib/use-t";
 export function SiteShell({ children }: { children: ReactNode }) {
   const t = useT();
   const lang = useStudio((s) => s.lang);
+  const theme = useStudio((s) => s.theme);
   const setRates = useStudio((s) => s.setRates);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const desk = isDeskPath(pathname);
@@ -23,6 +24,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     let alive = true;

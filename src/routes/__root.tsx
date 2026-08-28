@@ -7,6 +7,8 @@ import appCss from "../styles.css?url";
 
 const APP_NAME = "Arteli";
 
+const THEME_BOOT = `(function(){try{var r=JSON.parse(localStorage.getItem("arteli-studio")||"{}");var t=r.state&&r.state.theme;if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();`;
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -33,6 +35,7 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap",
       },
     ],
+    scripts: [{ children: THEME_BOOT }],
   }),
   component: RootDocument,
   notFoundComponent: NotFound,

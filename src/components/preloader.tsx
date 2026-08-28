@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
 
 export function Preloader() {
   const [mounted, setMounted] = useState(true);
@@ -21,9 +22,7 @@ export function Preloader() {
     <div className="preloader" aria-hidden="true">
       <div className="grid justify-items-center gap-5">
         <span className="kicker">Ile-Ife · Thread Painting</span>
-        <span className="font-display text-5xl tracking-[0.22em] sm:text-6xl">
-          ARTELI
-        </span>
+        <BrandMark />
         <span
           className="h-px w-48 origin-left bg-terracotta"
           style={{ animation: "boot-line 0.6s cubic-bezier(0.23,1,0.32,1) 0.12s both" }}

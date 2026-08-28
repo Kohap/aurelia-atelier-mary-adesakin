@@ -204,6 +204,8 @@ const en = {
   heroTrust: "Original works, studio-confirmed availability, and prints by inquiry.",
   menu: "Menu",
   inquiryPlaceholder: "Acquisition, commission, or viewing request.",
+  themeLight: "Light studio",
+  themeDark: "Night studio",
 };
 
 const yo: typeof en = {
@@ -379,6 +381,8 @@ const yo: typeof en = {
   heroTrust: "Iṣẹ́ àtilẹ̀bá, ìwàsí tí ilé-iṣẹ́ jẹ́rìí sí, àti àtẹ̀jáde nípasẹ̀ ìbéèrè.",
   menu: "Àtòjọ",
   inquiryPlaceholder: "Rírà, iṣẹ́ pàtàkì, tàbí ìbéèrè wíwò.",
+  themeLight: "Ilé-iṣẹ́ ìmọ́lẹ̀",
+  themeDark: "Ilé-iṣẹ́ alẹ́",
 };
 
 const fr: typeof en = {
@@ -560,6 +564,8 @@ const fr: typeof en = {
   heroTrust: "Œuvres originales, disponibilité confirmée, tirages sur demande.",
   menu: "Menu",
   inquiryPlaceholder: "Acquisition, commande ou demande de visite.",
+  themeLight: "Atelier clair",
+  themeDark: "Atelier sombre",
 };
 
 export const copy = { en, yo, fr };

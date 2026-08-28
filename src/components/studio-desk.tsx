@@ -10,6 +10,8 @@ import {
   Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/brand-mark";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { hasPaystack, PAYSTACK_CURRENCY } from "@/lib/paystack";
 import { useStudio } from "@/lib/store";
 import {
@@ -254,7 +256,10 @@ export function StudioDesk() {
       <header className="border-b border-line bg-paper">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="kicker">
+            <Link to="/" className="inline-flex text-ink" aria-label="Arteli">
+              <BrandMark compact />
+            </Link>
+            <p className="kicker mt-4">
               <Settings size={14} className="inline" /> Studio desk
             </p>
             <h1 className="font-display mt-2 text-4xl tracking-tight">Arteli catalogue</h1>
@@ -274,9 +279,12 @@ export function StudioDesk() {
                 placeholder="Required on the live host"
               />
             </label>
-            <Link to="/" className="btn btn-line">
-              View atelier
-            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <ThemeToggle />
+              <Link to="/" className="btn btn-line">
+                View atelier
+              </Link>
+            </div>
           </div>
         </div>
       </header>

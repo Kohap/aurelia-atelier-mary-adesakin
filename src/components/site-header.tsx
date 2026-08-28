@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Bookmark, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { currencies, languages, navPaths, type Currency, type Lang } from "@/data/i18n";
 import { useStudio } from "@/lib/store";
 import { useT } from "@/lib/use-t";
@@ -24,13 +26,8 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-line/80 bg-parchment/88 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-4 sm:px-8">
-        <Link to="/" className="flex items-baseline gap-3">
-          <span className="font-display text-[1.7rem] leading-none tracking-[0.18em]">
-            ARTELI
-          </span>
-          <span className="hidden text-[0.68rem] tracking-[0.22em] text-muted uppercase sm:inline">
-            Ile-Ife
-          </span>
+        <Link to="/" className="min-w-0" aria-label="Arteli">
+          <BrandMark />
         </Link>
 
         <nav className="hidden items-center gap-6 xl:flex">
@@ -77,6 +74,7 @@ export function SiteHeader() {
               ))}
             </select>
           </label>
+          <ThemeToggle />
           <button
             type="button"
             className="btn btn-line h-11 min-h-11 px-3"
@@ -100,7 +98,7 @@ export function SiteHeader() {
       <div
         className={cn(
           "overflow-hidden border-t border-line bg-parchment transition-[max-height,opacity] duration-400 xl:hidden",
-          open ? "max-h-[640px] opacity-100" : "max-h-0 opacity-0",
+          open ? "max-h-[720px] opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <nav className="flex flex-col px-6 py-6">
