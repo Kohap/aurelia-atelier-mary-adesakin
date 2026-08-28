@@ -1,5 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Reveal } from "@/components/reveal";
+import { StitchFilms } from "@/components/stitch-films";
 import { ThreadField } from "@/components/thread-field";
 import { Button } from "@/components/ui/button";
 import { artist, processSteps } from "@/data/studio";
@@ -62,37 +63,33 @@ function StudioPage() {
       </section>
 
       <section className="border-y border-line bg-paper">
-        <div className="mx-auto grid max-w-[1100px] items-center gap-10 px-4 py-16 sm:px-8 md:grid-cols-2">
-          <div className="frame aspect-video">
-            <img
-              src="/studio/thread-macro.jpg"
-              alt="Close stitches in terracotta and charcoal thread"
-              className="ken"
-            />
-          </div>
-          <Reveal>
+        <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-8">
+          <Reveal className="max-w-2xl">
             <p className="kicker">{t.watchStitch}</p>
             <h2 className="display-md mt-3">{t.watchStitch}</h2>
-            <p className="mt-4 text-muted">{t.watchCopy}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                className="btn btn-primary"
-                href={artist.instagram}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t.instagram}
-              </a>
-              <a
-                className="btn btn-ghost"
-                href={artist.tiktok}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t.tiktok}
-              </a>
-            </div>
+            <p className="mt-4 text-muted">{t.watchFilmsIntro}</p>
           </Reveal>
+          <div className="mt-12">
+            <StitchFilms />
+          </div>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a
+              className="btn btn-primary"
+              href={artist.instagram}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t.instagram}
+            </a>
+            <a
+              className="btn btn-ghost"
+              href={artist.tiktok}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t.tiktok}
+            </a>
+          </div>
         </div>
       </section>
 
@@ -104,7 +101,7 @@ function StudioPage() {
           <div className="mt-8">
             <Link
               to="/contact"
-              className="btn bg-terracotta text-paper hover:bg-terracotta-deep"
+              className="btn bg-terracotta text-on-accent hover:bg-terracotta-deep"
             >
               {t.startCommission}
             </Link>

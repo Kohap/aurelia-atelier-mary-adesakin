@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { useCallback } from "react";
-import { artworks } from "@/data/artworks";
+import { useCatalogue } from "@/lib/catalogue";
 import { useEscape } from "@/lib/use-escape";
 import { useStudio } from "@/lib/store";
 import { useMoney, useT } from "@/lib/use-t";
@@ -13,6 +13,7 @@ export function ShortlistDrawer() {
   const ids = useStudio((s) => s.shortlist);
   const remove = useStudio((s) => s.removeFromShortlist);
   const inquire = useStudio((s) => s.openInquiry);
+  const { works: artworks } = useCatalogue();
   const items = artworks.filter((work) => ids.includes(work.slug));
   const t = useT();
   const money = useMoney();

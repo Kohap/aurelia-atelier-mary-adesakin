@@ -9,6 +9,7 @@ import { Preloader } from "@/components/preloader";
 import { ShortlistDrawer } from "@/components/shortlist-drawer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { hydrateCatalogue } from "@/lib/catalogue";
 import { isDeskPath } from "@/lib/admin";
 import { useStudio } from "@/lib/store";
 import { useT } from "@/lib/use-t";
@@ -28,6 +29,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    hydrateCatalogue();
+  }, []);
 
   useEffect(() => {
     let alive = true;

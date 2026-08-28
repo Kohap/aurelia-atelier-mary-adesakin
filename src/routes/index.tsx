@@ -6,8 +6,9 @@ import { CollectorListForm } from "@/components/collector-form";
 import { Reveal } from "@/components/reveal";
 import { ThreadField } from "@/components/thread-field";
 import { Button } from "@/components/ui/button";
-import { artworks, featuredSlug, getArtwork } from "@/data/artworks";
+import { artworks as seedArtworks, featuredSlug, getArtwork } from "@/data/artworks";
 import { artist, exhibitions, processSteps } from "@/data/studio";
+import { useCatalogue } from "@/lib/catalogue";
 import { useStudio } from "@/lib/store";
 import { useT } from "@/lib/use-t";
 import { localize } from "@/lib/utils";
@@ -17,7 +18,8 @@ export const Route = createFileRoute("/")({ component: Home });
 function Home() {
   const t = useT();
   const lang = useStudio((s) => s.lang);
-  const featured = getArtwork(featuredSlug) ?? artworks[0];
+  const { works: artworks } = useCatalogue();
+  const featured = getArtwork(featuredSlug, artworks) ?? artworks[0] ?? seedArtworks[0];
   const selected = artworks
     .filter((w) => w.slug !== featured?.slug && w.slug !== "the-ife-muse")
     .slice(0, 6);
@@ -181,11 +183,11 @@ function Home() {
       </section>
 
       <section className="grid lg:grid-cols-2">
-        <div className="frame min-h-[420px] lg:min-h-[640px]">
+        <div className="frame aspect-[4/5] min-h-[420px] lg:min-h-[640px]">
           <img
-            src="/studio/worktable.jpg"
-            alt="Studio worktable with hoop, needle, and terracotta thread"
-            className="ken"
+            src={artist.portrait}
+            alt={t.portraitAlt}
+            className="object-cover object-[center_22%]"
           />
         </div>
         <div className="flex flex-col justify-center bg-ink px-6 py-16 text-paper sm:px-12 lg:px-16">

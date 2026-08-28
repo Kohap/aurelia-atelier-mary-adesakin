@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { ArtworkImage } from "@/components/artwork-image";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import { artist } from "@/data/studio";
@@ -19,6 +20,7 @@ function ArtistPage() {
     birthDate: artist.born,
     email: artist.email,
     telephone: artist.phone,
+    image: artist.portrait,
     address: {
       "@type": "PostalAddress",
       addressLocality: "Ile-Ife",
@@ -49,11 +51,14 @@ function ArtistPage() {
         </Reveal>
         <Reveal delay={120} className="lg:col-span-6">
           <div className="frame aspect-[4/5]">
-            <img
-              src="/artwork/beauty-in-becoming.webp"
-              alt="Beauty in Becoming, a thread painting by Adesakin Mary Damilola"
+            <ArtworkImage
+              src={artist.portrait}
+              alt={t.portraitAlt}
+              className="object-cover object-[center_22%]"
+              priority
             />
           </div>
+          <p className="mt-3 text-sm text-muted">{t.photoCredit}</p>
         </Reveal>
       </section>
 
@@ -90,6 +95,9 @@ function ArtistPage() {
           <div className="flex flex-wrap gap-3 md:justify-end">
             <Button asChild>
               <Link to="/contact">{t.contact}</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/press">{t.pressSheet}</Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link to="/catalogue">{t.viewWorks}</Link>

@@ -34,6 +34,11 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link to="/press" className="hover:text-foam">
+                {t.pressSheet}
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="lg:col-span-3">

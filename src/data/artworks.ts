@@ -275,17 +275,17 @@ export const collections = [
   ...new Set(artworks.map((work) => work.collection)),
 ];
 
-export function getArtwork(slug: string) {
-  return artworks.find((work) => work.slug === slug);
+export function getArtwork(slug: string, list: Artwork[] = artworks) {
+  return list.find((work) => work.slug === slug);
 }
 
-export function relatedWorks(slug: string, limit = 3) {
-  const current = getArtwork(slug);
-  if (!current) return artworks.slice(0, limit);
-  const same = artworks.filter(
+export function relatedWorks(slug: string, limit = 3, list: Artwork[] = artworks) {
+  const current = getArtwork(slug, list);
+  if (!current) return list.slice(0, limit);
+  const same = list.filter(
     (work) => work.slug !== slug && work.collection === current.collection,
   );
-  const rest = artworks.filter(
+  const rest = list.filter(
     (work) => work.slug !== slug && work.collection !== current.collection,
   );
   return [...same, ...rest].slice(0, limit);

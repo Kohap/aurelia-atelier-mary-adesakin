@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 import { X } from "lucide-react";
-import { getArtwork } from "@/data/artworks";
+import { useArtwork } from "@/lib/catalogue";
 import { artist } from "@/data/studio";
 import { useEscape } from "@/lib/use-escape";
 import { useStudio } from "@/lib/store";
@@ -14,12 +14,13 @@ export function InquiryDialog() {
   const slug = useStudio((s) => s.inquirySlug);
   const close = useStudio((s) => s.openInquiry);
   const setPolicy = useStudio((s) => s.setPolicy);
+  const policy = useStudio((s) => s.policy);
   const shortlist = useStudio((s) => s.shortlist);
-  const work = slug ? getArtwork(slug) : null;
+  const work = useArtwork(slug);
   const [sending, setSending] = useState(false);
   const t = useT();
   const onClose = useCallback(() => close(null), [close]);
-  useEscape(onClose, Boolean(slug));
+  useEscape(onClose, Boolean(slug) && !policy);
 
   if (!slug) return null;
 

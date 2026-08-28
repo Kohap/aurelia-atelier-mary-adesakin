@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { CollectorListForm } from "@/components/collector-form";
+import { PolicyBody } from "@/components/policy-body";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
-import { artist, faqs, policies } from "@/data/studio";
+import { artist, faqs, policies, policyUpdated } from "@/data/studio";
 import { useT } from "@/lib/use-t";
 
 export const Route = createFileRoute("/contact")({
@@ -66,6 +67,14 @@ function ContactPage() {
                 <a className="stitch" href={artist.whatsapp} target="_blank" rel="noreferrer">
                   {t.whatsapp}
                 </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="kicker">{t.pressSheet}</dt>
+              <dd className="mt-2">
+                <Link to="/press" className="stitch">
+                  {t.pressSheet}
+                </Link>
               </dd>
             </div>
             <div>
@@ -133,23 +142,34 @@ function ContactPage() {
         </div>
       </section>
 
-      <section className="mt-20 grid gap-10 md:grid-cols-3">
-        <Policy title={t.terms} lines={policies.terms} />
-        <Policy title={t.returns} lines={policies.returns} />
-        <Policy title={t.privacy} lines={policies.privacy} />
+      <section className="mt-20">
+        <p className="kicker">{t.atelier}</p>
+        <h2 className="display-md mt-3">{t.studioPolicies}</h2>
+        <p className="mt-3 text-sm text-muted">
+          {t.policyUpdated} {policyUpdated}
+        </p>
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <Policy title={t.terms} blocks={policies.terms} />
+          <Policy title={t.returns} blocks={policies.returns} />
+          <Policy title={t.privacy} blocks={policies.privacy} />
+        </div>
       </section>
     </div>
   );
 }
 
-function Policy({ title, lines }: { title: string; lines: string[] }) {
+function Policy({
+  title,
+  blocks,
+}: {
+  title: string;
+  blocks: (typeof policies)["terms"];
+}) {
   return (
-    <details>
+    <details className="border border-line bg-paper p-5">
       <summary className="kicker cursor-pointer">{title}</summary>
-      <div className="mt-4 space-y-3 text-sm text-muted">
-        {lines.map((line) => (
-          <p key={line.slice(0, 32)}>{line}</p>
-        ))}
+      <div className="mt-6">
+        <PolicyBody blocks={blocks} />
       </div>
     </details>
   );

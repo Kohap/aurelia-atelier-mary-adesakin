@@ -8,7 +8,8 @@ import { Reveal } from "@/components/reveal";
 import { ScaleFigure } from "@/components/scale-figure";
 import { WallView } from "@/components/wall-view";
 import { Button } from "@/components/ui/button";
-import { getArtwork, relatedWorks } from "@/data/artworks";
+import { getArtwork as seedGetArtwork } from "@/data/artworks";
+import { relatedFromCatalogue, useArtwork } from "@/lib/catalogue";
 import { useEscape } from "@/lib/use-escape";
 import { useStudio } from "@/lib/store";
 import { useMoney, useT } from "@/lib/use-t";
@@ -18,7 +19,7 @@ import { hasPaystack } from "@/lib/paystack";
 export const Route = createFileRoute("/work/$slug")({
   component: WorkPage,
   head: ({ params }) => {
-    const work = getArtwork(params.slug);
+    const work = seedGetArtwork(params.slug);
     return {
       meta: [{ title: work ? `${work.title} — Arteli` : "Work — Arteli" }],
     };
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/work/$slug")({
 
 function WorkPage() {
   const { slug } = Route.useParams();
-  const work = getArtwork(slug);
+  const work = useArtwork(slug);
   const [zoomed, setZoomed] = useState(false);
   const [onWall, setOnWall] = useState(false);
   const listed = useStudio((s) => s.shortlist.includes(slug));
@@ -43,7 +44,7 @@ function WorkPage() {
   if (!work) throw notFound();
   const piece = work;
 
-  const related = relatedWorks(piece.slug);
+  const related = relatedFromCatalogue(piece.slug);
   const copy = localize(piece.description, lang);
 
   async function copyLink() {

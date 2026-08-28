@@ -140,8 +140,11 @@ const en = {
   firstLook: "First look at new works.",
   questions: "Questions",
   terms: "Studio terms",
-  returns: "Returns",
+  returns: "Returns & refunds",
   privacy: "Privacy",
+  policyUpdated: "Updated",
+  studioPolicies: "Studio policies",
+  checkoutAgree: "By paying, you accept",
   journalKicker: "Studio notes",
   journalTitle: "A line that remembers.",
   journalIntro:
@@ -206,6 +209,18 @@ const en = {
   inquiryPlaceholder: "Acquisition, commission, or viewing request.",
   themeLight: "Light studio",
   themeDark: "Night studio",
+  portraitAlt: "Adesakin Mary Damilola, thread painter from Ile-Ife",
+  photoCredit: "Portrait · Perfect Lenz",
+  watchFilmsIntro:
+    "Process films from Mary’s own Instagram and TikTok — the hoop, the thread, the slow build of a face.",
+  openFilm: "Open film",
+  pressSheet: "Press sheet",
+  pressKicker: "Press",
+  pressTitle: "One page for writers.",
+  pressIntro:
+    "Biography, selected works, and studio contact. Print this page or download the sheet.",
+  downloadPress: "Download PDF",
+  pressContact: "Studio contact",
 };
 
 const yo: typeof en = {
@@ -321,8 +336,11 @@ const yo: typeof en = {
   firstLook: "Àkọ́kọ́ wo iṣẹ́ tuntun.",
   questions: "Àwọn ìbéèrè",
   terms: "Òfin ilé-iṣẹ́",
-  returns: "Ìdápadà",
+  returns: "Ìdápadà àti owó",
   privacy: "Àṣírí",
+  policyUpdated: "Àtúnṣe",
+  studioPolicies: "Òfin ilé-iṣẹ́",
+  checkoutAgree: "Nípa sínsan, o gbà",
   journalKicker: "Àkọsílẹ̀ ilé-iṣẹ́",
   journalTitle: "Ìlà tí ń rántí.",
   journalIntro: "Àkọsílẹ̀ iṣẹ́ — kì í ṣe ìwé ìròyìn, èrò tó tẹ̀lé òkùn nìkan.",
@@ -383,6 +401,17 @@ const yo: typeof en = {
   inquiryPlaceholder: "Rírà, iṣẹ́ pàtàkì, tàbí ìbéèrè wíwò.",
   themeLight: "Ilé-iṣẹ́ ìmọ́lẹ̀",
   themeDark: "Ilé-iṣẹ́ alẹ́",
+  portraitAlt: "Adesakin Mary Damilola, olùkọ̀wé òkùn láti Ilé-Ifẹ̀",
+  photoCredit: "Àwòrán · Perfect Lenz",
+  watchFilmsIntro:
+    "Fídíò iṣẹ́ láti Instagram àti TikTok Mary — ìgbà, òkùn, àti bí ojú ṣe ń dàgbà.",
+  openFilm: "Ṣí fídíò",
+  pressSheet: "Ìwé ìròyìn",
+  pressKicker: "Ìròyìn",
+  pressTitle: "Ojú-ìwé kan fún oníròyìn.",
+  pressIntro: "Ìtàn ayé, iṣẹ́ àyànfẹ́, àti ìbáraẹnisọ̀rọ̀. Tẹ̀ ẹ̀ jáde tàbí ṣe ìgbàsílẹ̀.",
+  downloadPress: "Ṣe ìgbàsílẹ̀ PDF",
+  pressContact: "Ìbáraẹnisọ̀rọ̀ ilé-iṣẹ́",
 };
 
 const fr: typeof en = {
@@ -502,8 +531,11 @@ const fr: typeof en = {
   firstLook: "Premier regard sur les nouvelles œuvres.",
   questions: "Questions",
   terms: "Conditions",
-  returns: "Retours",
+  returns: "Retours et remboursements",
   privacy: "Confidentialité",
+  policyUpdated: "Mise à jour",
+  studioPolicies: "Règles de l’atelier",
+  checkoutAgree: "En payant, vous acceptez",
   journalKicker: "Notes d’atelier",
   journalTitle: "Une ligne qui se souvient.",
   journalIntro: "Notes de la pratique — pas un magazine, seulement la pensée qui accompagne le fil.",
@@ -566,6 +598,18 @@ const fr: typeof en = {
   inquiryPlaceholder: "Acquisition, commande ou demande de visite.",
   themeLight: "Atelier clair",
   themeDark: "Atelier sombre",
+  portraitAlt: "Adesakin Mary Damilola, peintre au fil d’Ile-Ife",
+  photoCredit: "Portrait · Perfect Lenz",
+  watchFilmsIntro:
+    "Films de processus depuis Instagram et TikTok de Mary — le tambour, le fil, le visage qui se construit.",
+  openFilm: "Ouvrir le film",
+  pressSheet: "Dossier de presse",
+  pressKicker: "Presse",
+  pressTitle: "Une page pour les rédacteurs.",
+  pressIntro:
+    "Biographie, œuvres choisies et contact de l’atelier. Imprimez cette page ou téléchargez la fiche.",
+  downloadPress: "Télécharger le PDF",
+  pressContact: "Contact atelier",
 };
 
 export const copy = { en, yo, fr };

@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { X } from "lucide-react";
-import { getArtwork } from "@/data/artworks";
+import { useArtwork } from "@/lib/catalogue";
 import { useEscape } from "@/lib/use-escape";
 import {
   PAYSTACK_CURRENCY,
@@ -17,11 +17,13 @@ export function CheckoutDialog() {
   const checkout = useStudio((s) => s.checkout);
   const close = useStudio((s) => s.openCheckout);
   const rates = useStudio((s) => s.rates);
-  const work = checkout ? getArtwork(checkout.slug) : null;
+  const setPolicy = useStudio((s) => s.setPolicy);
+  const policy = useStudio((s) => s.policy);
+  const work = useArtwork(checkout?.slug);
   const t = useT();
   const money = useMoney();
   const onClose = useCallback(() => close(null), [close]);
-  useEscape(onClose, Boolean(checkout));
+  useEscape(onClose, Boolean(checkout) && !policy);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -177,6 +179,33 @@ export function CheckoutDialog() {
             />
           </label>
           <p className="text-sm text-muted">{t.checkoutNote}</p>
+          <p className="text-xs leading-relaxed text-muted">
+            {t.checkoutAgree}{" "}
+            <button
+              type="button"
+              className="underline decoration-line underline-offset-4"
+              onClick={() => setPolicy("terms")}
+            >
+              {t.terms}
+            </button>
+            {", "}
+            <button
+              type="button"
+              className="underline decoration-line underline-offset-4"
+              onClick={() => setPolicy("returns")}
+            >
+              {t.returns}
+            </button>
+            {", "}
+            <button
+              type="button"
+              className="underline decoration-line underline-offset-4"
+              onClick={() => setPolicy("privacy")}
+            >
+              {t.privacy}
+            </button>
+            .
+          </p>
           {error ? (
             <p className="text-sm text-terracotta" role="alert">
               {error}

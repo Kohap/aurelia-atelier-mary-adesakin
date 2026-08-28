@@ -28,6 +28,7 @@ import {
   normalizeCatalogue,
   normalizePrice,
   optimizeArtworkUpload,
+  publishableCatalogue,
   readDeskToken,
   uniqueArtworkSlug,
   writeDeskToken,
@@ -35,6 +36,7 @@ import {
   type DeskArtwork,
   type PaystackTransactionList,
 } from "@/lib/admin";
+import { applyPublishedCatalogue } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
 export function StudioDesk() {
@@ -88,6 +90,7 @@ export function StudioDesk() {
       setWorks(next);
       initialJson.current = catalogueJson(next);
       setSource("live");
+      applyPublishedCatalogue(publishableCatalogue(next));
       toast.success("Loaded the live catalogue from storage.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not load live storage.");
@@ -122,7 +125,8 @@ export function StudioDesk() {
       }
       initialJson.current = currentJson;
       setSource("live");
-      toast.success("Catalogue published to storage.");
+      applyPublishedCatalogue(publishableCatalogue(works));
+      toast.success("Catalogue published. The public site now shows this list.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Publish failed — use Export JSON as a backup.");
     } finally {

@@ -36,8 +36,11 @@ function ExhibitionsPage() {
       <Reveal className="border-t border-line pt-12">
         <h2 className="font-display text-3xl">{t.pressLoans}</h2>
         <p className="mt-3 max-w-xl text-muted">{t.pressCopy}</p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild>
+            <Link to="/press">{t.pressSheet}</Link>
+          </Button>
+          <Button variant="ghost" asChild>
             <Link to="/contact">{t.pressKit}</Link>
           </Button>
         </div>

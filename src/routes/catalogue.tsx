@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { CheckCircle2, ScrollText, ShieldCheck } from "lucide-react";
 import { ArtworkCard } from "@/components/artwork-card";
 import { Reveal } from "@/components/reveal";
-import { artworks, collections } from "@/data/artworks";
+import { useCatalogue } from "@/lib/catalogue";
 import { useT } from "@/lib/use-t";
 
 type CatalogueSearch = {
@@ -26,6 +26,8 @@ const FILTERS = ["all", "available", "sold", "prints", "2026"] as const;
 
 function CataloguePage() {
   const t = useT();
+  const { works: artworks } = useCatalogue();
+  const collections = [...new Set(artworks.map((work) => work.collection))];
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const query = search.q ?? "";
@@ -54,7 +56,7 @@ function CataloguePage() {
       if (filter === "2026") return work.year === "2026";
       return true;
     });
-  }, [query, filter, series]);
+  }, [query, filter, series, artworks]);
 
   const availableCount = artworks.filter((work) => work.status === "Available").length;
   const soldCount = artworks.filter((work) => work.status === "Sold").length;
