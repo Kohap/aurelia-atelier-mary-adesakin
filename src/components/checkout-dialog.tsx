@@ -55,8 +55,12 @@ export function CheckoutDialog() {
       .catch(() => setError(t.rateUnavailable));
   }, [checkout, amountUsd, rates.NGN, t.rateUnavailable]);
 
-  if (!checkout || !work) return null;
-  const piece = work;
+  if (!checkout) return null;
+  const piece = {
+    slug: checkout.slug,
+    title: work?.title ?? checkout.title ?? checkout.label,
+    collection: work?.collection ?? checkout.collection ?? "Arteli",
+  };
   const item = checkout;
 
   const chargeAmount = PAYSTACK_CURRENCY === "NGN" ? ngnAmount : amountUsd;
@@ -118,9 +122,9 @@ export function CheckoutDialog() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="kicker">{work.collection}</p>
+            <p className="kicker">{piece.collection}</p>
             <h2 id="checkout-title" className="font-display mt-2 text-3xl">
-              {work.title}
+              {piece.title}
             </h2>
             <p className="mt-2 text-sm text-muted">
               {checkout.label} — {money(amountUsd)}

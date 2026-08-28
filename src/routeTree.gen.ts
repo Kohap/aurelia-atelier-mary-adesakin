@@ -16,6 +16,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ExhibitionsRouteImport } from './routes/exhibitions'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as StudioRouteImport } from './routes/studio'
+import { Route as AdesakinAdminRouteImport } from './routes/adesakin.admin'
 import { Route as WorkSlugRouteImport } from './routes/work.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +54,11 @@ const StudioRoute = StudioRouteImport.update({
   path: '/studio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdesakinAdminRoute = AdesakinAdminRouteImport.update({
+  id: '/adesakin/admin',
+  path: '/adesakin/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorkSlugRoute = WorkSlugRouteImport.update({
   id: '/work/$slug',
   path: '/work/$slug',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/exhibitions': typeof ExhibitionsRoute
   '/journal': typeof JournalRoute
   '/studio': typeof StudioRoute
+  '/adesakin/admin': typeof AdesakinAdminRoute
   '/work/$slug': typeof WorkSlugRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/exhibitions': typeof ExhibitionsRoute
   '/journal': typeof JournalRoute
   '/studio': typeof StudioRoute
+  '/adesakin/admin': typeof AdesakinAdminRoute
   '/work/$slug': typeof WorkSlugRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/exhibitions': typeof ExhibitionsRoute
   '/journal': typeof JournalRoute
   '/studio': typeof StudioRoute
+  '/adesakin/admin': typeof AdesakinAdminRoute
   '/work/$slug': typeof WorkSlugRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/exhibitions'
     | '/journal'
     | '/studio'
+    | '/adesakin/admin'
     | '/work/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/exhibitions'
     | '/journal'
     | '/studio'
+    | '/adesakin/admin'
     | '/work/$slug'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/exhibitions'
     | '/journal'
     | '/studio'
+    | '/adesakin/admin'
     | '/work/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   ExhibitionsRoute: typeof ExhibitionsRoute
   JournalRoute: typeof JournalRoute
   StudioRoute: typeof StudioRoute
+  AdesakinAdminRoute: typeof AdesakinAdminRoute
   WorkSlugRoute: typeof WorkSlugRoute
 }
 
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/adesakin/admin': {
+      id: '/adesakin/admin'
+      path: '/adesakin/admin'
+      fullPath: '/adesakin/admin'
+      preLoaderRoute: typeof AdesakinAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/work/$slug': {
       id: '/work/$slug'
       path: '/work/$slug'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExhibitionsRoute: ExhibitionsRoute,
   JournalRoute: JournalRoute,
   StudioRoute: StudioRoute,
+  AdesakinAdminRoute: AdesakinAdminRoute,
   WorkSlugRoute: WorkSlugRoute,
 }
 export const routeTree = rootRouteImport

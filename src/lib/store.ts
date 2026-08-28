@@ -8,6 +8,8 @@ export type CheckoutTarget = {
   slug: string;
   amount: number;
   label: string;
+  title?: string;
+  collection?: string;
 };
 
 type StudioState = {

@@ -3,6 +3,7 @@ import type { Lang } from "@/data/i18n";
 export type PrintOption = {
   size: string;
   price: number;
+  paystackPaymentUrl?: string;
 };
 
 export type Localized = Record<Lang, string>;

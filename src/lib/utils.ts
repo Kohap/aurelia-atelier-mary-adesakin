@@ -39,7 +39,9 @@ export function localize<T extends Record<Lang, string>>(
 }
 
 export function artworkSrcSet(image: string) {
-  if (!image.endsWith(".webp")) return undefined;
+  if (!image.startsWith("/") || !image.endsWith(".webp") || image.includes("-480.")) {
+    return undefined;
+  }
   return `${image.replace(/\.webp$/, "-480.webp")} 480w, ${image} 900w`;
 }
 
