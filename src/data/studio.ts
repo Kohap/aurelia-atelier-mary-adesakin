@@ -97,6 +97,7 @@ export type StitchFilm = {
   embed?: string;
   videoId?: string;
   poster?: string;
+  posterPosition?: string;
 };
 
 export const stitchFilms: StitchFilm[] = [
@@ -128,6 +129,7 @@ export const stitchFilms: StitchFilm[] = [
     href: "https://www.tiktok.com/@dammy017/video/7542423924022299922",
     videoId: "7542423924022299922",
     poster: "/studio/films/showing.webp",
+    posterPosition: "center 12%",
   },
   {
     id: "weave",
@@ -137,6 +139,7 @@ export const stitchFilms: StitchFilm[] = [
     href: "https://www.tiktok.com/@dammy017/video/7526847375445478662",
     videoId: "7526847375445478662",
     poster: "/studio/films/weave.webp",
+    posterPosition: "center center",
   },
 ];
 

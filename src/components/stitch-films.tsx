@@ -12,11 +12,16 @@ function FilmFrame({ film }: { film: StitchFilm }) {
       className="film-frame"
       aria-label={`${t.openFilm}: ${film.title}`}
     >
-      {film.poster ? <img src={film.poster} alt="" className="film-poster" /> : null}
+      {film.poster ? (
+        <img
+          src={film.poster}
+          alt=""
+          className="film-poster"
+          style={film.posterPosition ? { objectPosition: film.posterPosition } : undefined}
+        />
+      ) : null}
       <span className="film-play" aria-hidden="true">
-        <span>
-          <Play size={18} fill="currentColor" />
-        </span>
+        <Play size={14} fill="currentColor" />
       </span>
     </a>
   );
